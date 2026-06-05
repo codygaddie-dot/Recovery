@@ -1,4 +1,1028 @@
-<!DOCTYPE html>
+<!<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Stay the Course" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <title>Stay the Course</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    html,body{height:100%;background:#0a0a0a;color:#e8e8e8;font-family:-apple-system,'Helvetica Neue',sans-serif}
+    #app{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:88px}
+    .header{padding:48px 20px 16px;border-bottom:1px solid #1e1e1e;background:#0d0d0d;position:sticky;top:0;z-index:10}
+    .header-sub{font-size:11px;letter-spacing:.2em;color:#555;text-transform:uppercase;margin-bottom:4px}
+    .header-title{font-size:22px;font-weight:700;letter-spacing:-.5px}
+    .content{padding:20px 16px 0}
+    .section-title{margin-bottom:20px}
+    .section-title h2{font-size:22px;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+    .section-title p{font-size:13px;color:#555;margin-top:4px}
+    .card{background:#111;border:1px solid #222;border-radius:12px;padding:18px;margin-bottom:14px}
+    .accordion-btn{width:100%;text-align:left;background:#111;border:1px solid #222;border-radius:10px;padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:#e8e8e8;font-size:15px;font-weight:600;font-family:inherit;transition:border-color .2s}
+    .accordion-btn.open{border-color:#ef4444;border-radius:10px 10px 0 0;background:#1a1a1a}
+    .accordion-btn.release.open{border-color:#f59e0b}
+    .accordion-body{background:#111;border-left:1px solid #ef4444;border-right:1px solid #ef4444;border-bottom:1px solid #ef4444;border-radius:0 0 10px 10px;padding:4px 0 12px;margin-bottom:10px}
+    .accordion-body.release{border-color:#f59e0b;padding:0}
+    .accordion-item{padding:10px 16px;border-bottom:1px solid #1a1a1a;display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#ccc;line-height:1.5}
+    .accordion-item:last-child{border-bottom:none}
+    .accordion-arrow{color:#ef4444;font-weight:700;font-size:16px;margin-top:1px;flex-shrink:0}
+    .accordion-toggle{color:#555;font-size:18px}
+    .accordion-wrapper{margin-bottom:10px}
+    .release-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #1a1a1a;gap:10px}
+    .release-row:last-child{border-bottom:none}
+    .release-text{font-size:14px;color:#ccc;flex:1}
+    .release-used-btn{background:#1a1a1a;border:1px solid #333;border-radius:7px;color:#888;font-size:11px;padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .2s}
+    .release-used-btn.used{background:#166534;border-color:#22c55e;color:#22c55e}
+    input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:#2a2a2a;outline:none}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;cursor:pointer}
+    textarea,input[type=text],input[type=number]{width:100%;background:#0d0d0d;border:1px solid #2a2a2a;border-radius:8px;color:#e8e8e8;font-size:14px;padding:10px 12px;resize:none;font-family:inherit}
+    textarea:focus,input[type=text]:focus,input[type=number]:focus{outline:none;border-color:#444}
+    select{width:100%;background:#0d0d0d;border:1px solid #2a2a2a;border-radius:8px;color:#e8e8e8;font-size:14px;padding:10px 12px;font-family:inherit;-webkit-appearance:none}
+    .btn-primary{width:100%;padding:13px 0;background:#ef4444;color:#fff;font-weight:700;font-size:15px;border:none;border-radius:9px;cursor:pointer;letter-spacing:.02em;font-family:inherit;transition:background .3s}
+    .btn-primary.saved{background:#166534}
+    .btn-start{background:#f59e0b;color:#000;font-weight:800;font-size:15px;border:none;border-radius:9px;padding:13px 32px;cursor:pointer;letter-spacing:.02em;font-family:inherit}
+    .btn-ghost{background:transparent;color:#555;font-weight:600;font-size:13px;border:1px solid #2a2a2a;border-radius:9px;padding:10px 20px;cursor:pointer;font-family:inherit}
+    .btn-share{width:100%;padding:13px 0;background:#1e3a5f;border:1px solid #2563eb;color:#60a5fa;font-weight:700;font-size:14px;border-radius:9px;cursor:pointer;font-family:inherit;margin-bottom:10px}
+    .field-label{font-size:12px;color:#777;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px}
+    .urge-num{font-size:28px;font-weight:800;min-width:32px;text-align:center}
+    .log-entry{background:#111;border:1px solid #1e1e1e;border-radius:9px;padding:12px 14px;margin-bottom:8px}
+    .log-meta{display:flex;justify-content:space-between;margin-bottom:4px}
+    .log-date{font-size:12px;color:#555}
+    .log-urge{font-size:13px;font-weight:700}
+    .log-line{font-size:13px;color:#aaa;margin-top:2px}
+    .log-line b{color:#666}
+    .board-gain{border:1px solid #1e2a1e}
+    .board-lose{border:1px solid #2a1e1e}
+    .board-label{font-size:12px;text-transform:uppercase;letter-spacing:.15em;font-weight:700;margin-bottom:12px}
+    .board-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a1a;align-items:flex-start}
+    .board-row:last-child{border-bottom:none}
+    .meeting-link{display:flex;justify-content:space-between;align-items:center;background:#111;border:1px solid #222;border-radius:10px;padding:16px;margin-bottom:10px;text-decoration:none}
+    .meeting-name{font-size:15px;font-weight:600;color:#e8e8e8;margin-bottom:3px}
+    .meeting-type{font-size:12px;color:#555}
+    .streak-card{background:#111;border:1px solid #222;border-radius:14px;padding:28px;text-align:center;margin-bottom:16px}
+    .streak-num{font-size:72px;font-weight:800;line-height:1;margin-bottom:8px}
+    .streak-sub{font-size:14px;color:#666;margin-bottom:20px}
+    .streak-date{font-size:12px;color:#444;margin-bottom:20px}
+    .milestone-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1a1a;align-items:center}
+    .milestone-row:last-child{border-bottom:none}
+    .section-label{font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+    .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#0a0a0a;border-top:1px solid #1a1a1a;display:flex;justify-content:space-around;padding:10px 0 28px;z-index:20}
+    .nav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 4px;font-family:inherit;transition:opacity .2s;min-width:38px}
+    .nav-icon{font-size:16px}
+    .nav-label{font-size:7px;color:#888;text-transform:uppercase;letter-spacing:.04em}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+    .modal-sheet{background:#111;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:24px 20px 40px;max-height:80vh;overflow-y:auto}
+    .sponsor-block{background:#0d0d0d;border:1px solid #222;border-radius:10px;padding:14px;margin-bottom:12px}
+    .sponsor-block-title{font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+    .sponsor-stat{font-size:28px;font-weight:800;color:#f59e0b}
+    .sponsor-stat-label{font-size:12px;color:#666;margin-top:2px}
+    .btn-copy{width:100%;padding:12px;background:#2563eb;color:#fff;font-weight:700;font-size:14px;border:none;border-radius:9px;cursor:pointer;font-family:inherit;margin-bottom:10px}
+    .btn-close{width:100%;padding:12px;background:transparent;color:#555;font-size:14px;border:1px solid #2a2a2a;border-radius:9px;cursor:pointer;font-family:inherit}
+    .release-log-entry{background:#111;border:1px solid #1e1e1e;border-radius:9px;padding:10px 14px;margin-bottom:6px}
+    .tag{display:inline-block;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:5px;font-size:11px;color:#888;padding:2px 7px;margin:2px 2px 0 0}
+    .tag.green{border-color:#166534;color:#22c55e;background:#0f2a1a}
+    .fitness-sub-tabs{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;padding-bottom:2px}
+    .fsub-btn{background:#111;border:1px solid #222;border-radius:20px;color:#555;font-size:12px;font-weight:600;padding:7px 14px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .2s}
+    .fsub-btn.active{background:#1a2a1a;border-color:#22c55e;color:#22c55e}
+    .progress-bar-bg{background:#1a1a1a;border-radius:4px;height:6px;flex:1;margin:0 10px}
+    .progress-bar-fill{height:6px;border-radius:4px;background:#22c55e;transition:width .4s}
+    .workout-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+    .workout-type-btn{background:#111;border:1px solid #222;border-radius:9px;color:#888;font-size:13px;font-weight:600;padding:10px;cursor:pointer;font-family:inherit;text-align:center;transition:all .2s}
+    .workout-type-btn.selected{background:#1a2a1a;border-color:#22c55e;color:#22c55e}
+    .supp-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1a1a1a}
+    .supp-row:last-child{border-bottom:none}
+    .supp-check{width:22px;height:22px;border-radius:6px;border:1.5px solid #333;background:#0d0d0d;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+    .supp-check.checked{background:#166534;border-color:#22c55e}
+    .photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+    .photo-card{background:#111;border:1px solid #222;border-radius:10px;overflow:hidden;position:relative;aspect-ratio:3/4;cursor:pointer}
+    .photo-card img{width:100%;height:100%;object-fit:cover}
+    .photo-date-badge{position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.7);border-radius:4px;font-size:10px;color:#888;padding:2px 6px}
+    .journal-entry-card{background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:14px;margin-bottom:10px}
+    .journal-entry-meta{font-size:11px;color:#555;margin-bottom:6px}
+    .journal-entry-preview{font-size:13px;color:#777;line-height:1.5}
+    .mood-btn{border:1px solid #2a2a2a;border-radius:50%;width:44px;height:44px;font-size:20px;background:#111;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+    .mood-btn.selected{border-color:#f59e0b;background:#2a1a00;transform:scale(1.15)}
+    .prompt-box{background:#0d0d0d;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:14px;font-size:13px;color:#888;font-style:italic;line-height:1.5}
+    .habit-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #1a1a1a}
+    .habit-row:last-child{border-bottom:none}
+    .habit-streak-badge{font-size:11px;color:#f59e0b;background:#1a1200;border:1px solid #2a2000;border-radius:10px;padding:2px 8px}
+    .habit-check{width:28px;height:28px;border-radius:8px;border:1.5px solid #333;background:#0d0d0d;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:all .2s}
+    .habit-check.checked{background:#166534;border-color:#22c55e}
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <div class="header-sub">Recovery Companion</div>
+    <div class="header-title">Stay the Course</div>
+    <div id="daily-quote-bar" style="margin-top:12px;padding-top:12px;border-top:1px solid #1e1e1e;cursor:pointer" onclick="toggleSerenity()">
+      <div id="quote-display"></div>
+    </div>
+  </div>
+  <div class="content" id="content"></div>
+  <nav class="bottom-nav" id="nav"></nav>
+</div>
+<div id="modal-overlay" style="display:none"></div>
+
+<script>
+const STORAGE_KEY="recovery_data_v1";
+const SERENITY_PRAYER="God, grant me the serenity to accept the things I cannot change, the courage to change the things I can, and the wisdom to know the difference.";
+const DAILY_QUOTES=[
+  {text:"Recovery is not a race. You don't have to feel guilty if it takes you longer than you thought.",author:"Anonymous"},
+  {text:"The goal isn't to be sober. The goal is to love yourself so much that you don't need to.",author:"Anonymous"},
+  {text:"You don't have to see the whole staircase. Just take the first step.",author:"Martin Luther King Jr."},
+  {text:"Every moment is a fresh beginning.",author:"T.S. Eliot"},
+  {text:"Courage isn't having the strength to go on — it is going on when you don't have the strength.",author:"Napoleon Bonaparte"},
+  {text:"You are not your addiction. You are a person who has an addiction.",author:"Anonymous"},
+  {text:"The first step towards getting somewhere is to decide you're not going to stay where you are.",author:"J.P. Morgan"},
+  {text:"Fall seven times, stand up eight.",author:"Japanese Proverb"},
+  {text:"One day at a time. This is enough.",author:"Anonymous"},
+  {text:"Pain is inevitable. Suffering is optional.",author:"Haruki Murakami"},
+  {text:"Rock bottom became the solid foundation on which I rebuilt my life.",author:"J.K. Rowling"},
+  {text:"The only way out is through.",author:"Robert Frost"},
+  {text:"Sobriety was the greatest gift I ever gave myself.",author:"Rob Lowe"},
+  {text:"Nothing changes if nothing changes.",author:"Anonymous"},
+  {text:"You can't go back and change the beginning, but you can start where you are and change the ending.",author:"C.S. Lewis"},
+  {text:"Accept what is, let go of what was, have faith in what will be.",author:"Anonymous"},
+  {text:"The struggle you're in today is developing the strength you need tomorrow.",author:"Anonymous"},
+  {text:"I am not defined by my relapses, but by my decision to remain in recovery.",author:"Anonymous"},
+  {text:"There is no elevator to sobriety. You have to take the steps.",author:"Anonymous"},
+  {text:"The greatest glory in living lies not in never falling, but in rising every time we fall.",author:"Nelson Mandela"},
+  {text:"Act as if what you do makes a difference. It does.",author:"William James"},
+  {text:"Be gentle with yourself. You are a child of the universe, no less than the trees and the stars.",author:"Max Ehrmann"},
+  {text:"What you are is what you have been. What you will be is what you do now.",author:"Buddha"},
+  {text:"Believe you can and you're halfway there.",author:"Theodore Roosevelt"},
+  {text:"Do not let what you cannot do interfere with what you can do.",author:"John Wooden"},
+  {text:"Recovery gives you the chance to dream again.",author:"Anonymous"},
+  {text:"Strength does not come from winning. Your struggles develop your strengths.",author:"Arnold Schwarzenegger"},
+  {text:"Man never made any material as resilient as the human spirit.",author:"Bernard Williams"},
+  {text:"It does not matter how slowly you go as long as you do not stop.",author:"Confucius"},
+  {text:"What lies behind us and what lies before us are tiny matters compared to what lies within us.",author:"Ralph Waldo Emerson"}
+];
+function getDailyQuote(){const day=Math.floor(Date.now()/86400000);return DAILY_QUOTES[day%DAILY_QUOTES.length];}
+
+const RED_ALERTS=[
+  {trigger:"Home alone",responses:["Call someone right now — don't wait","Go to the gym immediately","Leave the house — coffee shop, anywhere","Work in the garage with the door open","Urge surf: sit with it, name where you feel it in your body, breathe — urges pass in 20-30 min","Text your sponsor your location and urge level","Put every screen in a different room","Plan your next hour in detail — idle time feeds the urge"]},
+  {trigger:"Wife asleep",responses:["Phone goes in the kitchen — not the bedroom","Read recovery material until tired","Do pushups or situps to physical exhaustion","Wake Sabrina and tell her you're struggling — honesty is the shield","Urge surf: close eyes, locate the feeling, breathe into it, watch it rise and fall","Repeat your commitment statement out loud 3 times","Write in journal until the urge loses power","Call sponsor's voicemail even if they don't pick up — saying it out loud breaks the secrecy"]},
+  {trigger:"Argument with Sabrina",responses:["Take a walk before touching any screen","Call sponsor before you process it alone","Write down what you actually FEEL — not what happened","Give it 30 minutes before returning to the conversation","Name the emotion: hurt? Rejection? Disrespect? Fear?","Do not use the argument as justification — it never is","Pray specifically about the conflict","Arguments are a middle-circle trigger — execute your plan automatically"]},
+  {trigger:"Feeling rejected sexually",responses:["Name the feeling out loud — rejection, not emergency","Journal it — don't act on it","Call a trusted friend or sponsor","Pray or meditate on it","Your worth is not tied to sexual availability","This feeling is the trigger, not the truth — write what's actually true","Heavy physical exercise — redirect the energy","Talk to Sabrina about how you feel, not what you want"]},
+  {trigger:"Late at night",responses:["Phone goes to charger in another room — non-negotiable","10-minute breathing or prayer before sleep","Wake Sabrina if the urge is at a 7 or higher","Cold shower — resets the nervous system fast","Urge surf: lie still, locate the urge, breathe through it, it will pass","Read recovery literature instead of screens","If you can't sleep, go to another room and journal — don't stay in bed with phone"]},
+  {trigger:"Long drives",responses:["Recovery podcast or audiobook on before you start — no silence","Call someone during the drive — sponsor, friend, family","No social media at stops — leave phone in the car","Plan check-in calls at specific milestones","Keep podcast loud enough that your mind can't wander","Pray out loud during the drive"]},
+  {trigger:"Anxiety",responses:["Name the anxiety — write exactly what you're afraid of","4-7-8 breathing: inhale 4, hold 7, exhale 8 — do 4 rounds","Call sponsor before the anxiety builds momentum","Cold shower or cold plunge — physiologically resets anxiety fast","Walk outside immediately — movement metabolizes anxiety hormones","Urge surf: anxiety and urge often feel the same — observe it, don't feed it","Box breathing: 4 in, hold 4, out 4, hold 4 — repeat 5 times","Write down every anxious thought — getting it out reduces its power"]},
+  {trigger:"Stress",responses:["Rate it 1-10 out loud — naming it reduces its power","Leave the environment for 10 minutes before any decisions","Heavy exercise — stress hormones need physical discharge","Call someone — don't sit with it alone","Write down specifically what's stressing you — vague stress is more dangerous","Breathe: stress compresses breathing, slow it down on purpose","Tell Sabrina your stress level — secrecy and stress together are high risk"]},
+  {trigger:"Social media",responses:["Delete the app — right now, not later","Put phone face down and walk to a different room","Replace with a recovery podcast immediately","Call someone instead of scrolling","Set screen time limits in iPhone Settings","Recognize scrolling as numbing — ask what you're numbing","Log the urge in this app before you do anything else"]},
+  {trigger:"TV / Mindless watching",responses:["Turn it off — don't negotiate with yourself","Switch to a recovery podcast or audiobook","Go do something physical immediately","Text your sponsor what you were watching and how you felt","Recognize TV as a numbing tool — ask what you're avoiding","Replace with 20 minutes of reading recovery material"]},
+  {trigger:"Mindless scrolling",responses:["Put the phone down and walk away from it","Delete the app if it keeps happening — you've given it enough chances","Replace with a recovery podcast","Call someone — scrolling is isolation with a screen","Ask: what am I looking for right now? Name it honestly","Use iPhone Screen Time to lock yourself out after 10 minutes"]},
+  {trigger:"Loneliness",responses:["Call — don't text. Voice connection is different","Go somewhere public — coffee shop, gym","Reach out to an SAA or SLAA member specifically","Tell Sabrina how you're feeling","Loneliness is one of the highest-risk states — treat it like a 7/10 urge","Attend a meeting today, even online","Do something for someone else — service breaks loneliness faster than anything","Isolation is where the addiction lives — don't give it the room"]},
+  {trigger:"Isolation",responses:["Leave the house immediately — non-negotiable","Call sponsor","Go to a meeting today","Do not be alone with your phone","Isolation is not peace — it's the addiction's home court","Text three people right now just to make contact","Change your physical environment in the next 5 minutes"]},
+  {trigger:"Shame",responses:["Name it out loud — shame grows in silence and dies in the light","Call sponsor immediately — do not process shame alone","Do not isolate with this feeling","Read your Recovery Board","Shame says you ARE bad — the truth is you DID something bad. You are not your addiction","Write down the shame and then write the truth next to it","Tell one safe person exactly what you're feeling","Shame is the biggest relapse driver — treat it like a 9/10 urge","Pray: ask for relief from shame, not escape from it"]},
+  {trigger:"Guilt",responses:["Write down specifically what you feel guilty about","Call sponsor or accountability partner","Make amends if possible — action beats rumination every time","Pray or meditate on it","Talk to Sabrina if appropriate","Guilt is useful only if it changes today's behavior","Ask: is there an amend I'm avoiding? Make it.","Write what you would tell a friend in this situation — then apply it to yourself"]},
+  {trigger:"Compulsive shopping / spending",responses:["Close every browser tab and shopping app now","Call sponsor before any non-essential purchase","Write down what you're actually feeling — spending is numbing","Wait 24 hours on any purchase over $50","Tell Sabrina — no financial secrets, ever","Ask: what need am I trying to meet with this purchase?","Put your credit card in a different room or give it to Sabrina temporarily"]},
+  {trigger:"Compulsive behaviors",responses:["Name the behavior and the feeling driving it","Call sponsor immediately","Leave the environment","Replace with a physical release right now","Log it in this app — awareness is the first intervention","Ask: what is this behavior doing for me? What need is it meeting?","Call someone and say out loud what you almost did"]},
+  {trigger:"Alcohol",responses:["Do not take the first drink — that is the only one that matters","Call sponsor or AA contact immediately","Leave the environment entirely","Call Sabrina","Go to a meeting today","Alcohol lowers every defense you have — it is a direct path to acting out","Call SAMHSA: 1-800-522-4700 if it's critical","Alcohol is not a separate problem — it feeds the same addiction"]},
+  {trigger:"Chemical / substance urge",responses:["Call sponsor before anything else","Remove yourself from the environment immediately","Call SAMHSA: 1-800-522-4700","Tell someone you trust right now — say the words out loud","Do not be alone with this","Substances and sexual compulsion feed each other — this is high alert","Go to an AA or NA meeting today in addition to SAA"]},
+  {trigger:"Overeating / not eating",responses:["Notice the emotion underneath — food is the symptom","Step away from the kitchen for 10 minutes","Drink a full glass of water and wait","Journal what you're actually feeling right now","Ask: am I hungry or am I feeling something I don't want to feel?","Log it — compulsive eating patterns often run parallel to other addictive patterns"]},
+  {trigger:"Disconnected from marriage",responses:["Tell Sabrina you feel disconnected — use those exact words","Plan something intentional with her today, even small","Write 3 things you love about her right now","Ask her how she's really doing — and actually listen","Call sponsor if the disconnection is feeding urges","Disconnection is a warning sign, not a reason to act out","Make physical contact — hold her hand, sit next to her","What have you done in the last 48 hours to invest in this marriage?"]},
+  {trigger:"Low confidence",responses:["Name what specifically is making you feel low — vague bad feelings are more dangerous","Read your Recovery Board right now","Call sponsor or someone who knows the real you","Do not make any major decisions from this state","20 pushups or heavy exercise — confidence lives in the body first","Write 3 things you've done right this week, no matter how small","Low confidence is a trigger — the addiction will offer a false fix. Don't take it","Pray specifically about how you see yourself right now","Tell Sabrina how you're feeling — vulnerability builds real confidence"]}
+];
+
+const RELEASE_MENU={
+  Physical:["20 pushups right now","Heavy lifting","30-min walk","Bike ride","Pushups to failure","Yard work","Cold shower","Cold plunge","Box breathing — 4 in, hold 4, out 4, hold 4","10-min jump rope","Heavy bag work","Sprint intervals"],
+  Mental:["Journal for 10 minutes","Write a letter you don't send","Read recovery material","Recovery workbook page","Recovery podcast","Deep breathing — 4-7-8","Read your Recovery Board out loud","Listen to a full album start to finish","Gratitude list — 10 things minimum","Review your why"],
+  Social:["Call your sponsor","Reach out to someone in recovery","Text an SAA member","Call a trusted friend","Talk to Sabrina honestly","Text sponsor just to check in","Call a family member","Go somewhere public — coffee shop, gym"],
+  "Relationship & Gratitude":["Journal things I love about Sabrina","Positive affirmations — write 5 out loud","Send one text or call to someone I appreciate","Write what I'm grateful for right now","Tell Sabrina one specific thing you appreciate about her"],
+  "Spiritual & Grounding":["10-minute prayer or meditation","Go outside and sit — no phone","Read a page of recovery literature","Repeat your commitment statement out loud","Pray specifically about what you're feeling","Recite the Serenity Prayer slowly — out loud"],
+  "Purpose & Productivity":["Work on a business project","Build a software or app feature","Volunteer work — serve someone else","Listen to music — full focus, no phone","Plan tomorrow's work in detail","Do one thing on your to-do list you've been avoiding"]
+};
+
+const BOARD={
+  lose:["Sabrina's trust","Intimacy in your marriage","Hard-won progress","Self-respect","Peace of mind","Lilliana's respect","Your reputation","The man you're becoming","Clarity and focus","Your sobriety streak","Financial stability — compulsive behavior costs money","Your sponsor's trust","The ability to look Sabrina in the eye","Your mental health","The life you said you wanted"],
+  gain:["Integrity — the real kind","A better marriage","Confidence you can feel","Emotional stability","Actual freedom","Presence — being fully there for Sabrina and Lilliana","A clear conscience","Deeper intimacy — earned, not taken","Pride in who you are","The ability to lead your family","Energy and mental clarity","A business built on solid ground","Peace that doesn't require a behavior to maintain","The version of yourself you actually want to be","A story worth telling"]
+};
+
+const MEETINGS=[
+  {name:"SAA Southern Arizona",url:"http://saa-soaz.org/saa_meetinglist.html",type:"SAA — Local Tucson"},
+  {name:"NWAC Tucson Meeting Schedule",url:"https://www.nwactucson.com/meeting-schedule",type:"Local Tucson"},
+  {name:"SLAA Meeting Finder",url:"https://slaafws.org/meetings/",type:"SLAA"},
+  {name:"SA Meeting Finder",url:"https://sa.org/find-a-meeting/",type:"SA"},
+  {name:"AA Meeting Finder",url:"https://www.aa.org/find-aa",type:"AA"},
+  {name:"SMART Recovery",url:"https://www.smartrecovery.org/find-a-meeting/",type:"SMART"},
+  {name:"In The Rooms (Online)",url:"https://www.intherooms.com",type:"Online"}
+];
+
+const TABS=[
+  {icon:"&#x1F6A8;",label:"Shield"},
+  {icon:"&#x1F4CB;",label:"Log"},
+  {icon:"&#x26A1;",label:"Release"},
+  {icon:"&#x1F3DB;",label:"Board"},
+  {icon:"&#x1F91D;",label:"Meetings"},
+  {icon:"&#x1F525;",label:"Streak"},
+  {icon:"&#x1F4AA;",label:"Fitness"},
+  {icon:"&#x1F4D3;",label:"Journal"},
+  {icon:"&#x2705;",label:"Habits"}
+];
+
+const DEFAULT_HABITS=[
+  {id:"saaMeeting",name:"SAA Meeting",icon:"&#x1F91D;"},
+  {id:"aaMeeting",name:"AA Meeting",icon:"&#x1F91D;"},
+  {id:"sponsor",name:"Talk to sponsor",icon:"&#x1F4DE;"},
+  {id:"gym",name:"Gym",icon:"&#x1F4AA;"},
+  {id:"noMasturbation",name:"No masturbation",icon:"&#x1F6E1;"},
+  {id:"checkInSabrina",name:"Check in with Sabrina",icon:"&#x2764;"},
+  {id:"tellLove",name:"Tell Sabrina I love her",icon:"&#x1F495;"},
+  {id:"hangLilli",name:"Hang out with Lilliana",icon:"&#x1F46A;"},
+  {id:"meditation",name:"Meditation",icon:"&#x1F64F;"},
+  {id:"noSocialMedia",name:"No social media",icon:"&#x1F4F5;"},
+  {id:"affirmations",name:"Positive affirmations",icon:"&#x2B50;"},
+  {id:"makeBed",name:"Make my bed",icon:"&#x1F6CF;"},
+  {id:"journal",name:"Journal entry",icon:"&#x1F4D3;"},
+  {id:"reading",name:"Read 10 minutes",icon:"&#x1F4D6;"},
+  {id:"pushups",name:"20 push-ups",icon:"&#x1F4AA;"},
+  {id:"saaBook",name:"Work on SAA book",icon:"&#x1F4D8;"},
+  {id:"notBlowingUp",name:"Not blowing up",icon:"&#x1F610;"},
+  {id:"peptides",name:"Peptide protocol done",icon:"&#x1F489;"},
+  {id:"noPhone",name:"No phone in bedroom",icon:"&#x1F4F5;"},
+  {id:"dwop",name:"DWOP",icon:"&#x2705;"}
+];
+
+const DEFAULT_PEPTIDES=[
+  {name:"Tesamorelin",defaultDose:"2000",unit:"mcg",time:"PM",notes:"Sub-Q injection, abdomen. Cycle 5 on / 2 off."},
+  {name:"Ipamorelin",defaultDose:"200",unit:"mcg",time:"PM",notes:"Blend with Tesamorelin. Same syringe."},
+  {name:"IGF-1 LR3",defaultDose:"50",unit:"mcg",time:"Post-workout",notes:"IM or sub-Q. Use within 30 min post-workout."}
+];
+
+const WORKOUT_TYPES=["Lift","Cardio","HIIT","Bike","Walk","Swim","Sport","Other"];
+const DEFAULT_SUPPS=["Tesamorelin / Ipamorelin","IGF-1 LR3 (post-workout)","Creatine","Protein shake","Pre-workout","Vitamins / minerals"];
+
+const JOURNAL_PROMPTS=[
+  "What am I feeling right now, and where do I feel it in my body?",
+  "What am I grateful for today that I haven't said out loud?",
+  "What trigger did I face today, and how did I handle it?",
+  "What does Sabrina need from me that I haven't been giving?",
+  "What would I tell myself 5 years from now about today?",
+  "What am I afraid of right now? Is that fear based in reality?",
+  "What does the man I want to become do differently than the man I was yesterday?",
+  "Where did I show up well today? Where did I fall short?",
+  "What resentment am I carrying that I need to let go of?",
+  "What does my recovery mean to Lilliana, even if she doesn't know it yet?",
+  "What lie is my addiction telling me right now?",
+  "What is one thing I can do today to invest in my marriage?",
+  "What am I avoiding feeling? What would happen if I let myself feel it?",
+  "What does integrity look like for me today, specifically?",
+  "How did I treat Sabrina today? How would I want to be treated?",
+  "What does my higher power want for me today?",
+  "What habit is serving me right now? What habit is hurting me?",
+  "If I relapsed today, what would I lose? Write it out fully.",
+  "What does connection mean to me and am I pursuing it honestly?",
+  "Write a letter to the version of yourself that was struggling most."
+];
+
+const MOODS=[
+  {emoji:"&#x1F624;",label:"Struggling"},
+  {emoji:"&#x1F61F;",label:"Low"},
+  {emoji:"&#x1F610;",label:"Neutral"},
+  {emoji:"&#x1F642;",label:"Good"},
+  {emoji:"&#x1F4AA;",label:"Strong"}
+];
+
+function loadData(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{};}catch{return {};}}
+function saveData(d){localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
+function getTodayStr(){return new Date().toISOString().slice(0,10);}
+function urgeColor(v){return v<=3?"#22c55e":v<=6?"#f59e0b":"#ef4444";}
+function urgeStatus(v){return v<=3?"Manageable — stay aware":v<=6?"Moderate — run your plan":"High — execute immediately";}
+function streakDays(data){if(!data.soberStart)return 0;return Math.floor((Date.now()-new Date(data.soberStart).getTime())/86400000);}
+
+let currentTab=0,expandedAlert=null,expandedRelease=null,alertSearch='';
+
+function renderNav(){
+  document.getElementById("nav").innerHTML=TABS.map((t,i)=>`
+    <button class="nav-btn" style="opacity:${currentTab===i?1:.3}" onclick="switchTab(${i})">
+      <span class="nav-icon">${t.icon}</span>
+      <span class="nav-label" style="font-weight:${currentTab===i?700:400};color:${currentTab===i?"#aaa":"#555"}">${t.label}</span>
+    </button>`).join("");
+}
+function switchTab(i){currentTab=i;expandedAlert=null;expandedRelease=null;alertSearch='';render();}
+
+// SHIELD
+function renderShield(){
+  const filtered=RED_ALERTS.filter(a=>a.trigger.toLowerCase().includes(alertSearch.toLowerCase()));
+  return `
+    <div class="section-title"><h2>Red Alert Plan</h2><p>Tap a trigger. Follow the plan. No decisions required.</p></div>
+    <div style="position:relative;margin-bottom:16px">
+      <input type="text" placeholder="Search triggers..." value="${alertSearch}" oninput="alertSearch=this.value;expandedAlert=null;renderContent()" style="padding-left:14px" />
+      ${alertSearch?`<button onclick="alertSearch='';expandedAlert=null;renderContent()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#555;font-size:18px;cursor:pointer">x</button>`:""}
+    </div>
+    ${filtered.length===0?`<div style="text-align:center;color:#333;font-size:14px;padding:30px 0">No triggers match "${alertSearch}"</div>`:""}
+    ${filtered.map(a=>{
+      const ri=RED_ALERTS.indexOf(a);
+      return `<div class="accordion-wrapper">
+        <button class="accordion-btn${expandedAlert===ri?" open":""}" onclick="toggleAlert(${ri})">
+          <span>${a.trigger}</span><span class="accordion-toggle">${expandedAlert===ri?"&minus;":"+"}</span>
+        </button>
+        ${expandedAlert===ri?`<div class="accordion-body">${a.responses.map(r=>`<div class="accordion-item"><span class="accordion-arrow">&rarr;</span>${r}</div>`).join("")}</div>`:""}
+      </div>`;
+    }).join("")}`;
+}
+window.toggleAlert=i=>{expandedAlert=expandedAlert===i?null:i;render();};
+
+// CHECK-IN
+let checkIn={urge:5,emotion:"",situation:"",action:""};
+let checkInSaved=false;
+function renderCheckIn(){
+  const data=loadData();
+  const logs=(data.urgeLogs||[]).slice().reverse().slice(0,15);
+  const uc=urgeColor(checkIn.urge);
+  return `
+    <div class="section-title"><h2>Daily Check-In</h2><p>Track the urge before it owns you.</p></div>
+    <div class="card">
+      <label class="field-label">Urge Intensity</label>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:10px;margin-bottom:4px">
+        <input type="range" min="1" max="10" value="${checkIn.urge}" oninput="updateUrge(this.value)" style="flex:1;accent-color:${uc}" />
+        <span class="urge-num" style="color:${uc}">${checkIn.urge}</span>
+      </div>
+      <div style="font-size:12px;color:${uc};margin-bottom:16px">${urgeStatus(checkIn.urge)}</div>
+      ${[["What happened / trigger?","situation","Describe the trigger..."],["What are you feeling?","emotion","Name the emotion..."],["What did you do about it?","action","Your response or plan..."]].map(([l,k,p])=>`
+        <div style="margin-bottom:14px">
+          <label class="field-label">${l}</label>
+          <textarea rows="2" placeholder="${p}" oninput="updateCI('${k}',this.value)">${checkIn[k]}</textarea>
+        </div>`).join("")}
+      <button class="btn-primary${checkInSaved?" saved":""}" onclick="saveCheckIn()">${checkInSaved?"Logged":"Log This Check-In"}</button>
+    </div>
+    ${logs.length?`
+      <div class="section-label" style="margin-top:8px">Recent Logs</div>
+      ${logs.map(log=>`<div class="log-entry">
+        <div class="log-meta"><span class="log-date">${log.date}</span><span class="log-urge" style="color:${urgeColor(log.urge)}">Urge: ${log.urge}/10</span></div>
+        ${log.situation?`<div class="log-line"><b>Trigger:</b> ${log.situation}</div>`:""}
+        ${log.emotion?`<div class="log-line"><b>Feeling:</b> ${log.emotion}</div>`:""}
+        ${log.action?`<div class="log-line"><b>Response:</b> ${log.action}</div>`:""}
+      </div>`).join("")}`:""}`;
+}
+window.updateUrge=v=>{checkIn.urge=+v;renderContent();};
+window.updateCI=(k,v)=>{checkIn[k]=v;};
+window.saveCheckIn=()=>{
+  const data=loadData();const logs=data.urgeLogs||[];
+  logs.push({...checkIn,date:new Date().toLocaleString()});
+  saveData({...data,urgeLogs:logs});checkInSaved=true;
+  checkIn={urge:5,emotion:"",situation:"",action:""};renderContent();
+  setTimeout(()=>{checkInSaved=false;renderContent();},2500);
+};
+
+// RELEASE
+function renderRelease(){
+  const data=loadData();
+  const usedToday=(data.releaseLogs||[]).filter(r=>r.date&&r.date.startsWith(getTodayStr())).map(r=>r.item);
+  const releaseLogs=(data.releaseLogs||[]).slice().reverse().slice(0,10);
+  return `
+    <div class="section-title"><h2>Pressure Release</h2><p>Tap what you did to get through the urge. It gets tracked.</p></div>
+    ${Object.entries(RELEASE_MENU).map(([cat,items],ci)=>`
+      <div class="accordion-wrapper">
+        <button class="accordion-btn release${expandedRelease===ci?" open":""}" onclick="toggleRelease(${ci})">
+          <span>${cat}</span><span class="accordion-toggle">${expandedRelease===ci?"&minus;":"+"}</span>
+        </button>
+        ${expandedRelease===ci?`<div class="accordion-body release">${items.map(item=>{
+          const used=usedToday.includes(item);
+          return `<div class="release-row"><span class="release-text">${item}</span>
+            <button class="release-used-btn${used?" used":""}" onclick="logRelease('${item.replace(/'/g,"\\'")}')">
+              ${used?"Done":"I did this"}</button></div>`;
+        }).join("")}</div>`:""}
+      </div>`).join("")}
+    ${releaseLogs.length?`
+      <div class="section-label" style="margin-top:16px">What's Been Working</div>
+      ${releaseLogs.map(log=>`<div class="release-log-entry">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:12px;color:#555">${new Date(log.date).toLocaleDateString()}</span>
+          ${log.urge?`<span style="font-size:12px;font-weight:700;color:${urgeColor(log.urge)}">Urge was ${log.urge}/10</span>`:""}
+        </div>
+        <span class="tag green">${log.item}</span>
+      </div>`).join("")}`:""}`;
+}
+window.toggleRelease=i=>{expandedRelease=expandedRelease===i?null:i;render();};
+window.logRelease=item=>{
+  const data=loadData();const logs=data.releaseLogs||[];
+  const lastUrge=data.urgeLogs&&data.urgeLogs.length?data.urgeLogs[data.urgeLogs.length-1].urge:null;
+  logs.push({item,date:new Date().toISOString(),urge:lastUrge});
+  saveData({...data,releaseLogs:logs});renderContent();
+};
+
+// BOARD
+function renderBoard(){
+  return `
+    <div class="section-title"><h2>Recovery Board</h2><p>Read this when temptation hits.</p></div>
+    <div class="card board-gain">
+      <div class="board-label" style="color:#22c55e">What I Gain Staying Sober</div>
+      ${BOARD.gain.map(item=>`<div class="board-row"><span style="color:#22c55e;font-weight:700;margin-top:1px">+</span><span style="font-size:15px;color:#ccc">${item}</span></div>`).join("")}
+    </div>
+    <div class="card board-lose">
+      <div class="board-label" style="color:#ef4444">What I Lose If I Relapse</div>
+      ${BOARD.lose.map(item=>`<div class="board-row"><span style="color:#ef4444;font-weight:700;margin-top:1px">&minus;</span><span style="font-size:15px;color:#ccc">${item}</span></div>`).join("")}
+    </div>`;
+}
+
+// MEETINGS
+function renderMeetings(){
+  return `
+    <div class="section-title"><h2>Find a Meeting</h2><p>You don't have to do this alone.</p></div>
+    ${MEETINGS.map(m=>`<a href="${m.url}" target="_blank" rel="noopener noreferrer" class="meeting-link">
+      <div><div class="meeting-name">${m.name}</div><div class="meeting-type">${m.type}</div></div>
+      <span style="color:#444;font-size:20px">&rarr;</span></a>`).join("")}
+    <div class="card" style="margin-top:8px">
+      <div style="font-size:13px;font-weight:700;color:#f59e0b;margin-bottom:8px">Crisis Line</div>
+      <a href="tel:18005224700" style="display:block;font-size:20px;font-weight:800;color:#e8e8e8;text-decoration:none">1-800-522-4700</a>
+      <div style="font-size:12px;color:#555;margin-top:4px">SAMHSA — Free, confidential, 24/7</div>
+    </div>`;
+}
+
+// STREAK
+function renderStreak(){
+  const data=loadData();const days=streakDays(data);
+  const color=days>0?"#f59e0b":"#333";
+  const milestones=[1,7,14,30,60,90,180,365];
+  return `
+    <div class="section-title"><h2>Streak</h2><p>Every day counts.</p></div>
+    <div class="streak-card">
+      <div class="streak-num" style="color:${color}">${days}</div>
+      <div class="streak-sub">${days===0?"Start your streak today.":days===1?"Day 1. Every journey starts here.":"Days clean. Keep going."}</div>
+      ${data.soberStart?`<div class="streak-date">Started ${new Date(data.soberStart).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div>`:""}
+      ${!data.soberStart?`
+        <div style="margin-bottom:16px">
+          <label style="font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:8px">Your sober date</label>
+          <input type="date" id="sober-date-input" value="${getTodayStr()}" style="background:#0d0d0d;border:1px solid #2a2a2a;border-radius:8px;color:#e8e8e8;font-size:14px;padding:10px 12px;width:100%;font-family:inherit;margin-bottom:12px" />
+        </div>
+        <button class="btn-start" onclick="startStreak()">Set Sober Date</button>
+      `:`<button class="btn-ghost" onclick="logRelapse()">Log a Relapse</button>`}
+    </div>
+    <button class="btn-share" onclick="showSponsorModal()">Share Summary with Sponsor</button>
+    <div class="card">
+      <div class="section-label">Milestones</div>
+      ${milestones.map(d=>`<div class="milestone-row">
+        <span style="font-size:14px;color:${days>=d?"#e8e8e8":"#444"}">${d===365?"1 Year":d+" Day"+(d>1?"s":"")}</span>
+        <span style="font-size:18px">${days>=d?"&#x2705;":"&#x25CB;"}</span>
+      </div>`).join("")}
+    </div>
+    ${(data.relapseLogs||[]).length?`<div class="card">
+      <div class="section-label">Relapse History</div>
+      ${data.relapseLogs.map(r=>`<div style="font-size:13px;color:#555;padding:6px 0;border-bottom:1px solid #1a1a1a">${r.date||r}</div>`).join("")}
+    </div>`:""}`;
+}
+window.startStreak=()=>{
+  const dateInput = document.getElementById("sober-date-input");
+  const val = dateInput ? dateInput.value : "";
+  const data=loadData();
+  if(!data.soberStart){
+    saveData({...data,soberStart:val||getTodayStr()});render();
+  }
+};
+window.logRelapse=()=>{
+  if(confirm("Log a relapse and reset streak? This takes courage.")){
+    const data=loadData();const logs=data.relapseLogs||[];
+    logs.push({date:getTodayStr()});saveData({...data,soberStart:getTodayStr(),relapseLogs:logs});render();
+  }
+};
+
+// SPONSOR MODAL
+window.showSponsorModal=()=>{
+  const data=loadData();const days=streakDays(data);
+  const urgeLogs=(data.urgeLogs||[]).slice(-7).reverse();
+  const relapseCount=(data.relapseLogs||[]).length;
+  const avgUrge=urgeLogs.length?(urgeLogs.reduce((s,l)=>s+(+l.urge||0),0)/urgeLogs.length).toFixed(1):"--";
+  const topRelease=getTopRelease(data);
+  const smsText=`Recovery Update\nStreak: ${days} days\nAvg urge (7d): ${avgUrge}/10\nCheck-ins: ${(data.urgeLogs||[]).length}\nRelapses: ${relapseCount}${topRelease?"\nTop tool: "+topRelease:""}\n\nRecent:\n${urgeLogs.slice(0,5).map(l=>`${l.date} - ${l.urge}/10${l.situation?" | "+l.situation:""}`).join("\n")}`;
+  document.getElementById("modal-overlay").style.display="flex";
+  document.getElementById("modal-overlay").innerHTML=`<div class="modal-sheet">
+    <div style="font-size:18px;font-weight:800;margin-bottom:6px">Sponsor Summary</div>
+    <div style="font-size:13px;color:#555;margin-bottom:20px">A snapshot of where you're at.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      ${[["Streak",days,"days","#f59e0b"],["Avg Urge",avgUrge,"/ 10",urgeColor(+avgUrge||5)],["Check-ins",(data.urgeLogs||[]).length,"total","#60a5fa"],["Relapses",relapseCount,"logged",relapseCount>0?"#ef4444":"#22c55e"]].map(([t,v,l,c])=>`<div class="sponsor-block">
+        <div class="sponsor-block-title">${t}</div>
+        <div class="sponsor-stat" style="color:${c}">${v}</div>
+        <div class="sponsor-stat-label">${l}</div>
+      </div>`).join("")}
+    </div>
+    ${topRelease?`<div class="sponsor-block" style="margin-bottom:14px"><div class="sponsor-block-title">Most Used Tool</div><div style="font-size:15px;font-weight:700;color:#e8e8e8;margin-top:4px">${topRelease}</div></div>`:""}
+    <a href="sms:?&body=${encodeURIComponent(smsText)}" style="text-decoration:none"><button class="btn-copy">Send as Text Message</button></a>
+    <button class="btn-copy" onclick="copyToClipboard('${smsText.replace(/'/g,"\\'")}')">Copy to Clipboard</button>
+    <button class="btn-close" onclick="closeModal()">Close</button>
+  </div>`;
+};
+function getTopRelease(data){const logs=data.releaseLogs||[];if(!logs.length)return null;const c={};logs.forEach(l=>{c[l.item]=(c[l.item]||0)+1;});return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;}
+window.copyToClipboard=(text)=>{if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>alert("Copied!"));}};
+window.closeModal=()=>{document.getElementById("modal-overlay").style.display="none";};
+
+// FITNESS
+let fitSubTab=0,workoutForm={type:"",duration:"",notes:"",fasted:false},workoutSaved=false;
+let bodyForm={weight:"",chest:"",waist:"",hips:"",arms:"",notes:""},bodySaved=false;
+let peptideForm={name:"",dose:"",unit:"mcg",site:"",time:"",notes:""},peptideSaved=false;
+function renderFitness(){
+  const subLabels=["Workout","Body","Peptides","Supplements","Goals","Photos"];
+  return `
+    <div class="section-title"><h2>Fitness Tracker</h2><p>Train hard. Track everything.</p></div>
+    <div class="fitness-sub-tabs">
+      ${subLabels.map((l,i)=>`<button class="fsub-btn${fitSubTab===i?" active":""}" onclick="setFitSub(${i})">${l}</button>`).join("")}
+    </div>
+    ${fitSubTab===0?renderFitWorkout():""}
+    ${fitSubTab===1?renderFitBody():""}
+    ${fitSubTab===2?renderFitPeptides():""}
+    ${fitSubTab===3?renderFitSupps():""}
+    ${fitSubTab===4?renderFitGoals():""}
+    ${fitSubTab===5?renderFitPhotos():""}`;
+}
+window.setFitSub=i=>{fitSubTab=i;renderContent();};
+
+function renderFitWorkout(){
+  const data=loadData();
+  const logs=(data.workoutLogs||[]).slice().reverse().slice(0,10);
+  return `<div class="card">
+    <label class="field-label">Workout Type</label>
+    <div class="workout-type-grid">${WORKOUT_TYPES.map(t=>`<button class="workout-type-btn${workoutForm.type===t?" selected":""}" onclick="setWorkoutType('${t}')">${t}</button>`).join("")}</div>
+    <label class="field-label">Duration (minutes)</label>
+    <input type="number" placeholder="60" value="${workoutForm.duration}" oninput="workoutForm.duration=this.value" style="margin-bottom:14px" />
+    <label class="field-label">Notes</label>
+    <textarea rows="2" placeholder="What did you work on? How did it feel?" oninput="workoutForm.notes=this.value" style="margin-bottom:14px">${workoutForm.notes}</textarea>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;cursor:pointer" onclick="workoutForm.fasted=!workoutForm.fasted;renderContent()">
+      <div class="supp-check${workoutForm.fasted?" checked":""}">${workoutForm.fasted?"&#x2713;":""}</div>
+      <span style="font-size:14px;color:#aaa">Fasted training</span>
+    </div>
+    <button class="btn-primary${workoutSaved?" saved":""}" onclick="saveWorkout()">${workoutSaved?"Logged":"Log Workout"}</button>
+  </div>
+  ${logs.length?`<div class="section-label">Recent Workouts</div>${logs.map(w=>`<div class="log-entry">
+    <div class="log-meta"><span style="font-size:13px;font-weight:700;color:#22c55e">${w.type||"Workout"}</span><span class="log-date">${w.date}</span></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+      ${w.duration?`<span class="tag">${w.duration} min</span>`:""}${w.fasted?`<span class="tag green">Fasted</span>`:""}
+    </div>
+    ${w.notes?`<div class="log-line" style="margin-top:6px">${w.notes}</div>`:""}
+  </div>`).join("")}`:""}`;
+}
+window.setWorkoutType=t=>{workoutForm.type=t;renderContent();};
+window.saveWorkout=()=>{
+  if(!workoutForm.type){alert("Select a workout type.");return;}
+  const data=loadData();const logs=data.workoutLogs||[];
+  logs.push({...workoutForm,date:new Date().toLocaleDateString()});
+  saveData({...data,workoutLogs:logs});workoutSaved=true;
+  workoutForm={type:"",duration:"",notes:"",fasted:false};renderContent();
+  setTimeout(()=>{workoutSaved=false;renderContent();},2500);
+};
+
+function renderFitBody(){
+  const data=loadData();const logs=(data.bodyLogs||[]).slice().reverse().slice(0,8);
+  const fields=[["Weight (lbs)","weight"],["Chest (in)","chest"],["Waist (in)","waist"],["Hips (in)","hips"],["Arms (in)","arms"]];
+  return `<div class="card">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      ${fields.map(([l,k])=>`<div><label class="field-label">${l}</label><input type="number" placeholder="--" value="${bodyForm[k]}" oninput="bodyForm.${k}=this.value" /></div>`).join("")}
+    </div>
+    <label class="field-label">Notes</label>
+    <textarea rows="2" placeholder="How are you feeling? Any changes?" oninput="bodyForm.notes=this.value" style="margin-bottom:14px">${bodyForm.notes}</textarea>
+    <button class="btn-primary${bodySaved?" saved":""}" onclick="saveBody()">${bodySaved?"Saved":"Save Measurements"}</button>
+  </div>
+  ${logs.length?`<div class="section-label">History</div>${logs.map(b=>`<div class="log-entry">
+    <div class="log-date" style="margin-bottom:6px">${b.date}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      ${b.weight?`<span class="tag">${b.weight} lbs</span>`:""}${b.chest?`<span class="tag">Chest: ${b.chest}"</span>`:""}${b.waist?`<span class="tag">Waist: ${b.waist}"</span>`:""}${b.hips?`<span class="tag">Hips: ${b.hips}"</span>`:""}${b.arms?`<span class="tag">Arms: ${b.arms}"</span>`:""}
+    </div>
+    ${b.notes?`<div class="log-line" style="margin-top:6px">${b.notes}</div>`:""}
+  </div>`).join("")}`:""}`;
+}
+window.saveBody=()=>{
+  const data=loadData();const logs=data.bodyLogs||[];
+  logs.push({...bodyForm,date:new Date().toLocaleDateString()});
+  saveData({...data,bodyLogs:logs});bodySaved=true;
+  bodyForm={weight:"",chest:"",waist:"",hips:"",arms:"",notes:""};renderContent();
+  setTimeout(()=>{bodySaved=false;renderContent();},2500);
+};
+
+function renderFitPeptides(){
+  const data=loadData();
+  const todayLogs=(data.peptideLogs||[]).filter(l=>l.date===getTodayStr());
+  const allLogs=(data.peptideLogs||[]).slice().reverse().slice(0,20);
+  const customPeptides=data.customPeptides||[];
+  const allPeptides=[...DEFAULT_PEPTIDES,...customPeptides];
+  return `
+    <div class="card" style="margin-bottom:14px">
+      <div class="section-label" style="margin-bottom:12px">Today</div>
+      ${allPeptides.map(p=>{
+        const td=todayLogs.find(l=>l.name===p.name);
+        return `<div class="supp-row">
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:600;color:${td?"#e8e8e8":"#888"}">${p.name}</div>
+            <div style="font-size:11px;color:#555;margin-top:2px">${p.defaultDose}${p.unit} &bull; ${p.time}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            ${td?`<span style="font-size:11px;color:#22c55e">${td.dose}${td.unit}</span>`:""}
+            <div class="supp-check${td?" checked":""}" onclick="quickLogPeptide('${p.name.replace(/'/g,"\\'")}','${p.defaultDose}','${p.unit}')">${td?"&#x2713;":""}</div>
+          </div>
+        </div>`;
+      }).join("")}
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="section-label" style="margin-bottom:12px">Log a Dose</div>
+      <label class="field-label">Peptide</label>
+      <select id="psel" style="margin-bottom:10px" onchange="peptideForm.name=this.value">
+        <option value="">Select...</option>
+        ${allPeptides.map(p=>`<option value="${p.name}">${p.name}</option>`).join("")}
+      </select>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div><label class="field-label">Dose</label><input type="number" id="pdose" placeholder="200" oninput="peptideForm.dose=this.value" /></div>
+        <div><label class="field-label">Unit</label>
+          <select id="punit" onchange="peptideForm.unit=this.value">
+            <option value="mcg">mcg</option><option value="mg">mg</option><option value="IU">IU</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div><label class="field-label">Site</label>
+          <select id="psite" onchange="peptideForm.site=this.value">
+            <option value="">Site...</option>
+            <option>Abdomen L</option><option>Abdomen R</option><option>Thigh L</option><option>Thigh R</option><option>Delt L</option><option>Delt R</option><option>Glute L</option><option>Glute R</option>
+          </select>
+        </div>
+        <div><label class="field-label">Time</label>
+          <select id="ptime" onchange="peptideForm.time=this.value">
+            <option value="">Time...</option>
+            <option>AM (fasted)</option><option>Pre-workout</option><option>Post-workout</option><option>PM</option><option>Before bed</option>
+          </select>
+        </div>
+      </div>
+      <label class="field-label">Notes</label>
+      <textarea rows="2" placeholder="Batch, how you felt..." oninput="peptideForm.notes=this.value" style="margin-bottom:14px"></textarea>
+      <button class="btn-primary${peptideSaved?" saved":""}" onclick="savePeptideDose()" style="background:${peptideSaved?"#166534":"#2563eb"}">${peptideSaved?"Logged":"Log This Dose"}</button>
+    </div>
+    ${allLogs.length?`<div class="section-label">Dose History</div>${allLogs.map(log=>`<div class="log-entry">
+      <div class="log-meta"><span style="font-size:13px;font-weight:700;color:#60a5fa">${log.name}</span><span class="log-date">${log.date} ${log.time||""}</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
+        <span class="tag">${log.dose}${log.unit}</span>${log.site?`<span class="tag">${log.site}</span>`:""}
+      </div>
+      ${log.notes?`<div class="log-line" style="margin-top:4px">${log.notes}</div>`:""}
+    </div>`).join("")}`:""}`;
+}
+window.quickLogPeptide=(name,dose,unit)=>{
+  const data=loadData();const logs=data.peptideLogs||[];
+  const ei=logs.findIndex(l=>l.name===name&&l.date===getTodayStr());
+  if(ei>-1)logs.splice(ei,1);
+  else logs.push({name,dose,unit,site:"",time:new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}),date:getTodayStr(),notes:""});
+  saveData({...data,peptideLogs:logs});renderContent();
+};
+window.savePeptideDose=()=>{
+  const name=(document.getElementById("psel")||{}).value||peptideForm.name;
+  const dose=(document.getElementById("pdose")||{}).value||peptideForm.dose;
+  const unit=(document.getElementById("punit")||{}).value||peptideForm.unit;
+  const site=(document.getElementById("psite")||{}).value||peptideForm.site;
+  const time=(document.getElementById("ptime")||{}).value||peptideForm.time;
+  if(!name||!dose){alert("Select peptide and enter dose.");return;}
+  const data=loadData();const logs=data.peptideLogs||[];
+  logs.push({name,dose,unit,site,time,date:getTodayStr(),notes:peptideForm.notes});
+  saveData({...data,peptideLogs:logs});peptideSaved=true;
+  peptideForm={name:"",dose:"",unit:"mcg",site:"",time:"",notes:""};renderContent();
+  setTimeout(()=>{peptideSaved=false;renderContent();},2500);
+};
+
+function renderFitSupps(){
+  const data=loadData();const todayKey="supps_"+getTodayStr();
+  const checked=data[todayKey]||[];const custom=data.customSupps||[];
+  const allSupps=[...DEFAULT_SUPPS,...custom];
+  return `<div class="card">
+    <div class="section-label" style="margin-bottom:14px">Today</div>
+    ${allSupps.map(s=>{const ic=checked.includes(s);return `<div class="supp-row">
+      <span style="font-size:14px;color:${ic?"#e8e8e8":"#888"}">${s}</span>
+      <div class="supp-check${ic?" checked":""}" onclick="toggleSupp('${s.replace(/'/g,"\\'")}')">${ic?"&#x2713;":""}</div>
+    </div>`}).join("")}
+    <div style="margin-top:14px;display:flex;gap:8px">
+      <input type="text" id="new-supp-input" placeholder="Add supplement..." style="flex:1" />
+      <button onclick="addCustomSupp()" style="background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:8px;padding:0 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Add</button>
+    </div>
+  </div>`;
+}
+window.toggleSupp=s=>{
+  const data=loadData();const todayKey="supps_"+getTodayStr();
+  const checked=data[todayKey]||[];const idx=checked.indexOf(s);
+  if(idx>-1)checked.splice(idx,1);else checked.push(s);
+  saveData({...data,[todayKey]:checked});renderContent();
+};
+window.addCustomSupp=()=>{
+  const input=document.getElementById("new-supp-input");const val=input?input.value.trim():"";if(!val)return;
+  const data=loadData();const custom=data.customSupps||[];
+  if(!custom.includes(val)){custom.push(val);saveData({...data,customSupps:custom});}renderContent();
+};
+
+function renderFitGoals(){
+  const data=loadData();
+  const goals=data.fitnessGoals||[{text:"Train 4x per week",target:4,unit:"days/week",progress:0},{text:"Hit 200 lbs bodyweight",target:200,unit:"lbs",progress:0}];
+  const now=new Date();const startOfWeek=new Date(now);startOfWeek.setDate(now.getDate()-now.getDay());
+  const weekWorkouts=(data.workoutLogs||[]).filter(l=>new Date(l.date)>=startOfWeek).length;
+  return `<div class="card">
+    <div class="section-label" style="margin-bottom:14px">This week: ${weekWorkouts} workout${weekWorkouts!==1?"s":""}</div>
+    ${goals.map((g,i)=>{const pct=Math.min(100,Math.round((g.progress/g.target)*100));return `<div style="padding:10px 0;border-bottom:1px solid #1a1a1a">
+      <div style="font-size:14px;color:#e8e8e8;margin-bottom:6px">${g.text}</div>
+      <div style="display:flex;align-items:center">
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        <span style="font-size:12px;color:#555;white-space:nowrap">${g.progress}/${g.target} ${g.unit}</span>
+        <button onclick="adjustGoal(${i},1)" style="background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:5px;width:24px;height:24px;font-size:14px;cursor:pointer;margin-left:6px">+</button>
+        <button onclick="adjustGoal(${i},-1)" style="background:#1a1a1a;border:1px solid #333;color:#555;border-radius:5px;width:24px;height:24px;font-size:14px;cursor:pointer;margin-left:4px">-</button>
+      </div>
+    </div>`}).join("")}
+    <div style="margin-top:14px;display:flex;gap:8px">
+      <input type="text" id="new-goal-input" placeholder="Add a goal..." style="flex:1" />
+      <button onclick="addGoal()" style="background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:8px;padding:0 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Add</button>
+    </div>
+  </div>`;
+}
+window.adjustGoal=(i,delta)=>{
+  const data=loadData();const goals=data.fitnessGoals||[];
+  if(goals[i]){goals[i].progress=Math.max(0,(goals[i].progress||0)+delta);saveData({...data,fitnessGoals:goals});renderContent();}
+};
+window.addGoal=()=>{
+  const input=document.getElementById("new-goal-input");const val=input?input.value.trim():"";if(!val)return;
+  const data=loadData();const goals=data.fitnessGoals||[];
+  goals.push({text:val,target:10,unit:"times",progress:0});saveData({...data,fitnessGoals:goals});renderContent();
+};
+
+function renderFitPhotos(){
+  const data=loadData();const photos=data.progressPhotos||[];
+  return `<div class="card" style="margin-bottom:16px">
+    <label class="field-label">Add Progress Photo</label>
+    <input type="file" accept="image/*" capture="environment" id="photo-input" style="display:none" onchange="handlePhoto(this)" />
+    <button onclick="document.getElementById('photo-input').click()" style="width:100%;padding:13px;background:#111;border:1px dashed #333;border-radius:9px;color:#555;font-size:14px;cursor:pointer;font-family:inherit">Take or Choose Photo</button>
+    <input type="text" id="photo-label-input" placeholder="Label (e.g. Front, Week 4)" style="margin-top:10px" />
+  </div>
+  ${photos.length?`<div class="section-label">${photos.length} photos</div><div class="photo-grid">
+    ${photos.slice().reverse().map((p,i)=>`<div class="photo-card" onclick="viewPhoto(${photos.length-1-i})">
+      <img src="${p.data}" alt="${p.label||"photo"}" />
+      <div class="photo-date-badge">${p.label||p.date}</div>
+    </div>`).join("")}
+  </div>`:`<div style="text-align:center;color:#333;font-size:14px;padding:30px 0">No photos yet.</div>`}`;
+}
+window.handlePhoto=input=>{
+  const file=input.files[0];if(!file)return;
+  const label=(document.getElementById("photo-label-input")||{}).value||"";
+  const reader=new FileReader();
+  reader.onload=e=>{const data=loadData();const photos=data.progressPhotos||[];
+    photos.push({data:e.target.result,label,date:new Date().toLocaleDateString()});
+    saveData({...data,progressPhotos:photos});renderContent();};
+  reader.readAsDataURL(file);
+};
+window.viewPhoto=i=>{
+  const data=loadData();const p=(data.progressPhotos||[])[i];if(!p)return;
+  const overlay=document.getElementById("modal-overlay");overlay.style.display="flex";
+  overlay.innerHTML=`<div style="width:100%;max-width:480px;background:#0d0d0d;border-radius:20px 20px 0 0;padding:20px;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+      <div><div style="font-size:16px;font-weight:700">${p.label||"Progress Photo"}</div><div style="font-size:12px;color:#555">${p.date}</div></div>
+      <button onclick="closeModal()" style="background:none;border:none;color:#555;font-size:22px;cursor:pointer">x</button>
+    </div>
+    <img src="${p.data}" style="width:100%;border-radius:10px;margin-bottom:14px" />
+    <button onclick="deletePhoto(${i})" style="width:100%;padding:12px;background:transparent;border:1px solid #2a2a2a;color:#ef4444;border-radius:9px;cursor:pointer;font-family:inherit">Delete Photo</button>
+  </div>`;
+};
+window.deletePhoto=i=>{
+  if(!confirm("Delete?"))return;const data=loadData();const photos=data.progressPhotos||[];
+  photos.splice(i,1);saveData({...data,progressPhotos:photos});closeModal();renderContent();
+};
+
+// JOURNAL
+let journalSubTab=0;
+let journalForm={type:"free",mood:"",freeText:"",gratitude1:"",gratitude2:"",gratitude3:"",sabrinaLove:"",promptResponse:"",letterText:"",promptIndex:-1};
+let journalSaved=false;
+function getTodayPrompt(){const day=Math.floor(Date.now()/86400000);return JOURNAL_PROMPTS[day%JOURNAL_PROMPTS.length];}
+function renderJournal(){
+  const subLabels=["Write","Letters","History"];
+  return `
+    <div class="section-title"><h2>Journal</h2><p>What you write here stays here. Be honest.</p></div>
+    <div class="fitness-sub-tabs">
+      ${subLabels.map((l,i)=>`<button class="fsub-btn${journalSubTab===i?" active":""}" onclick="setJournalSub(${i})">${l}</button>`).join("")}
+    </div>
+    ${journalSubTab===0?renderJournalWrite():""}
+    ${journalSubTab===1?renderJournalLetters():""}
+    ${journalSubTab===2?renderJournalHistory():""}`;
+}
+window.setJournalSub=i=>{journalSubTab=i;renderContent();};
+
+function renderJournalWrite(){
+  return `
+    <div class="card">
+      <label class="field-label" style="margin-bottom:12px">How are you feeling right now?</label>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        ${MOODS.map(m=>`<button class="mood-btn${journalForm.mood===m.label?" selected":""}" onclick="setMood('${m.label}')" title="${m.label}">${m.emoji}</button>`).join("")}
+      </div>
+      <div style="text-align:center;font-size:12px;color:#555;margin-top:6px">${journalForm.mood||"Tap to select"}</div>
+    </div>
+    <div class="card">
+      <label class="field-label" style="margin-bottom:8px">Today's Prompt</label>
+      <div class="prompt-box">${getTodayPrompt()}</div>
+      <textarea rows="4" placeholder="Write your response..." oninput="journalForm.promptResponse=this.value">${journalForm.promptResponse}</textarea>
+    </div>
+    <div class="card">
+      <label class="field-label" style="margin-bottom:10px">One thing I love or admire about Sabrina today</label>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:20px">&#x2764;&#xFE0F;</span>
+        <input type="text" placeholder="Something specific, not generic..." value="${journalForm.sabrinaLove||""}" oninput="journalForm.sabrinaLove=this.value" style="flex:1" />
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label" style="margin-bottom:10px">Gratitude — 3 things today</label>
+      ${[1,2,3].map(n=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:16px;color:#f59e0b;font-weight:700">${n}.</span>
+        <input type="text" placeholder="I'm grateful for..." value="${journalForm["gratitude"+n]||""}" oninput="journalForm.gratitude${n}=this.value" style="flex:1" />
+      </div>`).join("")}
+    </div>
+    <div class="card">
+      <label class="field-label" style="margin-bottom:8px">Free Write</label>
+      <textarea rows="5" placeholder="Whatever's on your mind. No rules." oninput="journalForm.freeText=this.value">${journalForm.freeText}</textarea>
+    </div>
+    <button class="btn-primary${journalSaved?" saved":""}" onclick="saveJournalEntry()" style="margin-bottom:20px">${journalSaved?"Saved":"Save Entry"}</button>`;
+}
+
+function renderJournalLetters(){
+  const data=loadData();
+  const letters=(data.journalEntries||[]).filter(e=>e.type==="letter").slice().reverse().slice(0,10);
+  return `<div class="card">
+    <label class="field-label" style="margin-bottom:8px">Dear Sabrina...</label>
+    <div class="prompt-box">Write what you feel but haven't said. Share it with her if and when it feels right.</div>
+    <textarea rows="7" placeholder="Dear Sabrina," oninput="journalForm.letterText=this.value">${journalForm.letterText}</textarea>
+    <button class="btn-primary${journalSaved?" saved":""}" onclick="saveLetterEntry()" style="margin-top:12px">${journalSaved?"Saved":"Save Letter"}</button>
+  </div>
+  ${letters.length?`<div class="section-label" style="margin-top:8px">Previous Letters</div>${letters.map(e=>`<div class="journal-entry-card">
+    <div class="journal-entry-meta">${e.date}</div>
+    <div class="journal-entry-preview">${(e.letterText||"").slice(0,100)}${(e.letterText||"").length>100?"...":""}</div>
+  </div>`).join("")}`:""}`;
+}
+
+function renderJournalHistory(){
+  const data=loadData();const entries=(data.journalEntries||[]).slice().reverse().slice(0,20);
+  if(!entries.length)return `<div style="text-align:center;color:#333;font-size:14px;padding:40px 0">No journal entries yet.</div>`;
+  return `<div class="section-label">${(data.journalEntries||[]).length} entries</div>
+  ${entries.map(e=>`<div class="journal-entry-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+      <div class="journal-entry-meta" style="margin:0">${e.date}</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        ${e.mood?`<span style="font-size:16px">${MOODS.find(m=>m.label===e.mood)?.emoji||""}</span>`:""}
+        ${e.type==="letter"?`<span class="tag">Letter</span>`:""}
+      </div>
+    </div>
+    ${e.sabrinaLove?`<div class="log-line" style="margin-top:4px"><span style="color:#e75480">&#x2764;&#xFE0F;</span> ${e.sabrinaLove}</div>`:""}
+    ${e.promptResponse?`<div class="journal-entry-preview">${e.promptResponse.slice(0,120)}${e.promptResponse.length>120?"...":""}</div>`:""}
+    ${[e.gratitude1,e.gratitude2,e.gratitude3].filter(Boolean).length?`<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">${[e.gratitude1,e.gratitude2,e.gratitude3].filter(Boolean).map(g=>`<span class="tag green">${g}</span>`).join("")}</div>`:""}
+  </div>`).join("")}`;
+}
+
+window.setMood=m=>{journalForm.mood=m;renderContent();};
+window.saveJournalEntry=()=>{
+  const data=loadData();const entries=data.journalEntries||[];
+  entries.push({type:"daily",date:new Date().toLocaleString(),mood:journalForm.mood,promptResponse:journalForm.promptResponse,prompt:getTodayPrompt(),freeText:journalForm.freeText,gratitude1:journalForm.gratitude1,gratitude2:journalForm.gratitude2,gratitude3:journalForm.gratitude3,sabrinaLove:journalForm.sabrinaLove});
+  saveData({...data,journalEntries:entries});journalSaved=true;
+  journalForm={type:"free",mood:"",freeText:"",gratitude1:"",gratitude2:"",gratitude3:"",sabrinaLove:"",promptResponse:"",letterText:"",promptIndex:-1};
+  renderContent();setTimeout(()=>{journalSaved=false;renderContent();},2500);
+};
+window.saveLetterEntry=()=>{
+  if(!journalForm.letterText.trim())return;
+  const data=loadData();const entries=data.journalEntries||[];
+  entries.push({type:"letter",date:new Date().toLocaleString(),letterText:journalForm.letterText});
+  saveData({...data,journalEntries:entries});journalSaved=true;journalForm.letterText="";
+  renderContent();setTimeout(()=>{journalSaved=false;renderContent();},2500);
+};
+
+// HABITS
+let habitView="weekly",habitMonthOffset=0;
+
+function renderHabits(){
+  const data=loadData();const todayKey="habits_"+getTodayStr();
+  const todayDone=data[todayKey]||[];const customHabits=data.customHabits||[];
+  const allHabits=[...DEFAULT_HABITS,...customHabits];
+  const completedToday=todayDone.length;const totalHabits=allHabits.length;
+  const pct=totalHabits?Math.round((completedToday/totalHabits)*100):0;
+  const last7=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last7.push(d.toISOString().slice(0,10));}
+  const now=new Date();
+  const monthDate=new Date(now.getFullYear(),now.getMonth()+habitMonthOffset,1);
+  const monthYear=monthDate.toLocaleDateString("en-US",{month:"long",year:"numeric"});
+  const daysInMonth=new Date(monthDate.getFullYear(),monthDate.getMonth()+1,0).getDate();
+  const firstDayOfWeek=new Date(monthDate.getFullYear(),monthDate.getMonth(),1).getDay();
+  const monthDays=[];
+  for(let d=1;d<=daysInMonth;d++){const dt=new Date(monthDate.getFullYear(),monthDate.getMonth(),d);monthDays.push(dt.toISOString().slice(0,10));}
+  return `
+    <div class="section-title"><h2>Daily Habits</h2><p>Small things done consistently change everything.</p></div>
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div>
+          <div style="font-size:22px;font-weight:800;color:${pct===100?"#22c55e":"#e8e8e8"}">${completedToday} <span style="font-size:14px;font-weight:400;color:#555">/ ${totalHabits} today</span></div>
+          <div style="font-size:12px;color:#555;margin-top:2px">${new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>
+        </div>
+        <div style="font-size:28px;font-weight:800;color:${pct===100?"#22c55e":pct>=50?"#f59e0b":"#555"}">${pct}%</div>
+      </div>
+      <div class="progress-bar-bg" style="margin:0"><div class="progress-bar-fill" style="width:${pct}%;background:${pct===100?"#22c55e":"#f59e0b"}"></div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button onclick="habitView='weekly';renderContent()" style="flex:1;padding:9px;border-radius:9px;border:1px solid ${habitView==="weekly"?"#22c55e":"#2a2a2a"};background:${habitView==="weekly"?"#1a2a1a":"#111"};color:${habitView==="weekly"?"#22c55e":"#555"};font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Weekly</button>
+      <button onclick="habitView='monthly';renderContent()" style="flex:1;padding:9px;border-radius:9px;border:1px solid ${habitView==="monthly"?"#22c55e":"#2a2a2a"};background:${habitView==="monthly"?"#1a2a1a":"#111"};color:${habitView==="monthly"?"#22c55e":"#555"};font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Monthly</button>
+    </div>
+    ${habitView==="weekly"?renderHabitsWeekly(data,allHabits,todayDone,last7):renderHabitsMonthly(data,allHabits,monthDays,monthYear,daysInMonth,firstDayOfWeek)}
+    <div class="card" style="margin-bottom:20px">
+      <label class="field-label" style="margin-bottom:10px">Add Custom Habit</label>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="new-habit-input" placeholder="e.g. Cold plunge..." style="flex:1" />
+        <button onclick="addCustomHabit()" style="background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:8px;padding:0 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">Add</button>
+      </div>
+    </div>`;
+}
+
+function renderHabitsWeekly(data,allHabits,todayDone,last7){
+  return `<div class="card" style="margin-bottom:14px">
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:10px">
+      ${last7.map(d=>`<div style="text-align:center;font-size:9px;color:#444;text-transform:uppercase">${new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"short"})}<br><span style="font-size:10px;color:#333">${new Date(d+"T12:00:00").getDate()}</span></div>`).join("")}
+    </div>
+    ${allHabits.map(h=>{
+      const hid=h.id||h.name;const done=todayDone.includes(hid);
+      const streak=getHabitStreak(data,hid,last7);
+      return `<div class="habit-row">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:14px">${h.icon||"+"}</span>
+            <span style="font-size:12px;font-weight:600;color:${done?"#22c55e":"#e8e8e8"};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.name}</span>
+            ${streak>1?`<span class="habit-streak-badge" style="flex-shrink:0">${streak}d</span>`:""}
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:5px">
+            ${last7.map((d,di)=>{const isDone=(data["habits_"+d]||[]).includes(hid);const isToday=di===6;return `<div style="display:flex;justify-content:center"><div style="width:18px;height:18px;border-radius:3px;background:${isDone?"#22c55e":"#1a1a1a"};border:${isToday?"1.5px solid #555":"none"};display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff">${isDone?"v":""}</div></div>`;}).join("")}
+          </div>
+        </div>
+        <div class="habit-check${done?" checked":""}" style="margin-left:10px" onclick="toggleHabit('${hid.replace(/'/g,"\\'")}')">
+          ${done?"&#x2713;":""}
+        </div>
+      </div>`;
+    }).join("")}
+  </div>`;
+}
+
+function renderHabitsMonthly(data,allHabits,monthDays,monthYear,daysInMonth,firstDayOfWeek){
+  return `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <button onclick="habitMonthOffset--;renderContent()" style="background:#111;border:1px solid #222;border-radius:8px;color:#aaa;font-size:20px;width:38px;height:38px;cursor:pointer;font-family:inherit">&lt;</button>
+      <span style="font-size:15px;font-weight:700;color:#e8e8e8">${monthYear}</span>
+      <button onclick="habitMonthOffset=Math.min(0,habitMonthOffset+1);renderContent()" style="background:#111;border:1px solid #222;border-radius:8px;color:${habitMonthOffset<0?"#aaa":"#333"};font-size:20px;width:38px;height:38px;cursor:pointer;font-family:inherit" ${habitMonthOffset>=0?"disabled":""}>&gt;</button>
+    </div>
+    ${allHabits.map(h=>{
+      const hid=h.id||h.name;
+      const completedDays=monthDays.filter(d=>(data["habits_"+d]||[]).includes(hid)).length;
+      const pctM=Math.round((completedDays/daysInMonth)*100);
+      const color=pctM>=80?"#22c55e":pctM>=50?"#f59e0b":"#ef4444";
+      return `<div class="card" style="margin-bottom:10px;padding:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:15px">${h.icon||"+"}</span>
+            <span style="font-size:13px;font-weight:700;color:#e8e8e8">${h.name}</span>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:${color}">${completedDays}/${daysInMonth} &bull; ${pctM}%</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:8px">
+          ${["S","M","T","W","T","F","S"].map(d=>`<div style="text-align:center;font-size:8px;color:#444;padding-bottom:2px">${d}</div>`).join("")}
+          ${Array(firstDayOfWeek).fill("<div></div>").join("")}
+          ${monthDays.map(d=>{const isDone=(data["habits_"+d]||[]).includes(hid);const isToday=d===getTodayStr();const dn=parseInt(d.slice(-2));return `<div style="aspect-ratio:1;border-radius:3px;background:${isDone?"#22c55e":"#1a1a1a"};border:${isToday?"1.5px solid #f59e0b":"none"};display:flex;align-items:center;justify-content:center;font-size:8px;color:${isDone?"#fff":"#444"}">${dn}</div>`;}).join("")}
+        </div>
+        <div class="progress-bar-bg" style="margin:0"><div class="progress-bar-fill" style="width:${pctM}%;background:${color}"></div></div>
+      </div>`;
+    }).join("")}`;
+}
+
+function getHabitStreak(data,habitId,last7){
+  let streak=0;
+  for(let i=last7.length-1;i>=0;i--){const d=data["habits_"+last7[i]]||[];if(d.includes(habitId))streak++;else break;}
+  return streak;
+}
+window.toggleHabit=id=>{
+  const data=loadData();const todayKey="habits_"+getTodayStr();
+  const done=data[todayKey]||[];const idx=done.indexOf(id);
+  if(idx>-1)done.splice(idx,1);else done.push(id);
+  saveData({...data,[todayKey]:done});renderContent();
+};
+window.addCustomHabit=()=>{
+  const input=document.getElementById("new-habit-input");const val=input?input.value.trim():"";if(!val)return;
+  const data=loadData();const custom=data.customHabits||[];
+  if(!custom.find(h=>h.name===val)){custom.push({name:val,icon:"&#x2B50;"});saveData({...data,customHabits:custom});}
+  renderContent();
+};
+
+// RENDER
+const renderers=[renderShield,renderCheckIn,renderRelease,renderBoard,renderMeetings,renderStreak,renderFitness,renderJournal,renderHabits];
+function renderContent(){document.getElementById("content").innerHTML=renderers[currentTab]();}
+function render(){renderContent();renderNav();}
+
+let showingSerenity=false;
+function renderQuote(){
+  const el=document.getElementById("quote-display");if(!el)return;
+  if(showingSerenity){
+    el.innerHTML=`<div style="font-size:11px;color:#f59e0b;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Serenity Prayer</div><div style="font-size:13px;color:#aaa;line-height:1.6;font-style:italic">${SERENITY_PRAYER}</div><div style="font-size:10px;color:#444;margin-top:6px">Tap for daily quote</div>`;
+  }else{
+    const q=getDailyQuote();
+    el.innerHTML=`<div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Today</div><div style="font-size:13px;color:#aaa;line-height:1.6;font-style:italic">"${q.text}"</div><div style="font-size:11px;color:#444;margin-top:5px">— ${q.author}</div><div style="font-size:10px;color:#333;margin-top:4px">Tap for Serenity Prayer</div>`;
+  }
+}
+window.toggleSerenity=()=>{showingSerenity=!showingSerenity;renderQuote();};
+
+render();
+renderQuote();
+
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+</script>
+</body>
+</html>
+DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
