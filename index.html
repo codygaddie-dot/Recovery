@@ -111,6 +111,19 @@
     .habit-streak-badge{font-size:11px;color:#f59e0b;background:#1a1200;border:1px solid #2a2000;border-radius:10px;padding:2px 8px}
     .habit-check{width:50px;height:50px;border-radius:12px;border:2px solid #333;background:#0d0d0d;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;transition:all .2s}
     .habit-check.checked{background:#166534;border-color:#22c55e}
+
+    /* Stats */
+    .chart-container{background:#111;border:1px solid #222;border-radius:14px;padding:20px;margin-bottom:18px}
+    .chart-title{font-size:13px;font-weight:700;color:#e8e8e8;margin-bottom:4px}
+    .chart-sub{font-size:11px;color:#555;margin-bottom:16px}
+    .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .bar-label{font-size:11px;color:#555;width:60px;text-align:right;flex-shrink:0}
+    .bar-track{flex:1;background:#1a1a1a;border-radius:4px;height:20px;position:relative;overflow:hidden}
+    .bar-fill{height:100%;border-radius:4px;transition:width .4s;display:flex;align-items:center;padding-left:6px}
+    .bar-val{font-size:10px;font-weight:700;color:#fff}
+    .line-chart{width:100%;height:120px;position:relative}
+    .trigger-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #1a1a1a}
+    .trigger-row:last-child{border-bottom:none}
   </style>
 </head>
 <body>
@@ -223,7 +236,8 @@ const TABS=[
   {icon:"&#x1F525;",label:"Streak"},
   {icon:"&#x1F4AA;",label:"Fitness"},
   {icon:"&#x1F4D3;",label:"Journal"},
-  {icon:"&#x2705;",label:"Habits"}
+  {icon:"&#x2705;",label:"Habits"},
+  {icon:"&#x1F4CA;",label:"Stats"}
 ];
 
 const DEFAULT_HABITS=[
@@ -1136,10 +1150,12 @@ window.saveLetterEntry=()=>{
 };
 
 // HABITS
-let habitView="weekly",habitMonthOffset=0;
+let habitView="weekly",habitMonthOffset=0,habitSelectedDate=null;
 
 function renderHabits(){
-  const data=loadData();const todayKey="habits_"+getTodayStr();
+  const data=loadData();
+  const activeDate=habitSelectedDate||getTodayStr();
+  const todayKey="habits_"+activeDate;
   const todayDone=data[todayKey]||[];const customHabits=data.customHabits||[];
   const allHabits=[...DEFAULT_HABITS,...customHabits];
   const completedToday=todayDone.length;const totalHabits=allHabits.length;
@@ -1158,17 +1174,28 @@ function renderHabits(){
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <div>
           <div style="font-size:22px;font-weight:800;color:${pct===100?"#22c55e":"#e8e8e8"}">${completedToday} <span style="font-size:14px;font-weight:400;color:#555">/ ${totalHabits} today</span></div>
-          <div style="font-size:12px;color:#555;margin-top:2px">${new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>
+          <div style="font-size:12px;color:#555;margin-top:2px">${activeDate===getTodayStr()?"Today — "+new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"}):"Logging for: "+new Date(activeDate+"T12:00:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})}</div>
         </div>
         <div style="font-size:28px;font-weight:800;color:${pct===100?"#22c55e":pct>=50?"#f59e0b":"#555"}">${pct}%</div>
       </div>
       <div class="progress-bar-bg" style="margin:0"><div class="progress-bar-fill" style="width:${pct}%;background:${pct===100?"#22c55e":"#f59e0b"}"></div></div>
     </div>
+    <!-- Date picker for logging past days -->
+    <div class="card" style="margin-bottom:14px;padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div>
+          <div style="font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Logging date</div>
+          <input type="date" id="habit-date-picker" value="${activeDate}" max="${getTodayStr()}" onchange="setHabitDate(this.value)" style="background:#0d0d0d;border:1px solid #2a2a2a;border-radius:8px;color:#e8e8e8;font-size:14px;padding:8px 12px;font-family:inherit;width:100%" />
+        </div>
+        ${activeDate!==getTodayStr()?`<button onclick="setHabitDate(null)" style="background:#1a1a1a;border:1px solid #333;border-radius:8px;color:#aaa;font-size:12px;padding:8px 12px;cursor:pointer;font-family:inherit;white-space:nowrap">Back to Today</button>`:""}
+      </div>
+    </div>
+
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <button onclick="habitView='weekly';renderContent()" style="flex:1;padding:9px;border-radius:9px;border:1px solid ${habitView==="weekly"?"#22c55e":"#2a2a2a"};background:${habitView==="weekly"?"#1a2a1a":"#111"};color:${habitView==="weekly"?"#22c55e":"#555"};font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Weekly</button>
       <button onclick="habitView='monthly';renderContent()" style="flex:1;padding:9px;border-radius:9px;border:1px solid ${habitView==="monthly"?"#22c55e":"#2a2a2a"};background:${habitView==="monthly"?"#1a2a1a":"#111"};color:${habitView==="monthly"?"#22c55e":"#555"};font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Monthly</button>
     </div>
-    ${habitView==="weekly"?renderHabitsWeekly(data,allHabits,todayDone,last7):renderHabitsMonthly(data,allHabits,monthDays,monthYear,daysInMonth,firstDayOfWeek)}
+    ${habitView==="weekly"?renderHabitsWeekly(data,allHabits,todayDone,last7,activeDate):renderHabitsMonthly(data,allHabits,monthDays,monthYear,daysInMonth,firstDayOfWeek)}
     <div class="card" style="margin-bottom:20px">
       <label class="field-label" style="margin-bottom:10px">Add Custom Habit</label>
       <div style="display:flex;gap:8px">
@@ -1178,7 +1205,7 @@ function renderHabits(){
     </div>`;
 }
 
-function renderHabitsWeekly(data,allHabits,todayDone,last7){
+function renderHabitsWeekly(data,allHabits,todayDone,last7,activeDate){
   return `<div class="card" style="margin-bottom:14px">
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:10px">
       ${last7.map(d=>`<div style="text-align:center;font-size:9px;color:#444;text-transform:uppercase">${new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"short"})}<br><span style="font-size:10px;color:#333">${new Date(d+"T12:00:00").getDate()}</span></div>`).join("")}
@@ -1194,7 +1221,7 @@ function renderHabitsWeekly(data,allHabits,todayDone,last7){
             ${streak>1?`<span class="habit-streak-badge" style="flex-shrink:0">${streak}d</span>`:""}
           </div>
           <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:5px">
-            ${last7.map((d,di)=>{const isDone=(data["habits_"+d]||[]).includes(hid);const isToday=di===6;return `<div style="display:flex;justify-content:center"><div style="width:18px;height:18px;border-radius:3px;background:${isDone?"#22c55e":"#1a1a1a"};border:${isToday?"1.5px solid #555":"none"};display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff">${isDone?"v":""}</div></div>`;}).join("")}
+            ${last7.map((d,di)=>{const isDone=(data["habits_"+d]||[]).includes(hid);const isToday=d===activeDate;return `<div style="display:flex;justify-content:center"><div style="width:18px;height:18px;border-radius:3px;background:${isDone?"#22c55e":"#1a1a1a"};border:${isToday?"1.5px solid #555":"none"};display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff">${isDone?"v":""}</div></div>`;}).join("")}
           </div>
         </div>
         <div class="habit-check${done?" checked":""}" style="margin-left:10px" onclick="toggleHabit('${hid.replace(/'/g,"\\'")}')">
@@ -1241,11 +1268,18 @@ function getHabitStreak(data,habitId,last7){
   return streak;
 }
 window.toggleHabit=id=>{
-  const data=loadData();const todayKey="habits_"+getTodayStr();
+  const data=loadData();
+  const activeDate=habitSelectedDate||getTodayStr();
+  const todayKey="habits_"+activeDate;
   const done=data[todayKey]||[];const idx=done.indexOf(id);
   if(idx>-1)done.splice(idx,1);else done.push(id);
   saveData({...data,[todayKey]:done});renderContent();
 };
+window.setHabitDate=date=>{
+  habitSelectedDate=date||null;
+  renderContent();
+};
+
 window.addCustomHabit=()=>{
   const input=document.getElementById("new-habit-input");const val=input?input.value.trim():"";if(!val)return;
   const data=loadData();const custom=data.customHabits||[];
@@ -1254,7 +1288,7 @@ window.addCustomHabit=()=>{
 };
 
 // RENDER
-const renderers=[renderHome,renderShield,renderCheckIn,renderRelease,renderBoard,renderMeetings,renderStreak,renderFitness,renderJournal,renderHabits];
+const renderers=[renderHome,renderShield,renderCheckIn,renderRelease,renderBoard,renderMeetings,renderStreak,renderFitness,renderJournal,renderHabits,renderStats];
 function renderContent(){document.getElementById("content").innerHTML=renderers[currentTab]();}
 function render(){renderContent();renderNav();}
 
@@ -1272,6 +1306,157 @@ window.toggleSerenity=()=>{showingSerenity=!showingSerenity;renderQuote();};
 
 render();
 renderQuote();
+
+
+// STATS
+function renderStats(){
+  const data=loadData();
+  const urgeLogs=data.urgeLogs||[];
+  const releaseLogs=data.releaseLogs||[];
+
+  // Last 30 days for urge trend
+  const days30=[];
+  for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days30.push(d.toISOString().slice(0,10));}
+
+  // Group urge logs by day - average per day
+  const urgeByDay={};
+  urgeLogs.forEach(l=>{
+    const d=new Date(l.date).toISOString().slice(0,10);
+    if(!urgeByDay[d])urgeByDay[d]=[];
+    urgeByDay[d].push(+l.urge||0);
+  });
+  const urgePoints=days30.map(d=>{
+    const vals=urgeByDay[d];
+    return vals?vals.reduce((a,b)=>a+b,0)/vals.length:null;
+  });
+  const hasUrgeData=urgePoints.some(v=>v!==null);
+
+  // Last 8 weeks habit completion
+  const weeks=[];
+  for(let w=7;w>=0;w--){
+    const weekStart=new Date();weekStart.setDate(weekStart.getDate()-weekStart.getDay()-w*7);
+    const weekDays=[];
+    for(let d=0;d<7;d++){const dd=new Date(weekStart);dd.setDate(weekStart.getDate()+d);weekDays.push(dd.toISOString().slice(0,10));}
+    const totalHabits=[...DEFAULT_HABITS,...(data.customHabits||[])].length;
+    const completed=weekDays.reduce((sum,d)=>{return sum+(data["habits_"+d]||[]).length;},0);
+    const possible=totalHabits*7;
+    const pct=possible>0?Math.round((completed/possible)*100):0;
+    const label=new Date(weekStart).toLocaleDateString("en-US",{month:"short",day:"numeric"});
+    weeks.push({label,pct});
+  }
+
+  // Top triggers
+  const triggerCounts={};
+  urgeLogs.forEach(l=>{if(l.situation&&l.situation.trim()){const t=l.situation.trim().slice(0,30);triggerCounts[t]=(triggerCounts[t]||0)+1;}});
+  const topTriggers=Object.entries(triggerCounts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+
+  // Top release tools
+  const toolCounts={};
+  releaseLogs.forEach(l=>{toolCounts[l.item]=(toolCounts[l.item]||0)+1;});
+  const topTools=Object.entries(toolCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxTool=topTools[0]?topTools[0][1]:1;
+
+  // SVG line chart for urge trend
+  const svgW=300,svgH=100,pad=10;
+  const validPoints=urgePoints.map((v,i)=>v!==null?{x:i,y:v}:null).filter(Boolean);
+  let svgPath="";
+  if(validPoints.length>1){
+    const pts=validPoints.map(p=>{
+      const x=pad+(p.x/29)*(svgW-pad*2);
+      const y=pad+(1-p.y/10)*(svgH-pad*2);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    svgPath=`<polyline points="${pts.join(' ')}" fill="none" stroke="#ef4444" stroke-width="2" stroke-linejoin="round"/>`;
+    // Dots
+    validPoints.forEach(p=>{
+      const x=pad+(p.x/29)*(svgW-pad*2);
+      const y=pad+(1-p.y/10)*(svgH-pad*2);
+      const c=urgeColor(p.y);
+      svgPath+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${c}"/>`;
+    });
+  }
+
+  // Week labels for x axis (show every 5 days)
+  const xLabels=[0,10,20,29].map(i=>{
+    const x=pad+(i/29)*(svgW-pad*2);
+    const d=new Date();d.setDate(d.getDate()-(29-i));
+    return `<text x="${x.toFixed(1)}" y="${svgH+14}" font-size="8" fill="#444" text-anchor="middle">${d.toLocaleDateString("en-US",{month:"short",day:"numeric"})}</text>`;
+  }).join('');
+
+  const avgUrge30=validPoints.length?( validPoints.reduce((s,p)=>s+p.y,0)/validPoints.length).toFixed(1):"--";
+
+  return `
+    <div class="section-title"><h2>Stats</h2><p>Patterns don't lie. Know your data.</p></div>
+
+    <!-- Urge trend -->
+    <div class="chart-container">
+      <div class="chart-title">Urge Intensity — Last 30 Days</div>
+      <div class="chart-sub">Average: <span style="color:${avgUrge30!=="--"?urgeColor(+avgUrge30):"#555"};font-weight:700">${avgUrge30}/10</span> &bull; ${validPoints.length} check-ins</div>
+      ${hasUrgeData?`
+        <div style="overflow-x:auto">
+          <svg width="${svgW}" height="${svgH+20}" viewBox="0 0 ${svgW} ${svgH+20}" style="display:block;min-width:${svgW}px">
+            <!-- Grid lines -->
+            ${[2,4,6,8,10].map(v=>{
+              const y=pad+(1-v/10)*(svgH-pad*2);
+              return `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${svgW-pad}" y2="${y.toFixed(1)}" stroke="#1a1a1a" stroke-width="1"/>
+                      <text x="${pad-2}" y="${(y+3).toFixed(1)}" font-size="8" fill="#333" text-anchor="end">${v}</text>`;
+            }).join('')}
+            ${svgPath}
+            ${xLabels}
+          </svg>
+        </div>
+      `:`<div style="text-align:center;color:#333;font-size:13px;padding:20px 0">No check-ins yet. Start logging to see your trend.</div>`}
+    </div>
+
+    <!-- Habit completion by week -->
+    <div class="chart-container">
+      <div class="chart-title">Habit Completion — Last 8 Weeks</div>
+      <div class="chart-sub">% of all habits completed each week</div>
+      ${weeks.map(w=>`
+        <div class="bar-row">
+          <div class="bar-label">${w.label}</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${w.pct}%;background:${w.pct>=80?"#22c55e":w.pct>=50?"#f59e0b":"#ef4444"}">
+              ${w.pct>10?`<span class="bar-val">${w.pct}%</span>`:""}
+            </div>
+            ${w.pct<=10?`<span style="font-size:10px;color:#555;padding-left:4px">${w.pct}%</span>`:""}
+          </div>
+        </div>`).join("")}
+    </div>
+
+    <!-- Top release tools -->
+    ${topTools.length?`
+    <div class="chart-container">
+      <div class="chart-title">What's Working</div>
+      <div class="chart-sub">Most used pressure release tools</div>
+      ${topTools.map(([tool,count])=>`
+        <div class="bar-row">
+          <div class="bar-label" style="width:90px;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tool}</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${Math.round((count/maxTool)*100)}%;background:#22c55e">
+              ${count>0?`<span class="bar-val">${count}x</span>`:""}
+            </div>
+          </div>
+        </div>`).join("")}
+    </div>`:""}
+
+    <!-- Top triggers -->
+    ${topTriggers.length?`
+    <div class="chart-container">
+      <div class="chart-title">Top Triggers Logged</div>
+      <div class="chart-sub">From your check-in descriptions</div>
+      ${topTriggers.map(([trigger,count])=>`
+        <div class="trigger-row">
+          <span style="font-size:14px;color:#ccc">${trigger}</span>
+          <span style="font-size:13px;font-weight:700;color:#f59e0b">${count}x</span>
+        </div>`).join("")}
+    </div>`:`
+    <div class="chart-container">
+      <div class="chart-title">Top Triggers</div>
+      <div style="text-align:center;color:#333;font-size:13px;padding:20px 0">Log check-ins with trigger descriptions to see patterns here.</div>
+    </div>`}
+  `;
+}
 
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
 </script>
