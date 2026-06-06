@@ -1513,15 +1513,18 @@ function renderHabits(){
       </div>
       <div class="progress-bar-bg" style="margin:0"><div class="progress-bar-fill" style="width:${pct}%;background:${pct===100?"#22c55e":"#f59e0b"}"></div></div>
     </div>
-    <!-- Date picker for logging past days -->
+    <!-- Date navigation for logging past days -->
     <div class="card" style="margin-bottom:14px;padding:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-        <div style="flex:1">
-          <div style="font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Logging date</div>
-          <input type="date" id="habit-date-picker" value="${activeDate}" max="${getTodayStr()}" onchange="setHabitDate(this.value)" style="background:#0d0d0d;border:1px solid #2a2a2a;border-radius:8px;color:#e8e8e8;font-size:14px;padding:8px 12px;font-family:inherit;width:100%" />
+      <div style="font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Logging date</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button onclick="shiftHabitDate(-1)" style="background:#1a1a1a;border:1px solid #333;border-radius:8px;color:#aaa;font-size:20px;width:44px;height:44px;cursor:pointer;font-family:inherit;flex-shrink:0">&lt;</button>
+        <div style="flex:1;text-align:center">
+          <div style="font-size:16px;font-weight:700;color:#e8e8e8">${new Date(activeDate+'T12:00:00').toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>
+          <div style="font-size:11px;color:#555;margin-top:2px">${activeDate===getTodayStr()?"Today":""}</div>
         </div>
-        ${activeDate!==getTodayStr()?`<button onclick="setHabitDate(null)" style="background:#1a1a1a;border:1px solid #333;border-radius:8px;color:#aaa;font-size:12px;padding:8px 12px;cursor:pointer;font-family:inherit;white-space:nowrap">Back to Today</button>`:""}
+        <button onclick="shiftHabitDate(1)" style="background:#1a1a1a;border:1px solid #333;border-radius:8px;color:${activeDate===getTodayStr()?'#2a2a2a':'#aaa'};font-size:20px;width:44px;height:44px;cursor:pointer;font-family:inherit;flex-shrink:0" ${activeDate===getTodayStr()?'disabled':''}>&gt;</button>
       </div>
+      ${activeDate!==getTodayStr()?`<button onclick="setHabitDate(null)" style="width:100%;padding:8px;background:transparent;border:1px solid #2a2a2a;border-radius:8px;color:#555;font-size:12px;cursor:pointer;font-family:inherit;margin-top:10px">Back to Today</button>`:""}
     </div>
 
     <!-- Meeting counter -->
@@ -1638,6 +1641,18 @@ window.adjustMeeting=(key,date,delta)=>{
   if(newVal>0&&!done.includes(habitId)){done.push(habitId);}
   else if(newVal===0){const idx=done.indexOf(habitId);if(idx>-1)done.splice(idx,1);}
   saveData({...data,[storageKey]:newVal,[habitKey]:done});
+  renderContent();
+};
+
+window.shiftHabitDate=delta=>{
+  const current=habitSelectedDate||getTodayStr();
+  const parts=current.split('-');
+  const d=new Date(+parts[0],+parts[1]-1,+parts[2],12,0,0);
+  d.setDate(d.getDate()+delta);
+  const newDate=toLocalDateStr(d);
+  // Don't go into the future
+  if(newDate>getTodayStr()) return;
+  habitSelectedDate=newDate;
   renderContent();
 };
 
