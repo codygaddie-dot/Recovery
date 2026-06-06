@@ -237,7 +237,8 @@ const TABS=[
   {icon:"&#x1F4AA;",label:"Fitness"},
   {icon:"&#x1F4D3;",label:"Journal"},
   {icon:"&#x2705;",label:"Habits"},
-  {icon:"&#x1F4CA;",label:"Stats"}
+  {icon:"&#x1F4CA;",label:"Stats"},
+  {icon:"&#x25CE;",label:"Circles"}
 ];
 
 const DEFAULT_HABITS=[
@@ -1394,7 +1395,7 @@ window.addCustomHabit=()=>{
 };
 
 // RENDER
-const renderers=[renderHome,renderShield,renderCheckIn,renderRelease,renderBoard,renderMeetings,renderStreak,renderFitness,renderJournal,renderHabits,renderStats];
+const renderers=[renderHome,renderShield,renderCheckIn,renderRelease,renderBoard,renderMeetings,renderStreak,renderFitness,renderJournal,renderHabits,renderStats,renderCircles];
 function renderContent(){document.getElementById("content").innerHTML=renderers[currentTab]();}
 function render(){renderContent();renderNav();}
 
@@ -1576,6 +1577,91 @@ window.deleteUrgeLog=idx=>{
   const data=loadData();const logs=data.urgeLogs||[];
   logs.splice(idx,1);
   saveData({...data,urgeLogs:logs});renderContent();
+};
+
+
+// THREE CIRCLES
+let circlesEditing = null;
+
+const CIRCLE_INFO = {
+  inner: {
+    label: "Inner Circle",
+    color: "#ef4444",
+    border: "#2a1a1a",
+    icon: "&#x1F534;",
+    title: "Bottom Lines \u2014 Acting Out",
+    description: "Behaviors that are off limits. Acting on these means a relapse.",
+    placeholder: "e.g. Pornography, masturbation, seeking sexual content online..."
+  },
+  middle: {
+    label: "Middle Circle",
+    color: "#f59e0b",
+    border: "#2a1a00",
+    icon: "&#x1F7E1;",
+    title: "Warning Behaviors \u2014 The Slippery Slope",
+    description: "Behaviors that lead to your inner circle. Warning signs \u2014 not relapses, but dangerous.",
+    placeholder: "e.g. Scrolling late at night, isolation, not calling sponsor, boredom with no plan..."
+  },
+  outer: {
+    label: "Outer Circle",
+    color: "#22c55e",
+    border: "#1a2a1a",
+    icon: "&#x1F7E2;",
+    title: "Healthy Recovery Life",
+    description: "Behaviors that support your sobriety and the life you want to build.",
+    placeholder: "e.g. Daily prayer, gym, calling sponsor, time with Sabrina, journaling, meetings..."
+  }
+};
+
+function renderCircles() {
+  const data = loadData();
+  const circles = data.threeCircles || { inner: "", middle: "", outer: "" };
+  const keys = ['inner', 'middle', 'outer'];
+  return '<div class="section-title"><h2>Three Circles</h2><p>Your SAA recovery boundaries. Tap any circle to edit.</p></div>' +
+    '<div class="card" style="margin-bottom:14px;background:#0d0d0d;border:1px solid #1a1a1a"><div style="font-size:12px;color:#555;line-height:1.6">The Three Circles is a tool from Sex Addicts Anonymous. Your <span style="color:#ef4444;font-weight:700">inner circle</span> defines your sobriety. Your <span style="color:#f59e0b;font-weight:700">middle circle</span> warns you when heading toward relapse. Your <span style="color:#22c55e;font-weight:700">outer circle</span> describes the life you\'re building.</div></div>' +
+    keys.map(function(key) {
+      var info = CIRCLE_INFO[key];
+      var text = circles[key] || "";
+      var isEditing = circlesEditing === key;
+      var items = text ? text.split('\n').filter(function(l){return l.trim();}) : [];
+      var editBg = key==='inner'?'#2a1a1a':key==='middle'?'#2a1a00':'#1a2a1a';
+      return '<div class="card" style="border:1px solid '+info.border+';margin-bottom:14px">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">' +
+          '<div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:18px">'+info.icon+'</span><span style="font-size:16px;font-weight:800;color:'+info.color+'">'+info.label+'</span></div>' +
+          '<div style="font-size:12px;color:#555">'+info.title+'</div></div>' +
+          '<button onclick="circlesEditing=\''+key+'\';renderContent()" style="background:#1a1a1a;border:1px solid #2a2a2a;color:#555;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit;flex-shrink:0">'+(text?'Edit':'Add')+'</button>' +
+        '</div>' +
+        '<div style="font-size:12px;color:#444;margin-bottom:10px;font-style:italic">'+info.description+'</div>' +
+        (isEditing ?
+          '<textarea id="circle-input-'+key+'" rows="6" placeholder="'+info.placeholder+'" style="margin-bottom:10px;border-color:'+info.color+'">'+text+'</textarea>' +
+          '<div style="font-size:11px;color:#444;margin-bottom:10px">Enter each item on a new line.</div>' +
+          '<div style="display:flex;gap:8px">' +
+            '<button onclick="saveCircle(\''+key+'\')" style="flex:1;background:'+editBg+';border:1px solid '+info.color+';color:'+info.color+';border-radius:8px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Save</button>' +
+            '<button onclick="circlesEditing=null;renderContent()" style="flex:1;background:#1a1a1a;border:1px solid #333;color:#555;border-radius:8px;padding:11px;font-size:13px;cursor:pointer;font-family:inherit">Cancel</button>' +
+          '</div>'
+        : items.length ?
+          '<div style="display:flex;flex-direction:column;gap:6px">' +
+            items.map(function(item){return '<div style="display:flex;align-items:flex-start;gap:8px;font-size:14px;color:#ccc;line-height:1.5"><span style="color:'+info.color+';margin-top:2px;flex-shrink:0">&#x2022;</span>'+item.trim()+'</div>';}).join('') +
+          '</div>'
+        : '<div style="font-size:13px;color:#333;font-style:italic">Not set yet. Tap Add to define your '+info.label.toLowerCase()+'.</div>') +
+      '</div>';
+    }).join('') +
+    '<div class="card" style="background:#0d0d0d;border:1px solid #1a1a1a">' +
+      '<div style="font-size:12px;color:#555;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.1em">Remember</div>' +
+      '<div style="font-size:13px;color:#555;line-height:1.7">When you feel a middle circle behavior, that is your signal to run your Red Alert plan \u2014 before it becomes an inner circle act.</div>' +
+      '<button onclick="switchTab(1)" style="width:100%;margin-top:12px;padding:11px;background:#2a1a1a;border:1px solid #ef4444;color:#ef4444;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Go to Red Alert Plan</button>' +
+    '</div>';
+}
+
+window.saveCircle = function(key) {
+  var input = document.getElementById('circle-input-' + key);
+  var val = input ? input.value : "";
+  var data = loadData();
+  var circles = data.threeCircles || {};
+  circles[key] = val;
+  saveData(Object.assign({}, data, {threeCircles: circles}));
+  circlesEditing = null;
+  renderContent();
 };
 
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
