@@ -723,7 +723,11 @@ function renderFitPeptides(){
   const todayLogs=(data.peptideLogs||[]).filter(l=>l.date===getTodayStr());
   const allLogs=(data.peptideLogs||[]).slice().reverse().slice(0,20);
   const customPeptides=data.customPeptides||[];
-  const allPeptides=[...DEFAULT_PEPTIDES.map(p=>({...p,_default:true})),...customPeptides.map(p=>({...p,_custom:true}))];
+  const overrides=data.peptideOverrides||{};
+  const hidden=data.peptideHidden||[];
+  // Apply overrides to defaults, filter hidden
+  const defaults=DEFAULT_PEPTIDES.map((p,i)=>hidden.includes(i)?null:{...p,...(overrides[i]||{}),_default:true,_defaultIdx:i}).filter(Boolean);
+  const allPeptides=[...defaults,...customPeptides.map(p=>({...p,_custom:true}))];
   const editingIdx=data._peptideEditIdx;
 
   return `
@@ -860,13 +864,17 @@ window.savePeptideEdit=i=>{
   const site=(document.getElementById('pedit-site-'+i)||{}).value||'';
   const freq=(document.getElementById('pedit-freq-'+i)||{}).value||p.frequency||'';
   const updated={name,defaultDose:dose,unit,time,defaultSite:site,frequency:freq};
-  if(i<DEFAULT_PEPTIDES.length){
-    // Overriding a default — store in customOverrides
-    const overrides=data.peptideOverrides||{};
-    overrides[i]=updated;
-    data.peptideOverrides=overrides;
+  // Find the real default index
+  const hidden2=data.peptideHidden||[];
+  const defaults2=DEFAULT_PEPTIDES.map((p,di)=>hidden2.includes(di)?null:{_defaultIdx:di}).filter(Boolean);
+  if(i<defaults2.length){
+    const realIdx=defaults2[i]._defaultIdx;
+    const overrides2=data.peptideOverrides||{};
+    overrides2[realIdx]=updated;
+    data.peptideOverrides=overrides2;
   } else {
-    customPeptides[i-DEFAULT_PEPTIDES.length]=updated;
+    const customIdx=i-defaults2.length;
+    customPeptides[customIdx]=updated;
     data.customPeptides=customPeptides;
   }
   delete data._peptideEditIdx;
@@ -877,12 +885,15 @@ window.deletePeptide=i=>{
   if(!confirm('Delete this peptide?'))return;
   const data=loadData();
   const customPeptides=data.customPeptides||[];
-  if(i<DEFAULT_PEPTIDES.length){
-    const hidden=data.peptideHidden||[];
-    hidden.push(i);
-    data.peptideHidden=hidden;
+  const hidden3=data.peptideHidden||[];
+  const defaults3=DEFAULT_PEPTIDES.map((p,di)=>hidden3.includes(di)?null:{_defaultIdx:di}).filter(Boolean);
+  if(i<defaults3.length){
+    const realIdx=defaults3[i]._defaultIdx;
+    hidden3.push(realIdx);
+    data.peptideHidden=hidden3;
   } else {
-    customPeptides.splice(i-DEFAULT_PEPTIDES.length,1);
+    const customIdx=i-defaults3.length;
+    customPeptides.splice(customIdx,1);
     data.customPeptides=customPeptides;
   }
   delete data._peptideEditIdx;
