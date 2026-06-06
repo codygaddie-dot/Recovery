@@ -1642,7 +1642,16 @@ window.adjustMeeting=(key,date,delta)=>{
 };
 
 window.setHabitDate=date=>{
-  habitSelectedDate=date||null;
+  if(!date){habitSelectedDate=null;renderContent();return;}
+  // Date input returns YYYY-MM-DD which can be off by one day due to timezone
+  // Parse as local date by appending T12:00:00 to force local noon interpretation
+  const parts=date.split('-');
+  if(parts.length===3){
+    const local=new Date(+parts[0],+parts[1]-1,+parts[2],12,0,0);
+    habitSelectedDate=toLocalDateStr(local);
+  } else {
+    habitSelectedDate=date;
+  }
   renderContent();
 };
 
