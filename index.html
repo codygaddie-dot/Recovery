@@ -480,12 +480,18 @@ function renderCheckIn(){
     </div>
     ${logs.length?`
       <div class="section-label" style="margin-top:8px">Recent Logs</div>
-      ${logs.map(log=>`<div class="log-entry">
-        <div class="log-meta"><span class="log-date">${log.date}</span><span class="log-urge" style="color:${urgeColor(log.urge)}">Urge: ${log.urge}/10</span></div>
+      ${logs.map((log,i)=>{const realIdx=(data.urgeLogs||[]).length-1-i;return `<div class="log-entry">
+        <div class="log-meta">
+          <span class="log-date">${log.date}</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="log-urge" style="color:${urgeColor(log.urge)}">Urge: ${log.urge}/10</span>
+            <button onclick="deleteUrgeLog(${realIdx})" style="background:none;border:none;color:#555;font-size:20px;cursor:pointer;padding:0;line-height:1">&times;</button>
+          </div>
+        </div>
         ${log.situation?`<div class="log-line"><b>Trigger:</b> ${log.situation}</div>`:""}
         ${log.emotion?`<div class="log-line"><b>Feeling:</b> ${log.emotion}</div>`:""}
         ${log.action?`<div class="log-line"><b>Response:</b> ${log.action}</div>`:""}
-      </div>`).join("")}`:""}`;
+      </div>`}).join("")}`:""}`;
 }
 window.updateUrge=v=>{checkIn.urge=+v;renderContent();};
 window.updateCI=(k,v)=>{checkIn[k]=v;};
@@ -1457,6 +1463,20 @@ function renderStats(){
     </div>`}
   `;
 }
+
+window.deleteUrgeLog=idx=>{
+  const data=loadData();
+  const logs=data.urgeLogs||[];
+  logs.splice(idx,1);
+  saveData({...data,urgeLogs:logs});
+  renderContent();
+};
+
+window.deleteUrgeLog=idx=>{
+  const data=loadData();const logs=data.urgeLogs||[];
+  logs.splice(idx,1);
+  saveData({...data,urgeLogs:logs});renderContent();
+};
 
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
 </script>
