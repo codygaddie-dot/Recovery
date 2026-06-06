@@ -584,7 +584,14 @@ function renderStreak(){
     <div class="streak-card">
       <div class="streak-num" style="color:${color}">${days}</div>
       <div class="streak-sub">${days===0?"Start your streak today.":days===1?"Day 1. Every journey starts here.":"Days clean. Keep going."}</div>
-      ${data.soberStart?`<div class="streak-date">Started ${new Date(data.soberStart).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div>`:""}
+      ${data.soberStart?`
+        <div class="streak-date">Started ${new Date(data.soberStart+"T00:00:00").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div>
+        <div style="margin-bottom:12px">
+          <label style="font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px">Change start date</label>
+          <input type="date" id="sober-date-edit" value="${data.soberStart}" max="${getTodayStr()}" style="background:#0d0d0d;border:1px solid #2a2a2a;border-radius:8px;color:#e8e8e8;font-size:13px;padding:8px 12px;width:100%;font-family:inherit" />
+          <button onclick="updateSoberDate()" style="width:100%;margin-top:8px;padding:10px;background:#1a1a1a;border:1px solid #2a2a2a;color:#aaa;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Update Start Date</button>
+        </div>
+      `:""}
       ${!data.soberStart?`
         <div style="margin-bottom:16px">
           <label style="font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:8px">Your sober date</label>
@@ -1661,6 +1668,155 @@ window.saveCircle = function(key) {
   circles[key] = val;
   saveData(Object.assign({}, data, {threeCircles: circles}));
   circlesEditing = null;
+  renderContent();
+};
+
+window.updateSoberDate = function() {
+  var input = document.getElementById('sober-date-edit');
+  var val = input ? input.value : '';
+  if (!val) return;
+  var data = loadData();
+  saveData(Object.assign({}, data, {soberStart: val}));
+  render();
+};
+
+window.updateSoberDate = function() {
+  var input = document.getElementById('sober-date-edit');
+  var val = input ? input.value : '';
+  if (!val) { alert('Please select a date.'); return; }
+  var data = loadData();
+  saveData(Object.assign({}, data, {soberStart: val}));
+  render();
+};
+
+
+// THREE CIRCLES
+let circlesEditMode = false;
+
+function renderCircles(){
+  const data = loadData();
+  const circles = data.threeCircles || {
+    inner: "",
+    middle: "",
+    outer: ""
+  };
+
+  if(circlesEditMode){
+    return `
+      <div class="section-title"><h2>&#x25CE; Three Circles</h2><p>SAA recovery tool. Define your boundaries.</p></div>
+      <div class="card" style="border-color:#ef4444">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div style="width:14px;height:14px;border-radius:50%;background:#ef4444;flex-shrink:0"></div>
+          <div style="font-size:15px;font-weight:700;color:#ef4444">Inner Circle</div>
+        </div>
+        <div style="font-size:12px;color:#555;margin-bottom:10px">Bottom lines — behaviors you are committing to stop completely.</div>
+        <textarea id="inner-input" rows="5" placeholder="List each behavior on a new line...">${circles.inner}</textarea>
+      </div>
+      <div class="card" style="border-color:#f59e0b">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div style="width:14px;height:14px;border-radius:50%;background:#f59e0b;flex-shrink:0"></div>
+          <div style="font-size:15px;font-weight:700;color:#f59e0b">Middle Circle</div>
+        </div>
+        <div style="font-size:12px;color:#555;margin-bottom:10px">Warning behaviors — things that lead to the inner circle. Slippery slope.</div>
+        <textarea id="middle-input" rows="5" placeholder="List each warning behavior on a new line...">${circles.middle}</textarea>
+      </div>
+      <div class="card" style="border-color:#22c55e">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div style="width:14px;height:14px;border-radius:50%;background:#22c55e;flex-shrink:0"></div>
+          <div style="font-size:15px;font-weight:700;color:#22c55e">Outer Circle</div>
+        </div>
+        <div style="font-size:12px;color:#555;margin-bottom:10px">Healthy behaviors — what your recovery life looks like. Who you are becoming.</div>
+        <textarea id="outer-input" rows="5" placeholder="List each healthy behavior on a new line...">${circles.outer}</textarea>
+      </div>
+      <button class="btn-primary" onclick="saveCircles()" style="margin-bottom:10px">Save My Circles</button>
+      <button onclick="circlesEditMode=false;renderContent()" style="width:100%;padding:12px;background:transparent;border:1px solid #2a2a2a;color:#555;border-radius:10px;cursor:pointer;font-family:inherit;font-size:14px">Cancel</button>
+    `;
+  }
+
+  const hasData = circles.inner || circles.middle || circles.outer;
+
+  return `
+    <div class="section-title"><h2>&#x25CE; Three Circles</h2><p>Your personal SAA recovery boundary map.</p></div>
+
+    ${!hasData ? `
+      <div class="card" style="text-align:center;padding:30px 20px">
+        <div style="font-size:48px;margin-bottom:12px">&#x25CE;</div>
+        <div style="font-size:15px;font-weight:700;color:#e8e8e8;margin-bottom:8px">Define Your Three Circles</div>
+        <div style="font-size:13px;color:#555;margin-bottom:20px;line-height:1.6">The Three Circles tool helps you identify your bottom lines, warning behaviors, and healthy recovery behaviors.</div>
+        <button class="btn-primary" onclick="circlesEditMode=true;renderContent()">Set Up My Circles</button>
+      </div>
+      <div class="card">
+        <div style="font-size:13px;font-weight:700;color:#e8e8e8;margin-bottom:12px">How It Works</div>
+        <div style="display:flex;gap:10px;margin-bottom:12px;align-items:flex-start">
+          <div style="width:12px;height:12px;border-radius:50%;background:#ef4444;flex-shrink:0;margin-top:3px"></div>
+          <div><div style="font-size:13px;font-weight:600;color:#ef4444;margin-bottom:2px">Inner Circle</div><div style="font-size:12px;color:#555">Behaviors you are committing to stop completely. Your bottom lines.</div></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:12px;align-items:flex-start">
+          <div style="width:12px;height:12px;border-radius:50%;background:#f59e0b;flex-shrink:0;margin-top:3px"></div>
+          <div><div style="font-size:13px;font-weight:600;color:#f59e0b;margin-bottom:2px">Middle Circle</div><div style="font-size:12px;color:#555">Warning behaviors that lead toward the inner circle. The slippery slope.</div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="width:12px;height:12px;border-radius:50%;background:#22c55e;flex-shrink:0;margin-top:3px"></div>
+          <div><div style="font-size:13px;font-weight:600;color:#22c55e;margin-bottom:2px">Outer Circle</div><div style="font-size:12px;color:#555">Healthy behaviors that define your recovery life. Who you are becoming.</div></div>
+        </div>
+      </div>
+    ` : `
+      <!-- Inner Circle -->
+      <div class="card" style="border-color:#ef444433">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:12px;height:12px;border-radius:50%;background:#ef4444;flex-shrink:0"></div>
+            <div style="font-size:15px;font-weight:700;color:#ef4444">Inner Circle</div>
+          </div>
+          <button onclick="circlesEditMode=true;renderContent()" style="background:#1a1a1a;border:1px solid #2a2a2a;color:#555;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit">Edit</button>
+        </div>
+        ${circles.inner ? circles.inner.split('\n').filter(l=>l.trim()).map(l=>`
+          <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a1a;align-items:flex-start">
+            <span style="color:#ef4444;font-weight:700;flex-shrink:0">&#x2022;</span>
+            <span style="font-size:14px;color:#ccc">${l.trim()}</span>
+          </div>`).join('') : `<div style="font-size:13px;color:#333;font-style:italic">Not set yet.</div>`}
+      </div>
+
+      <!-- Middle Circle -->
+      <div class="card" style="border-color:#f59e0b33">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:12px;height:12px;border-radius:50%;background:#f59e0b;flex-shrink:0"></div>
+            <div style="font-size:15px;font-weight:700;color:#f59e0b">Middle Circle</div>
+          </div>
+        </div>
+        ${circles.middle ? circles.middle.split('\n').filter(l=>l.trim()).map(l=>`
+          <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a1a;align-items:flex-start">
+            <span style="color:#f59e0b;font-weight:700;flex-shrink:0">&#x2022;</span>
+            <span style="font-size:14px;color:#ccc">${l.trim()}</span>
+          </div>`).join('') : `<div style="font-size:13px;color:#333;font-style:italic">Not set yet.</div>`}
+      </div>
+
+      <!-- Outer Circle -->
+      <div class="card" style="border-color:#22c55e33">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:12px;height:12px;border-radius:50%;background:#22c55e;flex-shrink:0"></div>
+            <div style="font-size:15px;font-weight:700;color:#22c55e">Outer Circle</div>
+          </div>
+        </div>
+        ${circles.outer ? circles.outer.split('\n').filter(l=>l.trim()).map(l=>`
+          <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a1a;align-items:flex-start">
+            <span style="color:#22c55e;font-weight:700;flex-shrink:0">&#x2022;</span>
+            <span style="font-size:14px;color:#ccc">${l.trim()}</span>
+          </div>`).join('') : `<div style="font-size:13px;color:#333;font-style:italic">Not set yet.</div>`}
+      </div>
+    `}
+  `;
+}
+
+window.saveCircles = () => {
+  const inner = (document.getElementById('inner-input')||{}).value || '';
+  const middle = (document.getElementById('middle-input')||{}).value || '';
+  const outer = (document.getElementById('outer-input')||{}).value || '';
+  const data = loadData();
+  saveData({...data, threeCircles: {inner, middle, outer}});
+  circlesEditMode = false;
   renderContent();
 };
 
