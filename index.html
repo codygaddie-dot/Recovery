@@ -69,10 +69,10 @@
     .milestone-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1a1a1a;align-items:center}
     .milestone-row:last-child{border-bottom:none}
     .section-label{font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
-    .bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:#0a0a0a;border-top:1px solid #1a1a1a;display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:flex-start;align-items:center;padding:12px 4px 30px;z-index:20;overflow-x:scroll;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;touch-action:pan-x;will-change:scroll-position}.bottom-nav::-webkit-scrollbar{display:none;height:0;width:0}
-    .nav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;font-family:inherit;transition:opacity .2s;min-width:52px;flex-shrink:0}
-    .nav-icon{font-size:18px}
-    .nav-label{font-size:8px;color:#888;text-transform:uppercase;letter-spacing:.04em}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:#0a0a0a;border-top:1px solid #1a1a1a;display:flex;flex-direction:row;justify-content:space-around;align-items:center;padding:10px 8px 28px;z-index:20}
+    .nav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;font-family:inherit;transition:opacity .2s;flex:1;}
+    .nav-icon{font-size:22px}
+    .nav-label{font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.04em}
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;display:flex;align-items:flex-end;justify-content:center}
     .modal-sheet{background:#111;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:24px 20px 40px;max-height:80vh;overflow-y:auto}
     .sponsor-block{background:#0d0d0d;border:1px solid #222;border-radius:10px;padding:14px;margin-bottom:12px}
@@ -135,7 +135,7 @@
       <div id="quote-display"></div>
     </div>
   </div>
-  <div class="content" id="content"></div>
+  <div class="content" id="content" onclick="if(moreMenuOpen){moreMenuOpen=false;renderNav()}"></div>
   <nav class="bottom-nav" id="nav"></nav>
 </div>
 <div id="modal-overlay" style="display:none"></div>
@@ -348,13 +348,57 @@ function streakDays(data){if(!data.soberStart)return 0;const start=new Date(data
 
 let currentTab=0,expandedAlert=null,expandedRelease=null,alertSearch='';
 
+let moreMenuOpen = false;
+
 function renderNav(){
-  document.getElementById("nav").innerHTML=TABS.map((t,i)=>`
-    <button class="nav-btn" style="opacity:${currentTab===i?1:.3}" onclick="switchTab(${i})">
+  // Main tabs: Home(0), Shield(1), Board(4), Habits(9), Journal(8), More
+  const mainTabs = [
+    {idx:0, icon:'&#x1F3E0;', label:'Home'},
+    {idx:1, icon:'&#x1F6A8;', label:'Shield'},
+    {idx:4, icon:'&#x1F3DB;', label:'Board'},
+    {idx:9, icon:'&#x2705;', label:'Habits'},
+    {idx:8, icon:'&#x1F4D3;', label:'Journal'},
+  ];
+
+  const moreTabIndices = [2,3,5,6,7,10,11,12,13,14]; // all others
+
+  document.getElementById("nav").innerHTML = `
+    ${mainTabs.map(t=>`<button class="nav-btn" style="opacity:${currentTab===t.idx?1:.35}" onclick="moreMenuOpen=false;switchTab(${t.idx})">
       <span class="nav-icon">${t.icon}</span>
-      <span class="nav-label" style="font-weight:${currentTab===i?700:400};color:${currentTab===i?"#aaa":"#555"}">${t.label}</span>
-    </button>`).join("");
+      <span class="nav-label" style="font-weight:${currentTab===t.idx?700:400};color:${currentTab===t.idx?'#aaa':'#555'}">${t.label}</span>
+    </button>`).join('')}
+    <button class="nav-btn" style="opacity:${moreMenuOpen||moreTabIndices.includes(currentTab)?1:.35}" onclick="toggleMoreMenu()">
+      <span class="nav-icon">&#x22EF;</span>
+      <span class="nav-label" style="font-weight:${moreMenuOpen||moreTabIndices.includes(currentTab)?700:400};color:${moreMenuOpen||moreTabIndices.includes(currentTab)?'#aaa':'#555'}">More</span>
+    </button>
+    ${moreMenuOpen?renderMoreMenu():''}
+  `;
 }
+
+function renderMoreMenu(){
+  const moreTabs = [
+    {idx:2, icon:'&#x1F4CB;', label:'Log'},
+    {idx:3, icon:'&#x26A1;', label:'Release'},
+    {idx:5, icon:'&#x1F91D;', label:'Meetings'},
+    {idx:6, icon:'&#x1F525;', label:'Streak'},
+    {idx:7, icon:'&#x1F4AA;', label:'Fitness'},
+    {idx:10, icon:'&#x1F4CA;', label:'Stats'},
+    {idx:11, icon:'&#x25CE;', label:'Circles'},
+    {idx:12, icon:'&#x2699;&#xFE0F;', label:'Settings'},
+    {idx:13, icon:'&#x1F4D6;', label:'Steps'},
+    {idx:14, icon:'&#x1F916;', label:'AI Coach'},
+  ];
+  return `<div style="position:fixed;bottom:80px;right:0;width:200px;background:#111;border:1px solid #2a2a2a;border-radius:14px 0 0 14px;z-index:30;padding:8px 0;box-shadow:-4px -4px 20px rgba(0,0,0,.6)">
+    ${moreTabs.map(t=>`<button onclick="moreMenuOpen=false;switchTab(${t.idx})" style="width:100%;background:${currentTab===t.idx?'#1a2a1a':'none'};border:none;border-left:${currentTab===t.idx?'3px solid #22c55e':'3px solid transparent'};color:${currentTab===t.idx?'#22c55e':'#aaa'};font-size:14px;font-weight:${currentTab===t.idx?700:400};padding:12px 16px;cursor:pointer;font-family:inherit;text-align:left;display:flex;align-items:center;gap:10px">
+      <span style="font-size:18px">${t.icon}</span>${t.label}
+    </button>`).join('')}
+  </div>`;
+}
+
+window.toggleMoreMenu = () => {
+  moreMenuOpen = !moreMenuOpen;
+  renderNav();
+};
 function switchTab(i){
   currentTab=i;expandedAlert=null;expandedRelease=null;alertSearch='';render();
   // Auto-load AI content when switching to AI tab
