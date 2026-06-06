@@ -2048,46 +2048,7 @@ function renderSettings() {
     <!-- Notifications -->
     <div class="card">
       <div class="section-label" style="margin-bottom:14px">Weekly Summary Reminder</div>
-      \${(()=>{
-        const d=loadData();
-        const enabled=d.notificationsEnabled||false;
-        const reminderDay=d.reminderDay!==undefined?d.reminderDay:1;
-        const reminderHour=d.reminderHour!==undefined?d.reminderHour:8;
-        const reminderMin=d.reminderMin!==undefined?d.reminderMin:0;
-        const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-        const hourStr=reminderHour===0?'12':reminderHour>12?(reminderHour-12).toString():reminderHour.toString();
-        const ampm=reminderHour<12?'AM':'PM';
-        const minStr=reminderMin.toString().padStart(2,'0');
-        return \`
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-            <div>
-              <div style="font-size:14px;color:#e8e8e8;font-weight:600">Weekly Reminder</div>
-              <div style="font-size:12px;color:#555;margin-top:2px">\${days[reminderDay]} at \${hourStr}:\${minStr} \${ampm}</div>
-            </div>
-            <button onclick="toggleMondayReminder()" style="background:\${enabled?'#166534':'#1a1a1a'};border:1px solid \${enabled?'#22c55e':'#333'};color:\${enabled?'#22c55e':'#555'};border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">
-              \${enabled?'ON':'OFF'}
-            </button>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-            <div>
-              <label class="field-label">Day of week</label>
-              <select id="reminder-day" onchange="saveReminderTime()" style="margin-bottom:0">
-                \${days.map((day,i)=>\`<option value="\${i}"\${reminderDay===i?' selected':''}>\${day}</option>\`).join('')}
-              </select>
-            </div>
-            <div>
-              <label class="field-label">Time</label>
-              <select id="reminder-hour" onchange="saveReminderTime()" style="margin-bottom:0">
-                \${[6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21].map(h=>{
-                  const label=h===0?'12 AM':h<12?h+' AM':h===12?'12 PM':(h-12)+' PM';
-                  return \`<option value="\${h}"\${reminderHour===h?' selected':''}>\${label}</option>\`;
-                }).join('')}
-              </select>
-            </div>
-          </div>
-          \${!enabled?'<div style="font-size:12px;color:#555;text-align:center">Tap ON to enable this reminder</div>':''}
-        \`;
-      })()}
+      ${renderReminderCard()}
     </div>
 
     <!-- Export -->
@@ -2408,6 +2369,39 @@ window.addStepEntry = num => {
   el.value = '';
   renderContent();
 };
+
+
+function renderReminderCard(){
+  const d=loadData();
+  const enabled=d.notificationsEnabled||false;
+  const reminderDay=d.reminderDay!==undefined?d.reminderDay:1;
+  const reminderHour=d.reminderHour!==undefined?d.reminderHour:8;
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const h=reminderHour;
+  const hourStr=h===0?'12':h>12?(h-12).toString():h.toString();
+  const ampm=h<12?'AM':'PM';
+
+  let html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
+  html+='<div><div style="font-size:14px;color:#e8e8e8;font-weight:600">Weekly Reminder</div>';
+  html+='<div style="font-size:12px;color:#555;margin-top:2px">'+days[reminderDay]+' at '+hourStr+':00 '+ampm+'</div></div>';
+  html+='<button onclick="toggleMondayReminder()" style="background:'+(enabled?'#166534':'#1a1a1a')+';border:1px solid '+(enabled?'#22c55e':'#333')+';color:'+(enabled?'#22c55e':'#555')+';border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">'+(enabled?'ON':'OFF')+'</button>';
+  html+='</div>';
+
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">';
+  html+='<div><label class="field-label">Day of week</label><select id="reminder-day" onchange="saveReminderTime()" style="margin-bottom:0">';
+  days.forEach((day,i)=>{ html+='<option value="'+i+'"'+(reminderDay===i?' selected':'')+'>'+day+'</option>'; });
+  html+='</select></div>';
+
+  html+='<div><label class="field-label">Time</label><select id="reminder-hour" onchange="saveReminderTime()" style="margin-bottom:0">';
+  [6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21].forEach(hh=>{
+    const label=hh<12?hh+' AM':hh===12?'12 PM':(hh-12)+' PM';
+    html+='<option value="'+hh+'"'+(reminderHour===hh?' selected':'')+'>'+label+'</option>';
+  });
+  html+='</select></div></div>';
+
+  if(!enabled) html+='<div style="font-size:12px;color:#555;text-align:center">Tap ON to enable this reminder</div>';
+  return html;
+}
 
 window.saveReminderTime=()=>{
   const dayEl=document.getElementById('reminder-day');
