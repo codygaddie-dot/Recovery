@@ -722,30 +722,76 @@ function renderFitPeptides(){
   const todayLogs=(data.peptideLogs||[]).filter(l=>l.date===getTodayStr());
   const allLogs=(data.peptideLogs||[]).slice().reverse().slice(0,20);
   const customPeptides=data.customPeptides||[];
-  const allPeptides=[...DEFAULT_PEPTIDES,...customPeptides];
+  const allPeptides=[...DEFAULT_PEPTIDES.map(p=>({...p,_default:true})),...customPeptides.map(p=>({...p,_custom:true}))];
+  const editingIdx=data._peptideEditIdx;
+
   return `
     <div class="card" style="margin-bottom:14px">
-      <div class="section-label" style="margin-bottom:12px">Today</div>
-      ${allPeptides.map(p=>{
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="section-label" style="margin:0">Today's Protocol</div>
+        <button onclick="addNewPeptide()" style="background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">+ Add</button>
+      </div>
+      ${allPeptides.map((p,i)=>{
         const td=todayLogs.find(l=>l.name===p.name);
-        return `<div class="supp-row">
-          <div style="flex:1">
-            <div style="font-size:14px;font-weight:600;color:${td?"#e8e8e8":"#888"}">${p.name}</div>
-            <div style="font-size:11px;color:#555;margin-top:2px">${p.defaultDose}${p.unit} &bull; ${p.time}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            ${td?`<span style="font-size:11px;color:#22c55e">${td.dose}${td.unit}</span>`:""}
-            <div class="supp-check${td?" checked":""}" onclick="quickLogPeptide('${p.name.replace(/'/g,"\\'")}','${p.defaultDose}','${p.unit}')">${td?"&#x2713;":""}</div>
-          </div>
+        const isEditing=editingIdx===i;
+        return `<div style="border-bottom:1px solid #1a1a1a;padding:14px 0">
+          ${isEditing ? `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+              <div style="grid-column:1/-1">
+                <label class="field-label">Name</label>
+                <input type="text" id="pedit-name-${i}" value="${p.name}" style="margin-bottom:0" />
+              </div>
+              <div>
+                <label class="field-label">Default Dose</label>
+                <input type="number" id="pedit-dose-${i}" value="${p.defaultDose||''}" style="margin-bottom:0" />
+              </div>
+              <div>
+                <label class="field-label">Unit</label>
+                <select id="pedit-unit-${i}" style="margin-bottom:0">
+                  ${['mcg','mg','mL','IU'].map(u=>`<option value="${u}"${p.unit===u?' selected':''}>${u}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="field-label">Time</label>
+                <select id="pedit-time-${i}" style="margin-bottom:0">
+                  ${['AM (fasted)','Pre-workout','Post-workout','PM','Before bed'].map(t=>`<option value="${t}"${p.time===t?' selected':''}>${t}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="field-label">Site</label>
+                <select id="pedit-site-${i}" style="margin-bottom:0">
+                  ${['','Abdomen L','Abdomen R','Thigh L','Thigh R','Delt L','Delt R','Glute L','Glute R'].map(s=>`<option value="${s}"${(p.defaultSite||'')=== s?' selected':''}>${s||'None'}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button onclick="savePeptideEdit(${i})" style="flex:1;background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Save</button>
+              <button onclick="cancelPeptideEdit()" style="flex:1;background:#1a1a1a;border:1px solid #333;color:#555;border-radius:8px;padding:10px;font-size:13px;cursor:pointer;font-family:inherit">Cancel</button>
+              <button onclick="deletePeptide(${i})" style="background:#2a1a1a;border:1px solid #ef4444;color:#ef4444;border-radius:8px;padding:10px 14px;font-size:13px;cursor:pointer;font-family:inherit">Delete</button>
+            </div>
+          ` : `
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="flex:1">
+                <div style="font-size:15px;font-weight:600;color:${td?'#e8e8e8':'#888'}">${p.name}</div>
+                <div style="font-size:11px;color:#555;margin-top:3px">${p.defaultDose||''}${p.unit||''} &bull; ${p.time||''}${p.defaultSite?' &bull; '+p.defaultSite:''}</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                ${td?`<span style="font-size:11px;color:#22c55e">${td.dose}${td.unit}</span>`:''}
+                <button onclick="editPeptide(${i})" style="background:#1a1a1a;border:1px solid #2a2a2a;color:#555;border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer;font-family:inherit">Edit</button>
+                <div class="supp-check${td?' checked':''}" onclick="quickLogPeptide('${p.name.replace(/'/g,"\'")}','${p.defaultDose||''}','${p.unit||''}')">${td?'&#x2713;':''}</div>
+              </div>
+            </div>
+          `}
         </div>`;
-      }).join("")}
+      }).join('')}
     </div>
+
     <div class="card" style="margin-bottom:14px">
       <div class="section-label" style="margin-bottom:12px">Log a Dose</div>
       <label class="field-label">Peptide</label>
       <select id="psel" style="margin-bottom:10px" onchange="peptideForm.name=this.value">
         <option value="">Select...</option>
-        ${allPeptides.map(p=>`<option value="${p.name}">${p.name}</option>`).join("")}
+        ${allPeptides.map(p=>`<option value="${p.name}">${p.name}</option>`).join('')}
       </select>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
         <div><label class="field-label">Dose</label><input type="number" id="pdose" placeholder="200" oninput="peptideForm.dose=this.value" /></div>
@@ -771,16 +817,79 @@ function renderFitPeptides(){
       </div>
       <label class="field-label">Notes</label>
       <textarea rows="2" placeholder="Batch, how you felt..." oninput="peptideForm.notes=this.value" style="margin-bottom:14px"></textarea>
-      <button class="btn-primary${peptideSaved?" saved":""}" onclick="savePeptideDose()" style="background:${peptideSaved?"#166534":"#2563eb"}">${peptideSaved?"Logged":"Log This Dose"}</button>
+      <button class="btn-primary${peptideSaved?' saved':''}" onclick="savePeptideDose()" style="background:${peptideSaved?'#166534':'#2563eb'}">${peptideSaved?'Logged':'Log This Dose'}</button>
     </div>
+
     ${allLogs.length?`<div class="section-label">Dose History</div>${allLogs.map(log=>`<div class="log-entry">
-      <div class="log-meta"><span style="font-size:13px;font-weight:700;color:#60a5fa">${log.name}</span><span class="log-date">${log.date} ${log.time||""}</span></div>
+      <div class="log-meta"><span style="font-size:13px;font-weight:700;color:#60a5fa">${log.name}</span><span class="log-date">${log.date} ${log.time||''}</span></div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
-        <span class="tag">${log.dose}${log.unit}</span>${log.site?`<span class="tag">${log.site}</span>`:""}
+        <span class="tag">${log.dose}${log.unit}</span>${log.site?`<span class="tag">${log.site}</span>`:''}
       </div>
-      ${log.notes?`<div class="log-line" style="margin-top:4px">${log.notes}</div>`:""}
-    </div>`).join("")}`:""}`;
+      ${log.notes?`<div class="log-line" style="margin-top:4px">${log.notes}</div>`:''}
+    </div>`).join('')}`:''}
+  `;
 }
+
+window.editPeptide=i=>{
+  const data=loadData();
+  saveData({...data,_peptideEditIdx:i});
+  renderContent();
+};
+window.cancelPeptideEdit=()=>{
+  const data=loadData();
+  delete data._peptideEditIdx;
+  saveData(data);
+  renderContent();
+};
+window.savePeptideEdit=i=>{
+  const data=loadData();
+  const customPeptides=data.customPeptides||[];
+  const allPeptides=[...DEFAULT_PEPTIDES,...customPeptides];
+  const p=allPeptides[i];
+  const name=(document.getElementById('pedit-name-'+i)||{}).value||p.name;
+  const dose=(document.getElementById('pedit-dose-'+i)||{}).value||p.defaultDose;
+  const unit=(document.getElementById('pedit-unit-'+i)||{}).value||p.unit;
+  const time=(document.getElementById('pedit-time-'+i)||{}).value||p.time;
+  const site=(document.getElementById('pedit-site-'+i)||{}).value||'';
+  const updated={name,defaultDose:dose,unit,time,defaultSite:site};
+  if(i<DEFAULT_PEPTIDES.length){
+    // Overriding a default — store in customOverrides
+    const overrides=data.peptideOverrides||{};
+    overrides[i]=updated;
+    data.peptideOverrides=overrides;
+  } else {
+    customPeptides[i-DEFAULT_PEPTIDES.length]=updated;
+    data.customPeptides=customPeptides;
+  }
+  delete data._peptideEditIdx;
+  saveData(data);
+  renderContent();
+};
+window.deletePeptide=i=>{
+  if(!confirm('Delete this peptide?'))return;
+  const data=loadData();
+  const customPeptides=data.customPeptides||[];
+  if(i<DEFAULT_PEPTIDES.length){
+    const hidden=data.peptideHidden||[];
+    hidden.push(i);
+    data.peptideHidden=hidden;
+  } else {
+    customPeptides.splice(i-DEFAULT_PEPTIDES.length,1);
+    data.customPeptides=customPeptides;
+  }
+  delete data._peptideEditIdx;
+  saveData(data);
+  renderContent();
+};
+window.addNewPeptide=()=>{
+  const data=loadData();
+  const custom=data.customPeptides||[];
+  custom.push({name:'New Peptide',defaultDose:'',unit:'mcg',time:'PM',defaultSite:''});
+  const newIdx=DEFAULT_PEPTIDES.length+custom.length-1;
+  saveData({...data,customPeptides:custom,_peptideEditIdx:newIdx});
+  renderContent();
+};
+
 window.quickLogPeptide=(name,dose,unit)=>{
   const data=loadData();const logs=data.peptideLogs||[];
   const ei=logs.findIndex(l=>l.name===name&&l.date===getTodayStr());
