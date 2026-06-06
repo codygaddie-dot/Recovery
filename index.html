@@ -693,15 +693,66 @@ function renderFitWorkout(){
     </div>
     <button class="btn-primary${workoutSaved?" saved":""}" onclick="saveWorkout()">${workoutSaved?"Logged":"Log Workout"}</button>
   </div>
-  ${logs.length?`<div class="section-label">Recent Workouts</div>${logs.map(w=>`<div class="log-entry">
-    <div class="log-meta"><span style="font-size:13px;font-weight:700;color:#22c55e">${w.type||"Workout"}</span><span class="log-date">${w.date}</span></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
-      ${w.duration?`<span class="tag">${w.duration} min</span>`:""}${w.fasted?`<span class="tag green">Fasted</span>`:""}
-    </div>
-    ${w.notes?`<div class="log-line" style="margin-top:6px">${w.notes}</div>`:""}
-  </div>`).join("")}`:""}`;
+  ${logs.length?`<div class="section-label">Recent Workouts</div>${logs.map((w,i)=>{
+    const realIdx=(data.workoutLogs||[]).length-1-i;
+    const isEditing=workoutEditIdx===realIdx;
+    return `<div class="log-entry">
+      ${isEditing?`
+        <div class="workout-type-grid" style="margin-bottom:10px">${WORKOUT_TYPES.map(t=>`<button class="workout-type-btn${w.type===t?" selected":""}" onclick="updateWorkoutEdit(${realIdx},'type','${t}')">${t}</button>`).join("")}</div>
+        <label class="field-label">Duration (min)</label>
+        <input type="number" id="wedit-dur-${realIdx}" value="${w.duration||''}" style="margin-bottom:10px" />
+        <label class="field-label">Notes</label>
+        <textarea rows="2" id="wedit-notes-${realIdx}" style="margin-bottom:10px">${w.notes||''}</textarea>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer" onclick="toggleWorkoutFasted(${realIdx})">
+          <div class="supp-check${w.fasted?" checked":""}">${w.fasted?"&#x2713;":""}</div>
+          <span style="font-size:14px;color:#aaa">Fasted training</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="saveWorkoutEdit(${realIdx})" style="flex:1;background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Save</button>
+          <button onclick="workoutEditIdx=null;renderContent()" style="flex:1;background:#1a1a1a;border:1px solid #333;color:#555;border-radius:8px;padding:10px;font-size:13px;cursor:pointer;font-family:inherit">Cancel</button>
+          <button onclick="deleteWorkout(${realIdx})" style="background:#2a1a1a;border:1px solid #ef4444;color:#ef4444;border-radius:8px;padding:10px 14px;font-size:13px;cursor:pointer;font-family:inherit">Delete</button>
+        </div>
+      `:`
+        <div class="log-meta">
+          <span style="font-size:13px;font-weight:700;color:#22c55e">${w.type||"Workout"}</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="log-date">${w.date}</span>
+            <button onclick="workoutEditIdx=${realIdx};renderContent()" style="background:#1a1a1a;border:1px solid #2a2a2a;color:#555;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit">Edit</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+          ${w.duration?`<span class="tag">${w.duration} min</span>`:""}${w.fasted?`<span class="tag green">Fasted</span>`:""}
+        </div>
+        ${w.notes?`<div class="log-line" style="margin-top:6px">${w.notes}</div>`:""}
+      `}
+    </div>`;
+  }).join("")}`:""}`;
 }
 window.setWorkoutType=t=>{workoutForm.type=t;renderContent();};
+let workoutEditIdx=null;
+window.updateWorkoutEdit=(idx,key,val)=>{
+  const data=loadData();const logs=data.workoutLogs||[];
+  if(logs[idx])logs[idx][key]=val;
+  saveData({...data,workoutLogs:logs});renderContent();
+};
+window.toggleWorkoutFasted=idx=>{
+  const data=loadData();const logs=data.workoutLogs||[];
+  if(logs[idx])logs[idx].fasted=!logs[idx].fasted;
+  saveData({...data,workoutLogs:logs});renderContent();
+};
+window.saveWorkoutEdit=idx=>{
+  const data=loadData();const logs=data.workoutLogs||[];
+  if(logs[idx]){
+    logs[idx].duration=(document.getElementById('wedit-dur-'+idx)||{}).value||logs[idx].duration;
+    logs[idx].notes=(document.getElementById('wedit-notes-'+idx)||{}).value||'';
+  }
+  saveData({...data,workoutLogs:logs});workoutEditIdx=null;renderContent();
+};
+window.deleteWorkout=idx=>{
+  if(!confirm('Delete this workout?'))return;
+  const data=loadData();const logs=data.workoutLogs||[];
+  logs.splice(idx,1);saveData({...data,workoutLogs:logs});workoutEditIdx=null;renderContent();
+};
 window.saveWorkout=()=>{
   if(!workoutForm.type){alert("Select a workout type.");return;}
   const data=loadData();const logs=data.workoutLogs||[];
@@ -978,6 +1029,8 @@ window.addCustomSupp=()=>{
   if(!custom.includes(val)){custom.push(val);saveData({...data,customSupps:custom});}renderContent();
 };
 
+let goalEditIdx=null;
+
 function renderFitGoals(){
   const data=loadData();
   const goals=data.fitnessGoals||[{text:"Train 4x per week",target:4,unit:"days/week",progress:0},{text:"Hit 200 lbs bodyweight",target:200,unit:"lbs",progress:0}];
@@ -985,16 +1038,49 @@ function renderFitGoals(){
   const weekWorkouts=(data.workoutLogs||[]).filter(l=>new Date(l.date)>=startOfWeek).length;
   return `<div class="card">
     <div class="section-label" style="margin-bottom:14px">This week: ${weekWorkouts} workout${weekWorkouts!==1?"s":""}</div>
-    ${goals.map((g,i)=>{const pct=Math.min(100,Math.round((g.progress/g.target)*100));return `<div style="padding:10px 0;border-bottom:1px solid #1a1a1a">
-      <div style="font-size:14px;color:#e8e8e8;margin-bottom:6px">${g.text}</div>
-      <div style="display:flex;align-items:center">
-        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
-        <span style="font-size:12px;color:#555;white-space:nowrap">${g.progress}/${g.target} ${g.unit}</span>
-        <button onclick="adjustGoal(${i},1)" style="background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:5px;width:24px;height:24px;font-size:14px;cursor:pointer;margin-left:6px">+</button>
-        <button onclick="adjustGoal(${i},-1)" style="background:#1a1a1a;border:1px solid #333;color:#555;border-radius:5px;width:24px;height:24px;font-size:14px;cursor:pointer;margin-left:4px">-</button>
-      </div>
-    </div>`}).join("")}
-    <div style="margin-top:14px;display:flex;gap:8px">
+    ${goals.map((g,i)=>{
+      const pct=Math.min(100,Math.round(((g.progress||0)/g.target)*100));
+      const isEditing=goalEditIdx===i;
+      return `<div style="padding:14px 0;border-bottom:1px solid #1a1a1a">
+        ${isEditing?`
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+            <div style="grid-column:1/-1">
+              <label class="field-label">Goal name</label>
+              <input type="text" id="gedit-text-${i}" value="${g.text}" style="margin-bottom:0" />
+            </div>
+            <div>
+              <label class="field-label">Target</label>
+              <input type="number" id="gedit-target-${i}" value="${g.target}" style="margin-bottom:0" />
+            </div>
+            <div>
+              <label class="field-label">Unit</label>
+              <input type="text" id="gedit-unit-${i}" value="${g.unit||''}" placeholder="days, lbs, times..." style="margin-bottom:0" />
+            </div>
+            <div>
+              <label class="field-label">Current progress</label>
+              <input type="number" id="gedit-progress-${i}" value="${g.progress||0}" style="margin-bottom:0" />
+            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button onclick="saveGoalEdit(${i})" style="flex:1;background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Save</button>
+            <button onclick="goalEditIdx=null;renderContent()" style="flex:1;background:#1a1a1a;border:1px solid #333;color:#555;border-radius:8px;padding:10px;font-size:13px;cursor:pointer;font-family:inherit">Cancel</button>
+            <button onclick="deleteGoal(${i})" style="background:#2a1a1a;border:1px solid #ef4444;color:#ef4444;border-radius:8px;padding:10px 14px;font-size:13px;cursor:pointer;font-family:inherit">Delete</button>
+          </div>
+        `:`
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+            <div style="font-size:15px;color:#e8e8e8;font-weight:600">${g.text}</div>
+            <button onclick="goalEditIdx=${i};renderContent()" style="background:#1a1a1a;border:1px solid #2a2a2a;color:#555;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;flex-shrink:0;margin-left:8px">Edit</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="progress-bar-bg" style="margin:0"><div class="progress-bar-fill" style="width:${pct}%;background:${pct>=100?'#22c55e':pct>=50?'#f59e0b':'#60a5fa'}"></div></div>
+            <span style="font-size:12px;color:#555;white-space:nowrap">${g.progress||0}/${g.target} ${g.unit||''}</span>
+            <button onclick="adjustGoal(${i},1)" style="background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:5px;width:30px;height:30px;font-size:16px;cursor:pointer;flex-shrink:0">+</button>
+            <button onclick="adjustGoal(${i},-1)" style="background:#1a1a1a;border:1px solid #333;color:#555;border-radius:5px;width:30px;height:30px;font-size:16px;cursor:pointer;flex-shrink:0">-</button>
+          </div>
+        `}
+      </div>`;
+    }).join("")}
+    <div style="margin-top:16px;display:flex;gap:8px">
       <input type="text" id="new-goal-input" placeholder="Add a goal..." style="flex:1" />
       <button onclick="addGoal()" style="background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:8px;padding:0 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Add</button>
     </div>
@@ -1003,6 +1089,20 @@ function renderFitGoals(){
 window.adjustGoal=(i,delta)=>{
   const data=loadData();const goals=data.fitnessGoals||[];
   if(goals[i]){goals[i].progress=Math.max(0,(goals[i].progress||0)+delta);saveData({...data,fitnessGoals:goals});renderContent();}
+};
+window.saveGoalEdit=i=>{
+  const data=loadData();const goals=data.fitnessGoals||[];
+  const text=(document.getElementById('gedit-text-'+i)||{}).value||goals[i].text;
+  const target=+(document.getElementById('gedit-target-'+i)||{}).value||goals[i].target;
+  const unit=(document.getElementById('gedit-unit-'+i)||{}).value||goals[i].unit;
+  const progress=+(document.getElementById('gedit-progress-'+i)||{}).value||0;
+  goals[i]={...goals[i],text,target,unit,progress};
+  saveData({...data,fitnessGoals:goals});goalEditIdx=null;renderContent();
+};
+window.deleteGoal=i=>{
+  if(!confirm('Delete this goal?'))return;
+  const data=loadData();const goals=data.fitnessGoals||[];
+  goals.splice(i,1);saveData({...data,fitnessGoals:goals});goalEditIdx=null;renderContent();
 };
 window.addGoal=()=>{
   const input=document.getElementById("new-goal-input");const val=input?input.value.trim():"";if(!val)return;
