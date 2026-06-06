@@ -178,29 +178,53 @@ const DAILY_QUOTES=[
 function getDailyQuote(){const day=Math.floor(Date.now()/86400000);return DAILY_QUOTES[day%DAILY_QUOTES.length];}
 
 const RED_ALERTS=[
-  {trigger:"Home alone",responses:["Call someone right now — don't wait","Go to the gym immediately","Leave the house — coffee shop, anywhere","Work in the garage with the door open","Urge surf: sit with it, name where you feel it in your body, breathe — urges pass in 20-30 min","Text your sponsor your location and urge level","Put every screen in a different room","Plan your next hour in detail — idle time feeds the urge"]},
-  {trigger:"Wife asleep",responses:["Phone goes in the kitchen — not the bedroom","Read recovery material until tired","Do pushups or situps to physical exhaustion","Wake Sabrina and tell her you're struggling — honesty is the shield","Urge surf: close eyes, locate the feeling, breathe into it, watch it rise and fall","Repeat your commitment statement out loud 3 times","Write in journal until the urge loses power","Call sponsor's voicemail even if they don't pick up — saying it out loud breaks the secrecy"]},
-  {trigger:"Argument with Sabrina",responses:["Take a walk before touching any screen","Call sponsor before you process it alone","Write down what you actually FEEL — not what happened","Give it 30 minutes before returning to the conversation","Name the emotion: hurt? Rejection? Disrespect? Fear?","Do not use the argument as justification — it never is","Pray specifically about the conflict","Arguments are a middle-circle trigger — execute your plan automatically"]},
-  {trigger:"Feeling rejected sexually",responses:["Name the feeling out loud — rejection, not emergency","Journal it — don't act on it","Call a trusted friend or sponsor","Pray or meditate on it","Your worth is not tied to sexual availability","This feeling is the trigger, not the truth — write what's actually true","Heavy physical exercise — redirect the energy","Talk to Sabrina about how you feel, not what you want"]},
-  {trigger:"Late at night",responses:["Phone goes to charger in another room — non-negotiable","10-minute breathing or prayer before sleep","Wake Sabrina if the urge is at a 7 or higher","Cold shower — resets the nervous system fast","Urge surf: lie still, locate the urge, breathe through it, it will pass","Read recovery literature instead of screens","If you can't sleep, go to another room and journal — don't stay in bed with phone"]},
-  {trigger:"Long drives",responses:["Recovery podcast or audiobook on before you start — no silence","Call someone during the drive — sponsor, friend, family","No social media at stops — leave phone in the car","Plan check-in calls at specific milestones","Keep podcast loud enough that your mind can't wander","Pray out loud during the drive"]},
-  {trigger:"Anxiety",responses:["Name the anxiety — write exactly what you're afraid of","4-7-8 breathing: inhale 4, hold 7, exhale 8 — do 4 rounds","Call sponsor before the anxiety builds momentum","Cold shower or cold plunge — physiologically resets anxiety fast","Walk outside immediately — movement metabolizes anxiety hormones","Urge surf: anxiety and urge often feel the same — observe it, don't feed it","Box breathing: 4 in, hold 4, out 4, hold 4 — repeat 5 times","Write down every anxious thought — getting it out reduces its power"]},
-  {trigger:"Stress",responses:["Rate it 1-10 out loud — naming it reduces its power","Leave the environment for 10 minutes before any decisions","Heavy exercise — stress hormones need physical discharge","Call someone — don't sit with it alone","Write down specifically what's stressing you — vague stress is more dangerous","Breathe: stress compresses breathing, slow it down on purpose","Tell Sabrina your stress level — secrecy and stress together are high risk"]},
-  {trigger:"Social media",responses:["Delete the app — right now, not later","Put phone face down and walk to a different room","Replace with a recovery podcast immediately","Call someone instead of scrolling","Set screen time limits in iPhone Settings","Recognize scrolling as numbing — ask what you're numbing","Log the urge in this app before you do anything else"]},
-  {trigger:"TV / Mindless watching",responses:["Turn it off — don't negotiate with yourself","Switch to a recovery podcast or audiobook","Go do something physical immediately","Text your sponsor what you were watching and how you felt","Recognize TV as a numbing tool — ask what you're avoiding","Replace with 20 minutes of reading recovery material"]},
-  {trigger:"Mindless scrolling",responses:["Put the phone down and walk away from it","Delete the app if it keeps happening — you've given it enough chances","Replace with a recovery podcast","Call someone — scrolling is isolation with a screen","Ask: what am I looking for right now? Name it honestly","Use iPhone Screen Time to lock yourself out after 10 minutes"]},
-  {trigger:"Loneliness",responses:["Call — don't text. Voice connection is different","Go somewhere public — coffee shop, gym","Reach out to an SAA or SLAA member specifically","Tell Sabrina how you're feeling","Loneliness is one of the highest-risk states — treat it like a 7/10 urge","Attend a meeting today, even online","Do something for someone else — service breaks loneliness faster than anything","Isolation is where the addiction lives — don't give it the room"]},
-  {trigger:"Isolation",responses:["Leave the house immediately — non-negotiable","Call sponsor","Go to a meeting today","Do not be alone with your phone","Isolation is not peace — it's the addiction's home court","Text three people right now just to make contact","Change your physical environment in the next 5 minutes"]},
-  {trigger:"Shame",responses:["Name it out loud — shame grows in silence and dies in the light","Call sponsor immediately — do not process shame alone","Do not isolate with this feeling","Read your Recovery Board","Shame says you ARE bad — the truth is you DID something bad. You are not your addiction","Write down the shame and then write the truth next to it","Tell one safe person exactly what you're feeling","Shame is the biggest relapse driver — treat it like a 9/10 urge","Pray: ask for relief from shame, not escape from it"]},
-  {trigger:"Guilt",responses:["Write down specifically what you feel guilty about","Call sponsor or accountability partner","Make amends if possible — action beats rumination every time","Pray or meditate on it","Talk to Sabrina if appropriate","Guilt is useful only if it changes today's behavior","Ask: is there an amend I'm avoiding? Make it.","Write what you would tell a friend in this situation — then apply it to yourself"]},
-  {trigger:"Compulsive shopping / spending",responses:["Close every browser tab and shopping app now","Call sponsor before any non-essential purchase","Write down what you're actually feeling — spending is numbing","Wait 24 hours on any purchase over $50","Tell Sabrina — no financial secrets, ever","Ask: what need am I trying to meet with this purchase?","Put your credit card in a different room or give it to Sabrina temporarily"]},
-  {trigger:"Compulsive behaviors",responses:["Name the behavior and the feeling driving it","Call sponsor immediately","Leave the environment","Replace with a physical release right now","Log it in this app — awareness is the first intervention","Ask: what is this behavior doing for me? What need is it meeting?","Call someone and say out loud what you almost did"]},
   {trigger:"Alcohol",responses:["Do not take the first drink — that is the only one that matters","Call sponsor or AA contact immediately","Leave the environment entirely","Call Sabrina","Go to a meeting today","Alcohol lowers every defense you have — it is a direct path to acting out","Call SAMHSA: 1-800-522-4700 if it's critical","Alcohol is not a separate problem — it feeds the same addiction"]},
+  {trigger:"Anxiety",responses:["Name the anxiety — write exactly what you're afraid of","4-7-8 breathing: inhale 4, hold 7, exhale 8 — do 4 rounds","Call sponsor before the anxiety builds momentum","Cold shower or cold plunge — physiologically resets anxiety fast","Walk outside immediately — movement metabolizes anxiety hormones","Urge surf: anxiety and urge often feel the same — observe it, don't feed it","Box breathing: 4 in, hold 4, out 4, hold 4 — repeat 5 times","Write down every anxious thought — getting it out reduces its power"]},
+  {trigger:"Argument with Sabrina",responses:["Take a walk before touching any screen","Call sponsor before you process it alone","Write down what you actually FEEL — not what happened","Give it 30 minutes before returning to the conversation","Name the emotion: hurt? Rejection? Disrespect? Fear?","Do not use the argument as justification — it never is","Pray specifically about the conflict","Arguments are a middle-circle trigger — execute your plan automatically"]},
   {trigger:"Chemical / substance urge",responses:["Call sponsor before anything else","Remove yourself from the environment immediately","Call SAMHSA: 1-800-522-4700","Tell someone you trust right now — say the words out loud","Do not be alone with this","Substances and sexual compulsion feed each other — this is high alert","Go to an AA or NA meeting today in addition to SAA"]},
-  {trigger:"Overeating / not eating",responses:["Notice the emotion underneath — food is the symptom","Step away from the kitchen for 10 minutes","Drink a full glass of water and wait","Journal what you're actually feeling right now","Ask: am I hungry or am I feeling something I don't want to feel?","Log it — compulsive eating patterns often run parallel to other addictive patterns"]},
+  {trigger:"Compulsive behaviors",responses:["Name the behavior and the feeling driving it","Call sponsor immediately","Leave the environment","Replace with a physical release right now","Log it in this app — awareness is the first intervention","Ask: what is this behavior doing for me? What need is it meeting?","Call someone and say out loud what you almost did"]},
+  {trigger:"Compulsive shopping / spending",responses:["Close every browser tab and shopping app now","Call sponsor before any non-essential purchase","Write down what you're actually feeling — spending is numbing","Wait 24 hours on any purchase over $50","Tell Sabrina — no financial secrets, ever","Ask: what need am I trying to meet with this purchase?","Put your credit card in a different room or give it to Sabrina temporarily"]},
   {trigger:"Disconnected from marriage",responses:["Tell Sabrina you feel disconnected — use those exact words","Plan something intentional with her today, even small","Write 3 things you love about her right now","Ask her how she's really doing — and actually listen","Call sponsor if the disconnection is feeding urges","Disconnection is a warning sign, not a reason to act out","Make physical contact — hold her hand, sit next to her","What have you done in the last 48 hours to invest in this marriage?"]},
-  {trigger:"Low confidence",responses:["Name what specifically is making you feel low — vague bad feelings are more dangerous","Read your Recovery Board right now","Call sponsor or someone who knows the real you","Do not make any major decisions from this state","20 pushups or heavy exercise — confidence lives in the body first","Write 3 things you've done right this week, no matter how small","Low confidence is a trigger — the addiction will offer a false fix. Don't take it","Pray specifically about how you see yourself right now","Tell Sabrina how you're feeling — vulnerability builds real confidence"]}
-];
+  {trigger:"Feeling rejected sexually",responses:["Name the feeling out loud — rejection, not emergency","Journal it — don't act on it","Call a trusted friend or sponsor","Pray or meditate on it","Your worth is not tied to sexual availability","This feeling is the trigger, not the truth — write what's actually true","Heavy physical exercise — redirect the energy","Talk to Sabrina about how you feel, not what you want"]},
+  {trigger:"Guilt",responses:["Write down specifically what you feel guilty about","Call sponsor or accountability partner","Make amends if possible — action beats rumination every time","Pray or meditate on it","Talk to Sabrina if appropriate","Guilt is useful only if it changes today's behavior","Ask: is there an amend I'm avoiding? Make it.","Write what you would tell a friend in this situation — then apply it to yourself"]},
+  {trigger:"Home alone",responses:["Call someone right now — don't wait","Go to the gym immediately","Leave the house — coffee shop, anywhere","Work in the garage with the door open","Urge surf: sit with it, name where you feel it in your body, breathe — urges pass in 20-30 min","Text your sponsor your location and urge level","Put every screen in a different room","Plan your next hour in detail — idle time feeds the urge"]},
+  {trigger:"Isolation",responses:["Leave the house immediately — non-negotiable","Call sponsor","Go to a meeting today","Do not be alone with your phone","Isolation is not peace — it's the addiction's home court","Text three people right now just to make contact","Change your physical environment in the next 5 minutes"]},
+  {trigger:"Late at night",responses:["Phone goes to charger in another room — non-negotiable","10-minute breathing or prayer before sleep","Wake Sabrina if the urge is at a 7 or higher","Cold shower — resets the nervous system fast","Urge surf: lie still, locate the urge, breathe through it, it will pass","Read recovery literature instead of screens","If you can't sleep, go to another room and journal — don't stay in bed with phone"]},
+  {trigger:"Loneliness",responses:["Call — don't text. Voice connection is different","Go somewhere public — coffee shop, gym","Reach out to an SAA or SLAA member specifically","Tell Sabrina how you're feeling","Loneliness is one of the highest-risk states — treat it like a 7/10 urge","Attend a meeting today, even online","Do something for someone else — service breaks loneliness faster than anything","Isolation is where the addiction lives — don't give it the room"]},
+  {trigger:"Long drives",responses:["Recovery podcast or audiobook on before you start — no silence","Call someone during the drive — sponsor, friend, family","No social media at stops — leave phone in the car","Plan check-in calls at specific milestones","Keep podcast loud enough that your mind can't wander","Pray out loud during the drive"]},
+  {trigger:"Low confidence",responses:["Name what specifically is making you feel low — vague bad feelings are more dangerous","Read your Recovery Board right now","Call sponsor or someone who knows the real you","Do not make any major decisions from this state","20 pushups or heavy exercise — confidence lives in the body first","Write 3 things you've done right this week, no matter how small","Low confidence is a trigger — the addiction will offer a false fix. Don't take it","Pray specifically about how you see yourself right now","Tell Sabrina how you're feeling — vulnerability builds real confidence"]},
+  {trigger:"Mindless scrolling",responses:["Put the phone down and walk away from it","Delete the app if it keeps happening — you've given it enough chances","Replace with a recovery podcast","Call someone — scrolling is isolation with a screen","Ask: what am I looking for right now? Name it honestly","Use iPhone Screen Time to lock yourself out after 10 minutes"]},
+  {trigger:"Overeating / not eating",responses:["Notice the emotion underneath — food is the symptom","Step away from the kitchen for 10 minutes","Drink a full glass of water and wait","Journal what you're actually feeling right now","Ask: am I hungry or am I feeling something I don't want to feel?","Log it — compulsive eating patterns often run parallel to other addictive patterns"]},
+  {trigger:"Shame",responses:["Name it out loud — shame grows in silence and dies in the light","Call sponsor immediately — do not process shame alone","Do not isolate with this feeling","Read your Recovery Board","Shame says you ARE bad — the truth is you DID something bad. You are not your addiction","Write down the shame and then write the truth next to it","Tell one safe person exactly what you're feeling","Shame is the biggest relapse driver — treat it like a 9/10 urge","Pray: ask for relief from shame, not escape from it"]},
+  {trigger:"Self-harm urge (self or others)",responses:[
+    "Stop. Do not act. You are not your anger or your pain.",
+    "Leave the room or environment immediately — do not stay where you are",
+    "Call sponsor or crisis line right now: 988 (Suicide & Crisis Lifeline)",
+    "Call Sabrina and tell her what you're feeling — do not be alone with this",
+    "Physical release that doesn't harm: sprint outside, heavy lift, scream into a pillow",
+    "If the urge is toward someone else — leave the situation, do not return until calm",
+    "Cold shower immediately — it physiologically interrupts rage and panic",
+    "Pray or breathe — 10 slow deep breaths before any action",
+    "Destroying property is still self-harm — it feeds the cycle and creates more shame",
+    "If you've already hurt yourself or others: call 911 or go to urgent care",
+    "After the crisis: log it, tell your sponsor, and bring it to therapy — this needs attention"
+  ]},
+  {trigger:"Social media",responses:["Delete the app — right now, not later","Put phone face down and walk to a different room","Replace with a recovery podcast immediately","Call someone instead of scrolling","Set screen time limits in iPhone Settings","Recognize scrolling as numbing — ask what you're numbing","Log the urge in this app before you do anything else"]},
+  {trigger:"Stress",responses:["Rate it 1-10 out loud — naming it reduces its power","Leave the environment for 10 minutes before any decisions","Heavy exercise — stress hormones need physical discharge","Call someone — don't sit with it alone","Write down specifically what's stressing you — vague stress is more dangerous","Breathe: stress compresses breathing, slow it down on purpose","Tell Sabrina your stress level — secrecy and stress together are high risk"]},
+  {trigger:"TV / Mindless watching",responses:["Turn it off — don't negotiate with yourself","Switch to a recovery podcast or audiobook","Go do something physical immediately","Text your sponsor what you were watching and how you felt","Recognize TV as a numbing tool — ask what you're avoiding","Replace with 20 minutes of reading recovery material"]},
+  {trigger:"Visual triggers (seeing attractive people)",responses:[
+    "Name what you saw and the feeling it created — don't suppress it, identify it",
+    "This is a middle circle behavior if you're seeking it out — check your circles",
+    "Leave the environment or redirect your eyes immediately",
+    "Do not replay the image — replace it: call someone, put on a podcast, move",
+    "Log this check-in right now — urge level and trigger",
+    "Ask: was I seeking this out or was it unavoidable?",
+    "If unavoidable: breathe, redirect, move on. If sought: run your plan now.",
+    "Cold shower or heavy exercise to interrupt the dopamine loop",
+    "Tell Sabrina or sponsor if it led to further urges"
+  ]},
+  {trigger:"Wife asleep",responses:["Phone goes in the kitchen — not the bedroom","Read recovery material until tired","Do pushups or situps to physical exhaustion","Wake Sabrina and tell her you're struggling — honesty is the shield","Urge surf: close eyes, locate the feeling, breathe into it, watch it rise and fall","Repeat your commitment statement out loud 3 times","Write in journal until the urge loses power","Call sponsor's voicemail even if they don't pick up — saying it out loud breaks the secrecy"]}
+]
 
 const RELEASE_MENU={
   Physical:["20 pushups right now","Heavy lifting","30-min walk","Bike ride","Pushups to failure","Yard work","Cold shower","Cold plunge","Box breathing — 4 in, hold 4, out 4, hold 4","10-min jump rope","Heavy bag work","Sprint intervals"],
@@ -238,7 +262,10 @@ const TABS=[
   {icon:"&#x1F4D3;",label:"Journal"},
   {icon:"&#x2705;",label:"Habits"},
   {icon:"&#x1F4CA;",label:"Stats"},
-  {icon:"&#x25CE;",label:"Circles"}
+  {icon:"&#x25CE;",label:"Circles"},
+  {icon:"&#x2699;&#xFE0F;",label:"Settings"},
+  {icon:"&#x1F4D6;",label:"Steps"},
+  {icon:"&#x1F916;",label:"AI Coach"}
 ];
 
 const DEFAULT_HABITS=[
@@ -308,7 +335,13 @@ const MOODS=[
 
 function loadData(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{};}catch{return {};}}
 function saveData(d){localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
-function getTodayStr(){return new Date().toISOString().slice(0,10);}
+function getTodayStr(){
+  const now=new Date();
+  return toLocalDateStr(now);
+}
+function toLocalDateStr(d){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
 function urgeColor(v){return v<=3?"#22c55e":v<=6?"#f59e0b":"#ef4444";}
 function urgeStatus(v){return v<=3?"Manageable — stay aware":v<=6?"Moderate — run your plan":"High — execute immediately";}
 function streakDays(data){if(!data.soberStart)return 0;const start=new Date(data.soberStart+'T00:00:00');const today=new Date();const diff=new Date(today.getFullYear(),today.getMonth(),today.getDate())-new Date(start.getFullYear(),start.getMonth(),start.getDate());return Math.floor(diff/86400000);}
@@ -322,7 +355,15 @@ function renderNav(){
       <span class="nav-label" style="font-weight:${currentTab===i?700:400};color:${currentTab===i?"#aaa":"#555"}">${t.label}</span>
     </button>`).join("");
 }
-function switchTab(i){currentTab=i;expandedAlert=null;expandedRelease=null;alertSearch='';render();}
+function switchTab(i){
+  currentTab=i;expandedAlert=null;expandedRelease=null;alertSearch='';render();
+  // Auto-load AI content when switching to AI tab
+  const aiTabIdx=TABS.findIndex(t=>t.label==='AI Coach');
+  if(i===aiTabIdx){
+    if(aiSubTab===0&&!aiDailyInsight) loadDailyInsight();
+    if(aiSubTab===2&&!aiWeeklyReport) loadWeeklyReport();
+  }
+}
 
 
 // HOME DASHBOARD
@@ -333,7 +374,7 @@ function renderHome(){
   // This week stats
   const now=new Date();
   const startOfWeek=new Date(now);startOfWeek.setDate(now.getDate()-now.getDay());
-  const startOfWeekStr=startOfWeek.toISOString().slice(0,10);
+  const startOfWeekStr=toLocalDateStr(startOfWeek);
 
   const weekLogs=(data.urgeLogs||[]).filter(l=>new Date(l.date)>=startOfWeek);
   const avgUrge=weekLogs.length?(weekLogs.reduce((s,l)=>s+(+l.urge||0),0)/weekLogs.length).toFixed(1):"--";
@@ -404,6 +445,15 @@ function renderHome(){
           <span style="font-size:12px;font-weight:700;color:#22c55e;background:#0f2a1a;border:1px solid #166534;border-radius:10px;padding:2px 8px">${count}x</span>
         </div>`).join("")}
     </div>`:""}
+
+    <!-- Emergency button -->
+    <button onclick="showEmergency()" style="width:100%;padding:18px;background:#1a0000;border:2px solid #ef4444;border-radius:12px;color:#ef4444;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:14px;letter-spacing:.02em">
+      🚨 EMERGENCY — I Need Help Now
+    </button>
+
+    <!-- Gratitude + Sabrina lists -->
+    ${renderGratitudeList(loadData())}
+    ${renderSabrinaList(loadData())}
 
     <!-- Quick actions -->
     <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Quick Actions</div>
@@ -557,21 +607,65 @@ function renderBoard(){
     <div class="card board-lose">
       <div class="board-label" style="color:#ef4444">What I Lose If I Relapse</div>
       ${BOARD.lose.map(item=>`<div class="board-row"><span style="color:#ef4444;font-weight:700;margin-top:1px">&minus;</span><span style="font-size:15px;color:#ccc">${item}</span></div>`).join("")}
-    </div>`;
+    </div>
+
+    <!-- Date Night Planner -->
+    ${(()=>{
+      const data=loadData();
+      const dates=data.dateNights||[];
+      return `<div class="card" style="border-color:#60a5fa33">
+        <div style="font-size:11px;color:#60a5fa;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">Date Night Planner</div>
+        <div style="font-size:12px;color:#555;margin-bottom:12px">Intentional time with Sabrina. Plan it, protect it.</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <input type="text" id="date-night-input" placeholder="e.g. Dinner at Reforma, walk after..." style="flex:1" />
+          <button onclick="addDateNight()" style="background:#1a1a3a;border:1px solid #60a5fa;color:#60a5fa;border-radius:8px;padding:0 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">Add</button>
+        </div>
+        ${dates.slice().reverse().slice(0,5).map((d,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1a1a">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="color:#60a5fa">&#x1F4C5;</span>
+            <span style="font-size:14px;color:#ccc">${d.text}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:10px;color:#444">${d.date}</span>
+            <button onclick="deleteDateNight(${dates.length-1-i})" style="background:none;border:none;color:#333;font-size:16px;cursor:pointer;padding:0">&times;</button>
+          </div>
+        </div>`).join('')}
+        ${dates.length===0?`<div style="font-size:13px;color:#333;font-style:italic;text-align:center;padding:8px 0">No dates planned yet. Fix that.</div>`:''}
+      </div>`;
+    })()}`;
 }
 
 // MEETINGS
+function renderContactsCard(){
+  const d=loadData();
+  const contacts=(d.contacts||[]).filter(c=>c.phone);
+  if(!contacts.length) return '';
+  let html='<div class="card" style="margin-bottom:14px"><div class="section-label" style="margin-bottom:12px">Your Contacts</div>';
+  contacts.forEach((c,i)=>{
+    html+='<a href="tel:'+c.phone+'" style="display:flex;align-items:center;gap:12px;padding:10px 0;text-decoration:none;border-bottom:'+(i<contacts.length-1?'1px solid #1a1a1a':'none')+'">'
+      +'<span style="font-size:22px">&#x1F4DE;</span><div><div style="font-size:15px;font-weight:700;color:#e8e8e8">Call '+(c.name||c.role||'Contact')+'</div>'
+      +'<div style="font-size:12px;color:#555">'+(c.role?c.role+' &bull; ':'')+c.phone+'</div></div></a>';
+  });
+  html+='</div>';
+  return html;
+}
 function renderMeetings(){
   return `
     <div class="section-title"><h2>Find a Meeting</h2><p>You don't have to do this alone.</p></div>
-    ${MEETINGS.map(m=>`<a href="${m.url}" target="_blank" rel="noopener noreferrer" class="meeting-link">
+    <div class="fitness-sub-tabs" style="margin-bottom:16px">
+      <button class="fsub-btn${meetingsSubTab===0?' active':''}" onclick="meetingsSubTab=0;renderContent()">Find Meetings</button>
+      <button class="fsub-btn${meetingsSubTab===1?' active':''}" onclick="meetingsSubTab=1;renderContent()">Meeting Notes</button>
+    </div>
+    ${meetingsSubTab===1?renderMeetingNotes():''}
+    ${meetingsSubTab===0?renderContactsCard():''}
+    ${meetingsSubTab===0?MEETINGS.map(m=>`<a href="${m.url}" target="_blank" rel="noopener noreferrer" class="meeting-link">
       <div><div class="meeting-name">${m.name}</div><div class="meeting-type">${m.type}</div></div>
-      <span style="color:#444;font-size:20px">&rarr;</span></a>`).join("")}
+      <span style="color:#444;font-size:20px">&rarr;</span></a>`).join("")+`
     <div class="card" style="margin-top:8px">
       <div style="font-size:13px;font-weight:700;color:#f59e0b;margin-bottom:8px">Crisis Line</div>
       <a href="tel:18005224700" style="display:block;font-size:20px;font-weight:800;color:#e8e8e8;text-decoration:none">1-800-522-4700</a>
       <div style="font-size:12px;color:#555;margin-top:4px">SAMHSA — Free, confidential, 24/7</div>
-    </div>`;
+    </div>`:''}`;
 }
 
 // STREAK
@@ -638,31 +732,109 @@ window.logRelapse=()=>{
 
 // SPONSOR MODAL
 window.showSponsorModal=()=>{
-  const data=loadData();const days=streakDays(data);
-  const urgeLogs=(data.urgeLogs||[]).slice(-7).reverse();
+  const data=loadData();
+  const days=streakDays(data);
   const relapseCount=(data.relapseLogs||[]).length;
-  const avgUrge=urgeLogs.length?(urgeLogs.reduce((s,l)=>s+(+l.urge||0),0)/urgeLogs.length).toFixed(1):"--";
+  const sponsorName=data.sponsorName||(data.contacts&&data.contacts[0]&&data.contacts[0].name)||'Sponsor';
+
+  // Avg urge last 7 days
+  const urgeLogs7=(data.urgeLogs||[]).slice(-7);
+  const avgUrge=urgeLogs7.length?(urgeLogs7.reduce((s,l)=>s+(+l.urge||0),0)/urgeLogs7.length).toFixed(1):"--";
+
+  // Habit completion this week
+  const now=new Date();
+  const startOfWeek=new Date(now);startOfWeek.setDate(now.getDate()-now.getDay());
+  const weekDays2=[];for(let i=0;i<7;i++){const d=new Date(startOfWeek);d.setDate(startOfWeek.getDate()+i);weekDays2.push(toLocalDateStr(d));}
+  const totalHabits=[...DEFAULT_HABITS,...(data.customHabits||[])].length;
+  const habitTotal=totalHabits*7;
+  const habitDone=weekDays2.reduce((sum,d)=>sum+(data["habits_"+d]||[]).length,0);
+  const habitPct=habitTotal>0?Math.round((habitDone/habitTotal)*100):0;
+
+  // Meeting counts this week
+  const saaMeetingCount=weekDays2.reduce((sum,d)=>sum+(data["meeting_saaMeetingCount_"+d]||0),0);
+  const aaMeetingCount=weekDays2.reduce((sum,d)=>sum+(data["meeting_aaMeetingCount_"+d]||0),0);
+  const totalMeetings=saaMeetingCount+aaMeetingCount;
+
+  // Top release tool
   const topRelease=getTopRelease(data);
-  const smsText=`Recovery Update\nStreak: ${days} days\nAvg urge (7d): ${avgUrge}/10\nCheck-ins: ${(data.urgeLogs||[]).length}\nRelapses: ${relapseCount}${topRelease?"\nTop tool: "+topRelease:""}\n\nRecent:\n${urgeLogs.slice(0,5).map(l=>`${l.date} - ${l.urge}/10${l.situation?" | "+l.situation:""}`).join("\n")}`;
+
+  // Three circles set up?
+  const circlesSet=!!(data.threeCircles&&(data.threeCircles.inner||data.threeCircles.middle));
+  const wb=data.stepWorkbook||{};
+  const currentStepNum=([1,2,3,4,5,6,7,8,9,10,11,12].find(n=>(wb['step_'+n]||{}).status==='Working It'))||null;
+
+  const lines=[
+    "Recovery Update — Stay the Course",
+    "─────────────────────────────",
+    "Streak: "+days+" day"+(days!==1?"s":"")+" clean",
+    "Avg urge (7 days): "+avgUrge+"/10",
+    "Relapses logged: "+relapseCount,
+    "Habit completion this week: "+habitPct+"%",
+    "Meetings this week: "+totalMeetings+" (SAA: "+saaMeetingCount+", AA: "+aaMeetingCount+")",
+    topRelease?"Most used tool: "+topRelease:"",
+    "Step currently working: "+(currentStepNum?"Step "+currentStepNum:"Not started"),
+    "",
+    "Sent from Stay the Course app"
+  ].filter(l=>l!==undefined);
+  const smsText=lines.join("\n");
+
   document.getElementById("modal-overlay").style.display="flex";
   document.getElementById("modal-overlay").innerHTML=`<div class="modal-sheet">
-    <div style="font-size:18px;font-weight:800;margin-bottom:6px">Sponsor Summary</div>
-    <div style="font-size:13px;color:#555;margin-bottom:20px">A snapshot of where you're at.</div>
+    <div style="font-size:18px;font-weight:800;margin-bottom:4px">Summary for ${sponsorName}</div>
+    <div style="font-size:13px;color:#555;margin-bottom:20px">6 data points. Everything needed to ask the right questions.</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-      ${[["Streak",days,"days","#f59e0b"],["Avg Urge",avgUrge,"/ 10",urgeColor(+avgUrge||5)],["Check-ins",(data.urgeLogs||[]).length,"total","#60a5fa"],["Relapses",relapseCount,"logged",relapseCount>0?"#ef4444":"#22c55e"]].map(([t,v,l,c])=>`<div class="sponsor-block">
-        <div class="sponsor-block-title">${t}</div>
-        <div class="sponsor-stat" style="color:${c}">${v}</div>
-        <div class="sponsor-stat-label">${l}</div>
-      </div>`).join("")}
+      <div class="sponsor-block">
+        <div class="sponsor-block-title">Streak</div>
+        <div class="sponsor-stat" style="color:#f59e0b">${days}</div>
+        <div class="sponsor-stat-label">days clean</div>
+      </div>
+      <div class="sponsor-block">
+        <div class="sponsor-block-title">Avg Urge (7d)</div>
+        <div class="sponsor-stat" style="color:${avgUrge!=="--"?urgeColor(+avgUrge):"#555"}">${avgUrge}</div>
+        <div class="sponsor-stat-label">out of 10</div>
+      </div>
+      <div class="sponsor-block">
+        <div class="sponsor-block-title">Relapses</div>
+        <div class="sponsor-stat" style="color:${relapseCount>0?"#ef4444":"#22c55e"}">${relapseCount}</div>
+        <div class="sponsor-stat-label">logged</div>
+      </div>
+      <div class="sponsor-block">
+        <div class="sponsor-block-title">Habits This Week</div>
+        <div class="sponsor-stat" style="color:${habitPct>=80?"#22c55e":habitPct>=50?"#f59e0b":"#ef4444"}">${habitPct}%</div>
+        <div class="sponsor-stat-label">completion</div>
+      </div>
+      <div class="sponsor-block">
+        <div class="sponsor-block-title">Meetings This Week</div>
+        <div class="sponsor-stat" style="color:${totalMeetings>0?"#22c55e":"#ef4444"}">${totalMeetings}</div>
+        <div class="sponsor-stat-label">SAA: ${saaMeetingCount} &bull; AA: ${aaMeetingCount}</div>
+      </div>
+      <div class="sponsor-block">
+        <div class="sponsor-block-title">Top Tool</div>
+        <div style="font-size:12px;font-weight:700;color:#e8e8e8;margin-top:6px;line-height:1.3">${topRelease||"None logged"}</div>
+        <div class="sponsor-stat-label">this period</div>
+      </div>
     </div>
-    ${topRelease?`<div class="sponsor-block" style="margin-bottom:14px"><div class="sponsor-block-title">Most Used Tool</div><div style="font-size:15px;font-weight:700;color:#e8e8e8;margin-top:4px">${topRelease}</div></div>`:""}
-    <a href="sms:?&body=${encodeURIComponent(smsText)}" style="text-decoration:none"><button class="btn-copy">Send as Text Message</button></a>
-    <button class="btn-copy" onclick="copyToClipboard('${smsText.replace(/'/g,"\\'")}')">Copy to Clipboard</button>
+    ${currentStepNum?`<div style="background:#1a2a1a;border:1px solid #22c55e33;border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px;color:#22c55e">Currently working: Step ${currentStepNum}</div>`:``}
+    ${!circlesSet?`<div style="background:#1a1200;border:1px solid #f59e0b33;border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px;color:#f59e0b">Three Circles not set up yet.</div>`:""}
+    <a href="sms:?&body=${encodeURIComponent(smsText)}" style="text-decoration:none;display:block;margin-bottom:8px"><button class="btn-copy" style="margin:0">Send as Text</button></a>
+    <button class="btn-copy" onclick="sendToAllContacts(smsText)" style="margin-bottom:8px">Send to All Contacts</button>
+    <button class="btn-copy" onclick="copyToClipboard(smsText)" style="margin-bottom:8px">Copy to Clipboard</button>
     <button class="btn-close" onclick="closeModal()">Close</button>
   </div>`;
-};
+}
 function getTopRelease(data){const logs=data.releaseLogs||[];if(!logs.length)return null;const c={};logs.forEach(l=>{c[l.item]=(c[l.item]||0)+1;});return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;}
-window.copyToClipboard=(text)=>{if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>alert("Copied!"));}};
+window.copyToClipboard=(text)=>{if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>alert("Copied!"));}else{const el=document.createElement('textarea');el.value=text;document.body&&document.body.appendChild(el);el.select();try{document.execCommand('copy');alert("Copied!");}catch(e){}document.body&&document.body.removeChild(el);}};
+
+window.sendToAllContacts=(text)=>{
+  const contacts=(loadData().contacts||[]).filter(c=>c.phone);
+  if(!contacts.length){alert("No contacts saved. Add them in Settings.");return;}
+  // Open SMS for each contact sequentially  
+  contacts.forEach((c,i)=>{
+    setTimeout(()=>{
+      window.location.href='sms:'+c.phone+'?&body='+encodeURIComponent(text);
+    },i*500);
+  });
+};
 window.closeModal=()=>{document.getElementById("modal-overlay").style.display="none";};
 
 // FITNESS
@@ -1274,14 +1446,17 @@ function renderHabits(){
   const allHabits=[...DEFAULT_HABITS,...customHabits];
   const completedToday=todayDone.length;const totalHabits=allHabits.length;
   const pct=totalHabits?Math.round((completedToday/totalHabits)*100):0;
-  const last7=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last7.push(d.toISOString().slice(0,10));}
+  const last7=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last7.push(toLocalDateStr(d));}
   const now=new Date();
   const monthDate=new Date(now.getFullYear(),now.getMonth()+habitMonthOffset,1);
   const monthYear=monthDate.toLocaleDateString("en-US",{month:"long",year:"numeric"});
   const daysInMonth=new Date(monthDate.getFullYear(),monthDate.getMonth()+1,0).getDate();
   const firstDayOfWeek=new Date(monthDate.getFullYear(),monthDate.getMonth(),1).getDay();
   const monthDays=[];
-  for(let d=1;d<=daysInMonth;d++){const dt=new Date(monthDate.getFullYear(),monthDate.getMonth(),d);monthDays.push(dt.toISOString().slice(0,10));}
+  for(let d=1;d<=daysInMonth;d++){
+    const dt=new Date(monthDate.getFullYear(),monthDate.getMonth(),d);
+    monthDays.push(dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'));
+  }
   return `
     <div class="section-title"><h2>Daily Habits</h2><p>Small things done consistently change everything.</p></div>
     <div class="card" style="margin-bottom:14px">
@@ -1297,11 +1472,29 @@ function renderHabits(){
     <!-- Date picker for logging past days -->
     <div class="card" style="margin-bottom:14px;padding:14px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-        <div>
+        <div style="flex:1">
           <div style="font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Logging date</div>
           <input type="date" id="habit-date-picker" value="${activeDate}" max="${getTodayStr()}" onchange="setHabitDate(this.value)" style="background:#0d0d0d;border:1px solid #2a2a2a;border-radius:8px;color:#e8e8e8;font-size:14px;padding:8px 12px;font-family:inherit;width:100%" />
         </div>
         ${activeDate!==getTodayStr()?`<button onclick="setHabitDate(null)" style="background:#1a1a1a;border:1px solid #333;border-radius:8px;color:#aaa;font-size:12px;padding:8px 12px;cursor:pointer;font-family:inherit;white-space:nowrap">Back to Today</button>`:""}
+      </div>
+    </div>
+
+    <!-- Meeting counter -->
+    <div class="card" style="margin-bottom:14px;padding:16px">
+      <div style="font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">Meetings Today</div>
+      <div style="display:flex;gap:10px">
+        ${[{key:'saaMeetingCount',label:'SAA',color:'#22c55e'},{key:'aaMeetingCount',label:'AA',color:'#60a5fa'}].map(m=>{
+          const count=(data['meeting_'+m.key+'_'+activeDate]||0);
+          return `<div style="flex:1;background:#0d0d0d;border:1px solid #2a2a2a;border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">${m.label}</div>
+            <div style="font-size:28px;font-weight:800;color:${count>0?m.color:'#333'};margin-bottom:8px">${count}</div>
+            <div style="display:flex;gap:6px;justify-content:center">
+              <button onclick="adjustMeeting('${m.key}','${activeDate}',-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid #333;background:#1a1a1a;color:#555;font-size:18px;cursor:pointer;font-family:inherit">-</button>
+              <button onclick="adjustMeeting('${m.key}','${activeDate}',1)" style="width:32px;height:32px;border-radius:8px;border:1px solid ${m.color};background:${m.color}22;color:${m.color};font-size:18px;cursor:pointer;font-family:inherit">+</button>
+            </div>
+          </div>`;
+        }).join('')}
       </div>
     </div>
 
@@ -1389,6 +1582,21 @@ window.toggleHabit=id=>{
   if(idx>-1)done.splice(idx,1);else done.push(id);
   saveData({...data,[todayKey]:done});renderContent();
 };
+window.adjustMeeting=(key,date,delta)=>{
+  const data=loadData();
+  const storageKey='meeting_'+key+'_'+date;
+  const current=data[storageKey]||0;
+  const newVal=Math.max(0,current+delta);
+  // Also update the habit checkbox for SAA/AA meeting
+  const habitId=key==='saaMeetingCount'?'saaMeeting':'aaMeeting';
+  const habitKey='habits_'+date;
+  const done=data[habitKey]||[];
+  if(newVal>0&&!done.includes(habitId)){done.push(habitId);}
+  else if(newVal===0){const idx=done.indexOf(habitId);if(idx>-1)done.splice(idx,1);}
+  saveData({...data,[storageKey]:newVal,[habitKey]:done});
+  renderContent();
+};
+
 window.setHabitDate=date=>{
   habitSelectedDate=date||null;
   renderContent();
@@ -1402,7 +1610,7 @@ window.addCustomHabit=()=>{
 };
 
 // RENDER
-const renderers=[renderHome,renderShield,renderCheckIn,renderRelease,renderBoard,renderMeetings,renderStreak,renderFitness,renderJournal,renderHabits,renderStats,renderCircles];
+const renderers=[renderHome,renderShield,renderCheckIn,renderRelease,renderBoard,renderMeetings,renderStreak,renderFitness,renderJournal,renderHabits,renderStats,renderCircles,renderSettings,renderSteps,renderAICoach];
 function renderContent(){document.getElementById("content").innerHTML=renderers[currentTab]();}
 function render(){renderContent();renderNav();}
 
@@ -1430,12 +1638,12 @@ function renderStats(){
 
   // Last 30 days for urge trend
   const days30=[];
-  for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days30.push(d.toISOString().slice(0,10));}
+  for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days30.push(toLocalDateStr(d));}
 
   // Group urge logs by day - average per day
   const urgeByDay={};
   urgeLogs.forEach(l=>{
-    const d=new Date(l.date).toISOString().slice(0,10);
+    const d=toLocalDateStr(new Date(l.date));
     if(!urgeByDay[d])urgeByDay[d]=[];
     urgeByDay[d].push(+l.urge||0);
   });
@@ -1450,7 +1658,7 @@ function renderStats(){
   for(let w=7;w>=0;w--){
     const weekStart=new Date();weekStart.setDate(weekStart.getDate()-weekStart.getDay()-w*7);
     const weekDays=[];
-    for(let d=0;d<7;d++){const dd=new Date(weekStart);dd.setDate(weekStart.getDate()+d);weekDays.push(dd.toISOString().slice(0,10));}
+    for(let d=0;d<7;d++){const dd=new Date(weekStart);dd.setDate(weekStart.getDate()+d);weekDays.push(toLocalDateStr(dd));}
     const totalHabits=[...DEFAULT_HABITS,...(data.customHabits||[])].length;
     const completed=weekDays.reduce((sum,d)=>{return sum+(data["habits_"+d]||[]).length;},0);
     const possible=totalHabits*7;
@@ -1693,134 +1901,1044 @@ window.updateSoberDate = function() {
 // THREE CIRCLES
 let circlesEditMode = false;
 
-function renderCircles(){
+
+
+
+// ═══════════════════════════════════════
+// ── EMERGENCY BUTTON (Home Screen) ──
+// ═══════════════════════════════════════
+window.showEmergency = () => {
   const data = loadData();
-  const circles = data.threeCircles || {
-    inner: "",
-    middle: "",
-    outer: ""
-  };
+  const sponsorPhone = data.sponsorPhone || '';
+  const overlay = document.getElementById('modal-overlay');
+  overlay.style.display = 'flex';
+  const cs=(loadData().commitmentStatement||'').trim();
+  overlay.innerHTML = `<div style="width:100%;max-width:480px;background:#1a0000;border-top:3px solid #ef4444;border-radius:20px 20px 0 0;padding:24px 20px 40px;max-height:90vh;overflow-y:auto">
+    <div style="font-size:22px;font-weight:800;color:#ef4444;margin-bottom:4px">STOP.</div>
+    <div style="font-size:14px;color:#888;margin-bottom:${cs?'12px':'24px'}">Execute these steps right now. No negotiating.</div>
+    ${cs?`<div style="background:#111;border-left:3px solid #ef4444;border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:20px;font-size:13px;color:#ccc;font-style:italic;line-height:1.5">${cs}</div>`:''}
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px">
+      ${sponsorPhone?`<a href="tel:${sponsorPhone}" style="display:flex;align-items:center;gap:14px;background:#111;border:1px solid #ef4444;border-radius:12px;padding:16px;text-decoration:none">
+        <span style="font-size:28px">📞</span>
+        <div><div style="font-size:16px;font-weight:700;color:#e8e8e8">Call Sponsor</div><div style="font-size:12px;color:#555">${sponsorPhone}</div></div>
+      </a>`:''}
+      <div onclick="switchTab(3);closeModal()" style="display:flex;align-items:center;gap:14px;background:#111;border:1px solid #333;border-radius:12px;padding:16px;cursor:pointer">
+        <span style="font-size:28px">⚡</span>
+        <div><div style="font-size:16px;font-weight:700;color:#e8e8e8">Use a Release Tool</div><div style="font-size:12px;color:#555">Physical, mental, or social</div></div>
+      </div>
+      <div onclick="switchTab(1);closeModal()" style="display:flex;align-items:center;gap:14px;background:#111;border:1px solid #333;border-radius:12px;padding:16px;cursor:pointer">
+        <span style="font-size:28px">🚨</span>
+        <div><div style="font-size:16px;font-weight:700;color:#e8e8e8">Check Red Alert Plan</div><div style="font-size:12px;color:#555">Find your trigger. Run your plan.</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;background:#111;border:1px solid #333;border-radius:12px;padding:16px">
+        <span style="font-size:28px">🏃</span>
+        <div><div style="font-size:16px;font-weight:700;color:#e8e8e8">Leave. Right now.</div><div style="font-size:12px;color:#555">Change your environment immediately.</div></div>
+      </div>
+      <a href="tel:18005224700" style="display:flex;align-items:center;gap:14px;background:#111;border:1px solid #333;border-radius:12px;padding:16px;text-decoration:none">
+        <span style="font-size:28px">🆘</span>
+        <div><div style="font-size:16px;font-weight:700;color:#e8e8e8">SAMHSA Crisis Line</div><div style="font-size:12px;color:#555">1-800-522-4700 · Free · 24/7</div></div>
+      </a>
+    </div>
+    <button onclick="closeModal()" style="width:100%;padding:14px;background:transparent;border:1px solid #2a2a2a;color:#555;border-radius:10px;cursor:pointer;font-family:inherit;font-size:14px">I'm OK — Close</button>
+  </div>`;
+};
 
-  if(circlesEditMode){
-    return `
-      <div class="section-title"><h2>&#x25CE; Three Circles</h2><p>SAA recovery tool. Define your boundaries.</p></div>
-      <div class="card" style="border-color:#ef4444">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-          <div style="width:14px;height:14px;border-radius:50%;background:#ef4444;flex-shrink:0"></div>
-          <div style="font-size:15px;font-weight:700;color:#ef4444">Inner Circle</div>
-        </div>
-        <div style="font-size:12px;color:#555;margin-bottom:10px">Bottom lines — behaviors you are committing to stop completely.</div>
-        <textarea id="inner-input" rows="5" placeholder="List each behavior on a new line...">${circles.inner}</textarea>
-      </div>
-      <div class="card" style="border-color:#f59e0b">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-          <div style="width:14px;height:14px;border-radius:50%;background:#f59e0b;flex-shrink:0"></div>
-          <div style="font-size:15px;font-weight:700;color:#f59e0b">Middle Circle</div>
-        </div>
-        <div style="font-size:12px;color:#555;margin-bottom:10px">Warning behaviors — things that lead to the inner circle. Slippery slope.</div>
-        <textarea id="middle-input" rows="5" placeholder="List each warning behavior on a new line...">${circles.middle}</textarea>
-      </div>
-      <div class="card" style="border-color:#22c55e">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-          <div style="width:14px;height:14px;border-radius:50%;background:#22c55e;flex-shrink:0"></div>
-          <div style="font-size:15px;font-weight:700;color:#22c55e">Outer Circle</div>
-        </div>
-        <div style="font-size:12px;color:#555;margin-bottom:10px">Healthy behaviors — what your recovery life looks like. Who you are becoming.</div>
-        <textarea id="outer-input" rows="5" placeholder="List each healthy behavior on a new line...">${circles.outer}</textarea>
-      </div>
-      <button class="btn-primary" onclick="saveCircles()" style="margin-bottom:10px">Save My Circles</button>
-      <button onclick="circlesEditMode=false;renderContent()" style="width:100%;padding:12px;background:transparent;border:1px solid #2a2a2a;color:#555;border-radius:10px;cursor:pointer;font-family:inherit;font-size:14px">Cancel</button>
-    `;
-  }
+// ═══════════════════════════════════════
+// ── SETTINGS ──
+// ═══════════════════════════════════════
+let settingsSaved = false;
 
-  const hasData = circles.inner || circles.middle || circles.outer;
+function renderSettings() {
+  const data = loadData();
+  const affirmations = data.affirmations || ['', '', ''];
 
   return `
-    <div class="section-title"><h2>&#x25CE; Three Circles</h2><p>Your personal SAA recovery boundary map.</p></div>
+    <div class="section-title"><h2>&#x2699;&#xFE0F; Settings</h2><p>Contacts, affirmations, and data.</p></div>
 
-    ${!hasData ? `
-      <div class="card" style="text-align:center;padding:30px 20px">
-        <div style="font-size:48px;margin-bottom:12px">&#x25CE;</div>
-        <div style="font-size:15px;font-weight:700;color:#e8e8e8;margin-bottom:8px">Define Your Three Circles</div>
-        <div style="font-size:13px;color:#555;margin-bottom:20px;line-height:1.6">The Three Circles tool helps you identify your bottom lines, warning behaviors, and healthy recovery behaviors.</div>
-        <button class="btn-primary" onclick="circlesEditMode=true;renderContent()">Set Up My Circles</button>
-      </div>
-      <div class="card">
-        <div style="font-size:13px;font-weight:700;color:#e8e8e8;margin-bottom:12px">How It Works</div>
-        <div style="display:flex;gap:10px;margin-bottom:12px;align-items:flex-start">
-          <div style="width:12px;height:12px;border-radius:50%;background:#ef4444;flex-shrink:0;margin-top:3px"></div>
-          <div><div style="font-size:13px;font-weight:600;color:#ef4444;margin-bottom:2px">Inner Circle</div><div style="font-size:12px;color:#555">Behaviors you are committing to stop completely. Your bottom lines.</div></div>
-        </div>
-        <div style="display:flex;gap:10px;margin-bottom:12px;align-items:flex-start">
-          <div style="width:12px;height:12px;border-radius:50%;background:#f59e0b;flex-shrink:0;margin-top:3px"></div>
-          <div><div style="font-size:13px;font-weight:600;color:#f59e0b;margin-bottom:2px">Middle Circle</div><div style="font-size:12px;color:#555">Warning behaviors that lead toward the inner circle. The slippery slope.</div></div>
-        </div>
-        <div style="display:flex;gap:10px;align-items:flex-start">
-          <div style="width:12px;height:12px;border-radius:50%;background:#22c55e;flex-shrink:0;margin-top:3px"></div>
-          <div><div style="font-size:13px;font-weight:600;color:#22c55e;margin-bottom:2px">Outer Circle</div><div style="font-size:12px;color:#555">Healthy behaviors that define your recovery life. Who you are becoming.</div></div>
-        </div>
-      </div>
-    ` : `
-      <!-- Inner Circle -->
-      <div class="card" style="border-color:#ef444433">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:12px;height:12px;border-radius:50%;background:#ef4444;flex-shrink:0"></div>
-            <div style="font-size:15px;font-weight:700;color:#ef4444">Inner Circle</div>
-          </div>
-          <button onclick="circlesEditMode=true;renderContent()" style="background:#1a1a1a;border:1px solid #2a2a2a;color:#555;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit">Edit</button>
-        </div>
-        ${circles.inner ? circles.inner.split('\n').filter(l=>l.trim()).map(l=>`
-          <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a1a;align-items:flex-start">
-            <span style="color:#ef4444;font-weight:700;flex-shrink:0">&#x2022;</span>
-            <span style="font-size:14px;color:#ccc">${l.trim()}</span>
-          </div>`).join('') : `<div style="font-size:13px;color:#333;font-style:italic">Not set yet.</div>`}
-      </div>
+    <!-- Contacts -->
+    <div class="card">
+      <div class="section-label" style="margin-bottom:14px">Contacts</div>
+      <div style="font-size:12px;color:#555;margin-bottom:16px">These people receive your accountability summary. Tap a name to call.</div>
+      ${(()=>{
+        const contacts=loadData().contacts||[{name:'',phone:'',role:'Sponsor'},{name:'',phone:'',role:'Wife'},{name:'',phone:'',role:'Therapist'}];
+        return contacts.map((c,i)=>`
+          <div style="border-bottom:1px solid #1a1a1a;padding-bottom:14px;margin-bottom:14px">
+            <div style="display:flex;gap:8px;margin-bottom:8px">
+              <div style="flex:1">
+                <label class="field-label">Name</label>
+                <input type="text" id="contact-name-${i}" placeholder="Name" value="${c.name||''}" style="margin-bottom:0" />
+              </div>
+              <div style="flex:1">
+                <label class="field-label">Role</label>
+                <input type="text" id="contact-role-${i}" placeholder="e.g. Sponsor" value="${c.role||''}" style="margin-bottom:0" />
+              </div>
+            </div>
+            <label class="field-label">Phone</label>
+            <input type="tel" id="contact-phone-${i}" placeholder="520-555-0100" value="${c.phone||''}" style="margin-bottom:8px" />
+            ${c.phone?`<a href="tel:${c.phone}" style="display:block;text-align:center;background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:8px;padding:10px;text-decoration:none;font-weight:700;font-size:13px">📞 Call ${c.name||c.role||'Contact'}</a>`:''}
+          </div>`).join('');
+      })()}
+      <button onclick="addContact()" style="width:100%;padding:10px;background:#111;border:1px dashed #2a2a2a;border-radius:9px;color:#555;font-size:13px;cursor:pointer;font-family:inherit">+ Add Another Contact</button>
+    </div>
 
-      <!-- Middle Circle -->
-      <div class="card" style="border-color:#f59e0b33">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:12px;height:12px;border-radius:50%;background:#f59e0b;flex-shrink:0"></div>
-            <div style="font-size:15px;font-weight:700;color:#f59e0b">Middle Circle</div>
-          </div>
-        </div>
-        ${circles.middle ? circles.middle.split('\n').filter(l=>l.trim()).map(l=>`
-          <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a1a;align-items:flex-start">
-            <span style="color:#f59e0b;font-weight:700;flex-shrink:0">&#x2022;</span>
-            <span style="font-size:14px;color:#ccc">${l.trim()}</span>
-          </div>`).join('') : `<div style="font-size:13px;color:#333;font-style:italic">Not set yet.</div>`}
-      </div>
+    <!-- Commitment Statement -->
+    <div class="card">
+      <div class="section-label" style="margin-bottom:10px">Commitment Statement</div>
+      <div style="font-size:12px;color:#555;margin-bottom:12px">Write this when you're strong. Read it when you're not. Shows on Home screen and Emergency button.</div>
+      <textarea id="commitment-statement" rows="4" placeholder="e.g. I am committed to sobriety because Sabrina and Lilliana deserve the real me. I choose integrity over a moment of relief. I am not my addiction...">${loadData().commitmentStatement||''}</textarea>
+    </div>
 
-      <!-- Outer Circle -->
-      <div class="card" style="border-color:#22c55e33">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:12px;height:12px;border-radius:50%;background:#22c55e;flex-shrink:0"></div>
-            <div style="font-size:15px;font-weight:700;color:#22c55e">Outer Circle</div>
+    <!-- Daily Affirmations -->
+    <div class="card">
+      <div class="section-label" style="margin-bottom:14px">Daily Affirmations</div>
+      <div style="font-size:12px;color:#555;margin-bottom:14px">These show on your Home screen every day.</div>
+      ${[0,1,2].map(i=>`
+        <div style="margin-bottom:12px">
+          <label class="field-label">Affirmation ${i+1}</label>
+          <input type="text" id="affirmation-${i}" placeholder="e.g. I am worthy of recovery" value="${affirmations[i]||''}" />
+        </div>`).join('')}
+    </div>
+
+    <button class="btn-primary${settingsSaved?' saved':''}" onclick="saveSettings()" style="margin-bottom:14px">${settingsSaved?'✓ Saved':'Save Settings'}</button>
+
+    <!-- Notifications -->
+    <div class="card">
+      <div class="section-label" style="margin-bottom:14px">Weekly Summary Reminder</div>
+      \${(()=>{
+        const d=loadData();
+        const enabled=d.notificationsEnabled||false;
+        const reminderDay=d.reminderDay!==undefined?d.reminderDay:1;
+        const reminderHour=d.reminderHour!==undefined?d.reminderHour:8;
+        const reminderMin=d.reminderMin!==undefined?d.reminderMin:0;
+        const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        const hourStr=reminderHour===0?'12':reminderHour>12?(reminderHour-12).toString():reminderHour.toString();
+        const ampm=reminderHour<12?'AM':'PM';
+        const minStr=reminderMin.toString().padStart(2,'0');
+        return \`
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <div>
+              <div style="font-size:14px;color:#e8e8e8;font-weight:600">Weekly Reminder</div>
+              <div style="font-size:12px;color:#555;margin-top:2px">\${days[reminderDay]} at \${hourStr}:\${minStr} \${ampm}</div>
+            </div>
+            <button onclick="toggleMondayReminder()" style="background:\${enabled?'#166534':'#1a1a1a'};border:1px solid \${enabled?'#22c55e':'#333'};color:\${enabled?'#22c55e':'#555'};border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">
+              \${enabled?'ON':'OFF'}
+            </button>
           </div>
-        </div>
-        ${circles.outer ? circles.outer.split('\n').filter(l=>l.trim()).map(l=>`
-          <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a1a;align-items:flex-start">
-            <span style="color:#22c55e;font-weight:700;flex-shrink:0">&#x2022;</span>
-            <span style="font-size:14px;color:#ccc">${l.trim()}</span>
-          </div>`).join('') : `<div style="font-size:13px;color:#333;font-style:italic">Not set yet.</div>`}
-      </div>
-    `}
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+            <div>
+              <label class="field-label">Day of week</label>
+              <select id="reminder-day" onchange="saveReminderTime()" style="margin-bottom:0">
+                \${days.map((day,i)=>\`<option value="\${i}"\${reminderDay===i?' selected':''}>\${day}</option>\`).join('')}
+              </select>
+            </div>
+            <div>
+              <label class="field-label">Time</label>
+              <select id="reminder-hour" onchange="saveReminderTime()" style="margin-bottom:0">
+                \${[6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21].map(h=>{
+                  const label=h===0?'12 AM':h<12?h+' AM':h===12?'12 PM':(h-12)+' PM';
+                  return \`<option value="\${h}"\${reminderHour===h?' selected':''}>\${label}</option>\`;
+                }).join('')}
+              </select>
+            </div>
+          </div>
+          \${!enabled?'<div style="font-size:12px;color:#555;text-align:center">Tap ON to enable this reminder</div>':''}
+        \`;
+      })()}
+    </div>
+
+    <!-- Export -->
+    <div class="card">
+      <div class="section-label" style="margin-bottom:10px">Data</div>
+      <button onclick="exportData()" style="width:100%;padding:12px;background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;margin-bottom:10px">Export All Data</button>
+      <button onclick="clearAllData()" style="width:100%;padding:12px;background:transparent;border:1px solid #2a2a2a;color:#555;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13px">Clear All Data</button>
+    </div>
   `;
 }
 
-window.saveCircles = () => {
-  const inner = (document.getElementById('inner-input')||{}).value || '';
-  const middle = (document.getElementById('middle-input')||{}).value || '';
-  const outer = (document.getElementById('outer-input')||{}).value || '';
+window.saveSettings = () => {
   const data = loadData();
-  saveData({...data, threeCircles: {inner, middle, outer}});
-  circlesEditMode = false;
+  const existingContacts = data.contacts||[{},{},{}];
+  const contacts = existingContacts.map((_,i)=>({
+    name: (document.getElementById('contact-name-'+i)||{}).value||'',
+    phone: (document.getElementById('contact-phone-'+i)||{}).value||'',
+    role: (document.getElementById('contact-role-'+i)||{}).value||''
+  }));
+  // Keep backward compat
+  const sponsorContact = contacts.find(c=>c.role.toLowerCase().includes('sponsor'))||contacts[0]||{};
+  const sponsorName = sponsorContact.name||'';
+  const sponsorPhone = sponsorContact.phone||'';
+  const affirmations = [0,1,2].map(i=>(document.getElementById('affirmation-'+i)||{}).value||'');
+  const commitmentStatement = (document.getElementById('commitment-statement')||{}).value||'';
+  saveData({...data, contacts, sponsorName, sponsorPhone, affirmations, commitmentStatement});
+  settingsSaved = true;
+  renderContent();
+  setTimeout(()=>{settingsSaved=false;renderContent();},2500);
+};
+
+window.exportData = () => {
+  const data = loadData();
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'staythecourse-backup-'+getTodayStr()+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+
+// ═══════════════════════════════════════
+// ── 12 STEPS WORKBOOK ──
+// ═══════════════════════════════════════
+const SAA_STEPS = [
+  {
+    num: 1,
+    title: "We admitted we were powerless over addictive sexual behavior — that our lives had become unmanageable.",
+    description: "The foundation of recovery. Admitting powerlessness isn't weakness — it's the first honest thing. You can't fix what you won't face.",
+    questions: [
+      "In what ways has your sexual behavior been out of control?",
+      "How has your addiction made your life unmanageable?",
+      "What have you tried in order to stop or control your behavior?",
+      "What would your life look like if you truly surrendered?"
+    ]
+  },
+  {
+    num: 2,
+    title: "Came to believe that a Power greater than ourselves could restore us to sanity.",
+    description: "You don't have to believe perfectly — you just have to be open. The insanity is doing the same thing and expecting different results.",
+    questions: [
+      "What does a Higher Power mean to you personally?",
+      "Where have you seen evidence that something greater than yourself is at work?",
+      "What would it mean for you to be restored to sanity?",
+      "What barriers do you have to believing?"
+    ]
+  },
+  {
+    num: 3,
+    title: "Made a decision to turn our will and our lives over to the care of God as we understood God.",
+    description: "A decision, not a destination. Turning it over means releasing the illusion of control — especially over people, places, and things.",
+    questions: [
+      "What does it mean to turn your will over?",
+      "What areas of your life are you still trying to control?",
+      "How does self-will show up in your addiction?",
+      "What would trusting your Higher Power look like today?"
+    ]
+  },
+  {
+    num: 4,
+    title: "Made a searching and fearless moral inventory of ourselves.",
+    description: "The housecleaning step. You write down everything — resentments, fears, harms, patterns. What you can see, you can change.",
+    questions: [
+      "Who do you resent and why?",
+      "What are your deepest fears?",
+      "Where have you been selfish, dishonest, or self-seeking?",
+      "What patterns do you see in your inventory?"
+    ]
+  },
+  {
+    num: 5,
+    title: "Admitted to God, to ourselves, and to another human being the exact nature of our wrongs.",
+    description: "Secrets keep us sick. Saying it out loud to another person — your sponsor — removes the shame's power.",
+    questions: [
+      "What are you most afraid to admit?",
+      "What would it feel like to have no more secrets?",
+      "What did you learn about yourself from your 4th step?",
+      "How did sharing your 5th step change you?"
+    ]
+  },
+  {
+    num: 6,
+    title: "Were entirely ready to have God remove all these defects of character.",
+    description: "Willingness is the work here. Some defects feel like protection — pride, control, people-pleasing. Being ready means seeing them clearly.",
+    questions: [
+      "What character defects do you identify in yourself?",
+      "Which defects are you most reluctant to give up, and why?",
+      "How have your character defects driven your addiction?",
+      "What would you be like without these defects?"
+    ]
+  },
+  {
+    num: 7,
+    title: "Humbly asked God to remove our shortcomings.",
+    description: "Humility isn't humiliation — it's an accurate view of yourself. You ask, you don't demand. Then you do the work.",
+    questions: [
+      "What does humility mean to you?",
+      "What shortcomings have you asked to have removed?",
+      "How has your Higher Power responded?",
+      "Where do you still struggle with humility?"
+    ]
+  },
+  {
+    num: 8,
+    title: "Made a list of all persons we had harmed, and became willing to make amends to them all.",
+    description: "This step is about willingness — not action yet. You make the list honestly, including yourself.",
+    questions: [
+      "Who have you harmed through your addiction?",
+      "How have you harmed yourself?",
+      "Who on your list are you most resistant to making amends to?",
+      "What does being willing to make amends mean to you?"
+    ]
+  },
+  {
+    num: 9,
+    title: "Made direct amends to such people wherever possible, except when to do so would injure them or others.",
+    description: "Action follows willingness. Amends are about changing behavior, not just apologizing. Some amends are living amends — you change and stay changed.",
+    questions: [
+      "What amends have you made so far?",
+      "How did making amends change you?",
+      "What amends are you still avoiding?",
+      "Are there situations where making amends would cause harm?"
+    ]
+  },
+  {
+    num: 10,
+    title: "Continued to take personal inventory and when we were wrong, promptly admitted it.",
+    description: "The maintenance step. You don't graduate from self-examination. When you're wrong, you say so quickly — before resentment builds.",
+    questions: [
+      "How are you taking daily inventory?",
+      "Where have you been wrong recently — and did you admit it?",
+      "What patterns do you notice in your daily inventory?",
+      "How does this step protect your recovery?"
+    ]
+  },
+  {
+    num: 11,
+    title: "Sought through prayer and meditation to improve our conscious contact with God as we understood God, praying only for knowledge of God's will for us and the power to carry that out.",
+    description: "Your connection to something greater is a practice, not a one-time event. Prayer and meditation are the maintenance of that connection.",
+    questions: [
+      "What does your current prayer and meditation practice look like?",
+      "How has conscious contact with your Higher Power changed you?",
+      "What gets in the way of your spiritual practice?",
+      "What is your Higher Power's will for you today?"
+    ]
+  },
+  {
+    num: 12,
+    title: "Having had a spiritual awakening as the result of these steps, we tried to carry this message to other sex addicts and to practice these principles in all areas of our lives.",
+    description: "The gift of recovery is given away to keep it. Service to others is protection against relapse. You don't just work the program — you become it.",
+    questions: [
+      "How has working the steps changed you spiritually?",
+      "How are you carrying the message to other addicts?",
+      "Where are you practicing these principles outside of meetings?",
+      "What does your spiritual awakening look like?"
+    ]
+  }
+];
+
+const STEP_STATUS = ['Not Started', 'Working It', 'Complete'];
+const STEP_STATUS_COLORS = ['#333', '#f59e0b', '#22c55e'];
+
+let stepsOpenStep = null;
+
+function renderSteps(){
+  const data = loadData();
+  const stepData = data.stepWorkbook || {};
+  const currentStep = SAA_STEPS.findIndex(s => (stepData['step_'+s.num]||{}).status === 'Working It') + 1 || null;
+
+  return `
+    <div class="section-title"><h2>&#x1F4D6; 12 Step Workbook</h2><p>SAA recovery — your living document.</p></div>
+
+    ${currentStep ? `
+    <div class="card" style="border-color:#f59e0b33;margin-bottom:14px;text-align:center;padding:14px">
+      <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Currently Working</div>
+      <div style="font-size:22px;font-weight:800;color:#f59e0b">Step ${currentStep}</div>
+    </div>` : ''}
+
+    <!-- Progress overview -->
+    <div class="card" style="margin-bottom:14px;padding:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        ${STEP_STATUS.map((s,i)=>`<div style="text-align:center">
+          <div style="font-size:18px;font-weight:800;color:${STEP_STATUS_COLORS[i]}">${SAA_STEPS.filter(step=>(stepData['step_'+step.num]||{}).status===s).length}</div>
+          <div style="font-size:10px;color:#555">${s}</div>
+        </div>`).join('')}
+      </div>
+      <div style="display:flex;gap:2px">
+        ${SAA_STEPS.map(s=>{const st=(stepData['step_'+s.num]||{}).status||'Not Started';const idx=STEP_STATUS.indexOf(st);return `<div style="flex:1;height:6px;border-radius:2px;background:${STEP_STATUS_COLORS[idx]}"></div>`}).join('')}
+      </div>
+    </div>
+
+    <!-- Steps list -->
+    ${SAA_STEPS.map(step => {
+      const sd = stepData['step_'+step.num] || {};
+      const status = sd.status || 'Not Started';
+      const statusIdx = STEP_STATUS.indexOf(status);
+      const statusColor = STEP_STATUS_COLORS[statusIdx];
+      const isOpen = stepsOpenStep === step.num;
+      const hasNotes = sd.notes && sd.notes.trim();
+      const entryCount = (sd.entries||[]).length;
+
+      return `<div style="margin-bottom:10px">
+        <button onclick="toggleStep(${step.num})" style="width:100%;text-align:left;background:#111;border:1px solid ${isOpen?statusColor:'#222'};border-radius:${isOpen?'10px 10px 0 0':'10px'};padding:14px 16px;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
+            <div style="width:32px;height:32px;border-radius:50%;border:2px solid ${statusColor};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:${statusColor};flex-shrink:0">${step.num}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;color:#e8e8e8;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${step.title.slice(0,60)}${step.title.length>60?'...':''}</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:3px">
+                <span style="font-size:11px;color:${statusColor}">${status}</span>
+                ${entryCount>0?`<span style="font-size:10px;color:#444">${entryCount} entr${entryCount===1?'y':'ies'}</span>`:''}
+                ${hasNotes?`<span style="font-size:10px;color:#444">Notes</span>`:''}
+              </div>
+            </div>
+          </div>
+          <span style="color:#555;font-size:18px;flex-shrink:0">${isOpen?'−':'+'}</span>
+        </button>
+
+        ${isOpen ? `<div style="background:#111;border:1px solid ${statusColor};border-top:none;border-radius:0 0 10px 10px;padding:16px">
+          <!-- Status selector -->
+          <div style="display:flex;gap:6px;margin-bottom:16px">
+            ${STEP_STATUS.map((s,i)=>`<button onclick="setStepStatus(${step.num},'${s}')" style="flex:1;padding:8px 4px;border-radius:8px;border:1px solid ${status===s?STEP_STATUS_COLORS[i]:'#2a2a2a'};background:${status===s?STEP_STATUS_COLORS[i]+'22':'#0d0d0d'};color:${status===s?STEP_STATUS_COLORS[i]:'#555'};font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">${s}</button>`).join('')}
+          </div>
+
+          <!-- Step description -->
+          <div style="background:#0d0d0d;border-left:3px solid ${statusColor};border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:14px;font-size:13px;color:#888;line-height:1.6">${step.description}</div>
+
+          <!-- Reflection questions -->
+          <div style="margin-bottom:14px">
+            <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Reflection Questions</div>
+            ${step.questions.map((q,qi)=>`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a1a">
+              <span style="color:${statusColor};font-weight:700;flex-shrink:0">${qi+1}.</span>
+              <span style="font-size:13px;color:#aaa;line-height:1.5">${q}</span>
+            </div>`).join('')}
+          </div>
+
+          <!-- Notes -->
+          <div style="margin-bottom:14px">
+            <label class="field-label">My Notes on This Step</label>
+            <textarea id="step-notes-${step.num}" rows="4" placeholder="Write your thoughts, reflections, what you're learning..." onchange="saveStepNotes(${step.num})">${sd.notes||''}</textarea>
+          </div>
+
+          <!-- Journal entries for this step -->
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <label class="field-label" style="margin:0">Step Entries (${entryCount})</label>
+              <button onclick="addStepEntry(${step.num})" style="background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">+ Add Entry</button>
+            </div>
+            <textarea id="step-entry-${step.num}" rows="3" placeholder="What did you work on today for this step? What came up?" style="margin-bottom:8px"></textarea>
+            ${(sd.entries||[]).slice().reverse().slice(0,5).map((e,i)=>`<div style="background:#0d0d0d;border:1px solid #1a1a1a;border-radius:8px;padding:10px;margin-bottom:6px">
+              <div style="font-size:11px;color:#444;margin-bottom:4px">${e.date}</div>
+              <div style="font-size:13px;color:#aaa;line-height:1.5">${e.text}</div>
+            </div>`).join('')}
+          </div>
+
+          <button onclick="saveStepNotes(${step.num})" style="width:100%;padding:11px;background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:13px">Save Notes</button>
+        </div>` : ''}
+      </div>`;
+    }).join('')}
+  `;
+}
+
+window.toggleStep = num => {
+  stepsOpenStep = stepsOpenStep === num ? null : num;
   renderContent();
 };
 
+window.setStepStatus = (num, status) => {
+  const data = loadData();
+  const wb = data.stepWorkbook || {};
+  if(!wb['step_'+num]) wb['step_'+num] = {};
+  wb['step_'+num].status = status;
+  saveData({...data, stepWorkbook: wb});
+  renderContent();
+};
+
+window.saveStepNotes = num => {
+  const el = document.getElementById('step-notes-'+num);
+  if(!el) return;
+  const data = loadData();
+  const wb = data.stepWorkbook || {};
+  if(!wb['step_'+num]) wb['step_'+num] = {};
+  wb['step_'+num].notes = el.value;
+  saveData({...data, stepWorkbook: wb});
+};
+
+window.addStepEntry = num => {
+  const el = document.getElementById('step-entry-'+num);
+  if(!el || !el.value.trim()) return;
+  const data = loadData();
+  const wb = data.stepWorkbook || {};
+  if(!wb['step_'+num]) wb['step_'+num] = {};
+  if(!wb['step_'+num].entries) wb['step_'+num].entries = [];
+  wb['step_'+num].entries.push({date: new Date().toLocaleString(), text: el.value.trim()});
+  saveData({...data, stepWorkbook: wb});
+  el.value = '';
+  renderContent();
+};
+
+window.saveReminderTime=()=>{
+  const dayEl=document.getElementById('reminder-day');
+  const hourEl=document.getElementById('reminder-hour');
+  if(!dayEl||!hourEl) return;
+  const data=loadData();
+  saveData({...data,
+    reminderDay:parseInt(dayEl.value),
+    reminderHour:parseInt(hourEl.value),
+    reminderMin:0
+  });
+  renderContent();
+};
+
+window.toggleMondayReminder=()=>{
+  const data=loadData();
+  if(data.notificationsEnabled){
+    saveData({...data,notificationsEnabled:false});
+    renderContent();
+  } else {
+    requestNotificationPermission();
+    renderContent();
+  }
+};
+
+window.addContact = () => {
+  const data = loadData();
+  const contacts = data.contacts || [{name:'',phone:'',role:'Sponsor'},{name:'',phone:'',role:'Wife'},{name:'',phone:'',role:'Therapist'}];
+  contacts.push({name:'',phone:'',role:''});
+  saveData({...data, contacts});
+  renderContent();
+};
+
+
+// ── MEETING NOTES ──
+let meetingsSubTab = 0;
+let meetingNoteForm = {type:'SAA', date:'', notes:'', takeaway:''};
+let meetingNoteSaved = false;
+
+function renderMeetingNotes(){
+  const data = loadData();
+  const notes = (data.meetingNotes||[]).slice().reverse().slice(0,20);
+  return `
+    <div class="card">
+      <div class="section-label" style="margin-bottom:12px">Log a Meeting</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        ${['SAA','AA','SLAA','SA','Online'].map(t=>`<button onclick="meetingNoteForm.type='${t}';renderContent()" style="padding:8px 12px;border-radius:8px;border:1px solid ${meetingNoteForm.type===t?'#22c55e':'#2a2a2a'};background:${meetingNoteForm.type===t?'#1a2a1a':'#111'};color:${meetingNoteForm.type===t?'#22c55e':'#555'};font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">${t}</button>`).join('')}
+      </div>
+      <label class="field-label">Date</label>
+      <input type="date" id="mnote-date" value="${meetingNoteForm.date||getTodayStr()}" oninput="meetingNoteForm.date=this.value" style="margin-bottom:12px" />
+      <label class="field-label">Notes — what came up, what you shared</label>
+      <textarea id="mnote-notes" rows="3" placeholder="What was discussed? What resonated?" oninput="meetingNoteForm.notes=this.value" style="margin-bottom:12px">${meetingNoteForm.notes}</textarea>
+      <label class="field-label">Key takeaway</label>
+      <textarea id="mnote-takeaway" rows="2" placeholder="One thing you're taking with you..." oninput="meetingNoteForm.takeaway=this.value" style="margin-bottom:14px">${meetingNoteForm.takeaway}</textarea>
+      <button class="btn-primary${meetingNoteSaved?' saved':''}" onclick="saveMeetingNote()" style="background:${meetingNoteSaved?'#166534':'#2563eb'}">${meetingNoteSaved?'Saved':'Log This Meeting'}</button>
+    </div>
+    ${notes.length?`
+      <div class="section-label">Meeting History</div>
+      ${notes.map(n=>`<div class="log-entry">
+        <div class="log-meta">
+          <span style="font-size:13px;font-weight:700;color:#60a5fa">${n.type} Meeting</span>
+          <span class="log-date">${n.date}</span>
+        </div>
+        ${n.notes?`<div class="log-line" style="margin-top:4px">${n.notes.slice(0,120)}${n.notes.length>120?'...':''}</div>`:''}
+        ${n.takeaway?`<div style="margin-top:6px;display:flex;gap:6px;align-items:flex-start"><span style="color:#22c55e;font-size:11px;font-weight:700;flex-shrink:0">KEY:</span><span style="font-size:13px;color:#22c55e">${n.takeaway}</span></div>`:''}
+      </div>`).join('')}
+    `:''}
+  `;
+}
+
+window.saveMeetingNote = () => {
+  const data = loadData();
+  const notes = data.meetingNotes || [];
+  const date = (document.getElementById('mnote-date')||{}).value || getTodayStr();
+  const noteText = (document.getElementById('mnote-notes')||{}).value || meetingNoteForm.notes;
+  const takeaway = (document.getElementById('mnote-takeaway')||{}).value || meetingNoteForm.takeaway;
+  notes.push({type:meetingNoteForm.type, date, notes:noteText, takeaway});
+  saveData({...data, meetingNotes:notes});
+  meetingNoteSaved = true;
+  meetingNoteForm = {type:'SAA', date:'', notes:'', takeaway:''};
+  renderContent();
+  setTimeout(()=>{meetingNoteSaved=false;renderContent();},2500);
+};
+
+// ── GRATITUDE LIST (running) ──
+function renderGratitudeList(data){
+  const items = data.gratitudeList || [];
+  return `
+    <div class="card" style="margin-bottom:14px">
+      <div style="font-size:11px;color:#f59e0b;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Running Gratitude List</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <input type="text" id="gratitude-input" placeholder="I'm grateful for..." style="flex:1" />
+        <button onclick="addGratitudeItem()" style="background:#1a1200;border:1px solid #f59e0b;color:#f59e0b;border-radius:8px;padding:0 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">Add</button>
+      </div>
+      ${items.slice().reverse().slice(0,10).map((item,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1a1a">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="color:#f59e0b">&#x2022;</span>
+          <span style="font-size:14px;color:#ccc">${item.text}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:10px;color:#444">${item.date}</span>
+          <button onclick="deleteGratitudeItem(${items.length-1-i})" style="background:none;border:none;color:#333;font-size:16px;cursor:pointer;padding:0;line-height:1">&times;</button>
+        </div>
+      </div>`).join('')}
+      ${items.length>10?`<div style="font-size:11px;color:#444;text-align:center;margin-top:6px">${items.length} total items</div>`:''}
+    </div>
+  `;
+}
+
+window.addGratitudeItem = () => {
+  const input = document.getElementById('gratitude-input');
+  const val = input ? input.value.trim() : '';
+  if(!val) return;
+  const data = loadData();
+  const list = data.gratitudeList || [];
+  list.push({text:val, date:new Date().toLocaleDateString()});
+  saveData({...data, gratitudeList:list});
+  renderContent();
+};
+
+window.deleteGratitudeItem = idx => {
+  const data = loadData();
+  const list = data.gratitudeList || [];
+  list.splice(idx,1);
+  saveData({...data, gratitudeList:list});
+  renderContent();
+};
+
+// ── SABRINA APPRECIATION LIST ──
+function renderSabrinaList(data){
+  const items = data.sabrinaList || [];
+  return `
+    <div class="card" style="margin-bottom:14px;border-color:#e7548033">
+      <div style="font-size:11px;color:#e75480;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Things I Love About Sabrina</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <input type="text" id="sabrina-input" placeholder="Something specific..." style="flex:1" />
+        <button onclick="addSabrinaItem()" style="background:#1a0a10;border:1px solid #e75480;color:#e75480;border-radius:8px;padding:0 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">Add</button>
+      </div>
+      ${items.slice().reverse().slice(0,10).map((item,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1a1a">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="color:#e75480">&#x2665;</span>
+          <span style="font-size:14px;color:#ccc">${item.text}</span>
+        </div>
+        <button onclick="deleteSabrinaItem(${items.length-1-i})" style="background:none;border:none;color:#333;font-size:16px;cursor:pointer;padding:0;line-height:1">&times;</button>
+      </div>`).join('')}
+      ${items.length===0?`<div style="font-size:13px;color:#333;font-style:italic;text-align:center;padding:10px 0">Start building this list. Read it when you're disconnected.</div>`:''}
+    </div>
+  `;
+}
+
+window.addSabrinaItem = () => {
+  const input = document.getElementById('sabrina-input');
+  const val = input ? input.value.trim() : '';
+  if(!val) return;
+  const data = loadData();
+  const list = data.sabrinaList || [];
+  list.push({text:val, date:new Date().toLocaleDateString()});
+  saveData({...data, sabrinaList:list});
+  renderContent();
+};
+
+window.deleteSabrinaItem = idx => {
+  const data = loadData();
+  const list = data.sabrinaList || [];
+  list.splice(idx,1);
+  saveData({...data, sabrinaList:list});
+  renderContent();
+};
+
+window.addDateNight = () => {
+  const input = document.getElementById('date-night-input');
+  const val = input ? input.value.trim() : '';
+  if(!val) return;
+  const data = loadData();
+  const list = data.dateNights || [];
+  list.push({text:val, date:new Date().toLocaleDateString()});
+  saveData({...data, dateNights:list});
+  renderContent();
+};
+
+window.deleteDateNight = idx => {
+  const data = loadData();
+  const list = data.dateNights || [];
+  list.splice(idx,1);
+  saveData({...data, dateNights:list});
+  renderContent();
+};
+
+
+// ═══════════════════════════════════════
+// ── AI COACH ──
+// ═══════════════════════════════════════
+let aiSubTab = 0; // 0=Daily Insight, 1=Chat, 2=Weekly Report
+let aiChatMessages = [];
+let aiChatInput = '';
+let aiLoading = false;
+let aiDailyInsight = null;
+let aiDailyInsightDate = null;
+let aiWeeklyReport = null;
+let aiWeeklyReportDate = null;
+
+function buildRecoveryContext(data) {
+  const days = streakDays(data);
+  const urgeLogs7 = (data.urgeLogs||[]).slice(-7);
+  const avgUrge = urgeLogs7.length ? (urgeLogs7.reduce((s,l)=>s+(+l.urge||0),0)/urgeLogs7.length).toFixed(1) : null;
+  const relapseCount = (data.relapseLogs||[]).length;
+  const lastRelapse = (data.relapseLogs||[]).slice(-1)[0];
+
+  // Habit completion this week
+  const now = new Date();
+  const startOfWeek = new Date(now); startOfWeek.setDate(now.getDate()-now.getDay());
+  const weekDays = []; for(let i=0;i<7;i++){const d=new Date(startOfWeek);d.setDate(startOfWeek.getDate()+i);weekDays.push(toLocalDateStr(d));}
+  const totalHabits = [...DEFAULT_HABITS,...(data.customHabits||[])].length;
+  const habitDone = weekDays.reduce((sum,d)=>sum+(data["habits_"+d]||[]).length,0);
+  const habitPct = totalHabits>0 ? Math.round((habitDone/(totalHabits*7))*100) : 0;
+
+  // Meetings this week
+  const saaMtg = weekDays.reduce((s,d)=>s+(data["meeting_saaMeetingCount_"+d]||0),0);
+  const aaMtg = weekDays.reduce((s,d)=>s+(data["meeting_aaMeetingCount_"+d]||0),0);
+
+  // Top triggers from recent check-ins
+  const recentLogs = (data.urgeLogs||[]).slice(-10);
+  const triggers = recentLogs.filter(l=>l.situation).map(l=>l.situation).slice(0,5);
+
+  // Release tools used
+  const topTool = getTopRelease(data);
+
+  // Step work
+  const wb = data.stepWorkbook||{};
+  const currentStep = [1,2,3,4,5,6,7,8,9,10,11,12].find(n=>(wb['step_'+n]||{}).status==='Working It')||null;
+
+  // Three circles
+  const circles = data.threeCircles||{};
+
+  // Recent journal entries
+  const recentJournal = (data.journalEntries||[]).slice(-3).map(e=>({
+    date:e.date, mood:e.mood, prompt:e.promptResponse?e.promptResponse.slice(0,100):null, free:e.freeText?e.freeText.slice(0,100):null
+  }));
+
+  // Urge trend - is it going up or down?
+  const urgeLogs14 = (data.urgeLogs||[]).slice(-14);
+  const firstHalf = urgeLogs14.slice(0,7);
+  const secondHalf = urgeLogs14.slice(7);
+  const firstAvg = firstHalf.length ? firstHalf.reduce((s,l)=>s+(+l.urge||0),0)/firstHalf.length : null;
+  const secondAvg = secondHalf.length ? secondHalf.reduce((s,l)=>s+(+l.urge||0),0)/secondHalf.length : null;
+  const urgeTrend = firstAvg&&secondAvg ? (secondAvg>firstAvg+1?'rising':secondAvg<firstAvg-1?'falling':'stable') : 'insufficient data';
+
+  return {
+    streak_days: days,
+    sober_start: data.soberStart||null,
+    relapse_count: relapseCount,
+    last_relapse_date: lastRelapse?lastRelapse.date:null,
+    avg_urge_7days: avgUrge,
+    urge_trend_14days: urgeTrend,
+    habit_completion_this_week_pct: habitPct,
+    saa_meetings_this_week: saaMtg,
+    aa_meetings_this_week: aaMtg,
+    recent_triggers: triggers,
+    most_used_release_tool: topTool,
+    current_step: currentStep,
+    three_circles_set_up: !!(circles.inner||circles.middle),
+    recent_journal_entries: recentJournal,
+    commitment_statement: data.commitmentStatement||null,
+    total_checkins: (data.urgeLogs||[]).length,
+    recent_checkins: recentLogs.slice(-3).map(l=>({urge:l.urge,situation:l.situation,emotion:l.emotion,date:l.date}))
+  };
+}
+
+function buildSystemPrompt(context) {
+  return `You are a recovery coach AI embedded in "Stay the Course", a personal recovery app for a man named Cody who is recovering from sex and pornography addiction (SAA/SLAA program). You have full access to his current recovery data.
+
+CODY'S CURRENT DATA:
+${JSON.stringify(context, null, 2)}
+
+YOUR ROLE:
+- You are direct, honest, and compassionate — not soft or generic
+- You know Cody's data and reference it specifically in your responses
+- You proactively flag concerning patterns (rising urges, dropping habits, missed meetings, etc.)
+- You celebrate real wins without being patronizing
+- You connect patterns to recovery principles (SAA, 12 steps, Three Circles)
+- You suggest specific actions based on what you see in the data
+- Keep responses concise — 3-5 sentences for insights, longer only if Cody asks a detailed question
+- Never be preachy or lecture repeatedly about the same thing
+- You know Cody is married to Sabrina and has a daughter Lilliana
+- If urge trend is rising or habit completion is below 50%, flag it clearly
+- Reference his current step work, circles, and tools when relevant
+
+CONCERNING PATTERNS TO FLAG:
+- Avg urge above 7/10
+- Urge trend rising over 14 days  
+- Habit completion below 50% this week
+- No meetings this week
+- Streak under 7 days (high relapse risk period)
+- No check-ins in 3+ days`;
+}
+
+async function callAI(messages) {
+  const data = loadData();
+  const context = buildRecoveryContext(data);
+  const systemPrompt = buildSystemPrompt(context);
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: messages
+    })
+  });
+  const result = await response.json();
+  return result.content && result.content[0] ? result.content[0].text : "Sorry, I couldn't get a response. Try again.";
+}
+
+async function loadDailyInsight() {
+  const today = getTodayStr();
+  const data = loadData();
+
+  // Check if we already have today's insight
+  if(data.aiDailyInsight && data.aiDailyInsightDate === today) {
+    aiDailyInsight = data.aiDailyInsight;
+    aiDailyInsightDate = today;
+    renderContent();
+    return;
+  }
+
+  aiLoading = true;
+  renderContent();
+
+  try {
+    const context = buildRecoveryContext(data);
+    // Auto-detect alerts
+    const alerts = [];
+    if(context.urge_trend_14days === 'rising') alerts.push('urge trend is RISING over the last 14 days');
+    if(context.habit_completion_this_week_pct < 50) alerts.push(`habit completion is only ${context.habit_completion_this_week_pct}% this week`);
+    if(context.saa_meetings_this_week === 0 && context.aa_meetings_this_week === 0) alerts.push('no meetings logged this week');
+    if(context.streak_days < 7 && context.streak_days > 0) alerts.push(`streak is only ${context.streak_days} days — high risk period`);
+
+    const prompt = alerts.length > 0
+      ? `Give Cody a direct daily insight. FLAG these concerning patterns first: ${alerts.join('; ')}. Then give him one specific action to take today based on his data.`
+      : `Give Cody a brief positive but honest daily insight based on his recovery data. Acknowledge what's going well, note anything worth watching, and give him one specific focus for today.`;
+
+    const text = await callAI([{role:'user', content:prompt}]);
+    aiDailyInsight = text;
+    aiDailyInsightDate = today;
+    saveData({...data, aiDailyInsight:text, aiDailyInsightDate:today});
+  } catch(e) {
+    aiDailyInsight = "Unable to load insight right now. Check your connection and try again.";
+  }
+  aiLoading = false;
+  renderContent();
+}
+
+async function loadWeeklyReport() {
+  const weekKey = (() => { const d=new Date(); d.setDate(d.getDate()-d.getDay()); return toLocalDateStr(d); })();
+  const data = loadData();
+
+  if(data.aiWeeklyReport && data.aiWeeklyReportDate === weekKey) {
+    aiWeeklyReport = data.aiWeeklyReport;
+    renderContent();
+    return;
+  }
+
+  aiLoading = true;
+  renderContent();
+
+  try {
+    const text = await callAI([{role:'user', content:`Write Cody a comprehensive weekly recovery report. Cover: (1) what went well this week, (2) what needs attention, (3) patterns you notice in the data, (4) specific recommendations for next week. Be direct and reference his actual numbers. Keep it under 300 words.`}]);
+    aiWeeklyReport = text;
+    saveData({...data, aiWeeklyReport:text, aiWeeklyReportDate:weekKey});
+  } catch(e) {
+    aiWeeklyReport = "Unable to generate report. Check your connection.";
+  }
+  aiLoading = false;
+  renderContent();
+}
+
+async function sendAIChat() {
+  const input = document.getElementById('ai-chat-input');
+  const msg = input ? input.value.trim() : aiChatInput;
+  if(!msg) return;
+
+  aiChatMessages.push({role:'user', content:msg});
+  if(input) input.value = '';
+  aiChatInput = '';
+  aiLoading = true;
+  renderContent();
+
+  try {
+    const text = await callAI(aiChatMessages);
+    aiChatMessages.push({role:'assistant', content:text});
+  } catch(e) {
+    aiChatMessages.push({role:'assistant', content:'Connection error. Try again.'});
+  }
+  aiLoading = false;
+  renderContent();
+
+  // Scroll to bottom of chat
+  setTimeout(()=>{
+    const chat = document.getElementById('ai-chat-messages');
+    if(chat) chat.scrollTop = chat.scrollHeight;
+  }, 100);
+}
+
+function renderAICoach() {
+  const subLabels = ['Daily Insight', 'Chat', 'Weekly Report'];
+  return `
+    <div class="section-title"><h2>&#x1F916; AI Coach</h2><p>Knows your data. Tells you the truth.</p></div>
+    <div class="fitness-sub-tabs">
+      ${subLabels.map((l,i)=>`<button class="fsub-btn${aiSubTab===i?' active':''}" onclick="aiSubTab=${i};renderContent()${i===0?';loadDailyInsight()':i===2?';loadWeeklyReport()':''}">${l}</button>`).join('')}
+    </div>
+    ${aiSubTab===0 ? renderAIDailyInsight() : ''}
+    ${aiSubTab===1 ? renderAIChat() : ''}
+    ${aiSubTab===2 ? renderAIWeeklyReport() : ''}
+  `;
+}
+
+function renderAIDailyInsight() {
+  const data = loadData();
+  const context = buildRecoveryContext(data);
+
+  // Build alert flags
+  const alerts = [];
+  if(context.urge_trend_14days==='rising') alerts.push({label:'Urge trend rising', color:'#ef4444'});
+  if(context.habit_completion_this_week_pct<50) alerts.push({label:`Habits at ${context.habit_completion_this_week_pct}%`, color:'#f59e0b'});
+  if(!context.saa_meetings_this_week&&!context.aa_meetings_this_week) alerts.push({label:'No meetings this week', color:'#f59e0b'});
+  if(context.streak_days>0&&context.streak_days<7) alerts.push({label:`${context.streak_days} day streak — stay close`, color:'#f59e0b'});
+
+  return `
+    ${alerts.length?`<div class="card" style="border-color:#ef444433;margin-bottom:14px;padding:14px">
+      <div style="font-size:11px;color:#ef4444;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">&#x26A0; Flags</div>
+      ${alerts.map(a=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="width:8px;height:8px;border-radius:50%;background:${a.color};flex-shrink:0"></div>
+        <span style="font-size:13px;color:${a.color}">${a.label}</span>
+      </div>`).join('')}
+    </div>`:''}
+
+    <div class="card" style="margin-bottom:14px">
+      <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">Today's Insight — ${new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>
+      ${aiLoading?`<div style="text-align:center;padding:20px 0;color:#555;font-size:14px">Analyzing your data...</div>`
+      :aiDailyInsight?`<div style="font-size:14px;color:#ccc;line-height:1.7">${aiDailyInsight.replace(/\n/g,'<br>')}</div>`
+      :`<div style="text-align:center;padding:20px 0">
+          <div style="font-size:13px;color:#555;margin-bottom:16px">Get a personalized insight based on your recovery data.</div>
+          <button class="btn-primary" onclick="loadDailyInsight()" style="max-width:200px;margin:0 auto;display:block">Get Today's Insight</button>
+        </div>`}
+    </div>
+    ${aiDailyInsight?`<button onclick="aiDailyInsight=null;aiDailyInsightDate=null;loadDailyInsight()" style="width:100%;padding:10px;background:transparent;border:1px solid #2a2a2a;color:#555;border-radius:9px;cursor:pointer;font-family:inherit;font-size:12px;margin-bottom:14px">Refresh Insight</button>`:''}
+
+    <!-- Quick data snapshot -->
+    <div class="card" style="padding:14px">
+      <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">What the AI sees</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        ${[
+          ['Streak',context.streak_days+' days',context.streak_days>=30?'#22c55e':context.streak_days>=7?'#f59e0b':'#ef4444'],
+          ['Avg Urge',context.avg_urge_7days?context.avg_urge_7days+'/10':'--',context.avg_urge_7days?urgeColor(+context.avg_urge_7days):'#555'],
+          ['Habits',context.habit_completion_this_week_pct+'%',context.habit_completion_this_week_pct>=80?'#22c55e':context.habit_completion_this_week_pct>=50?'#f59e0b':'#ef4444'],
+          ['Urge Trend',context.urge_trend_14days,context.urge_trend_14days==='falling'?'#22c55e':context.urge_trend_14days==='rising'?'#ef4444':'#f59e0b'],
+          ['Meetings',(context.saa_meetings_this_week+context.aa_meetings_this_week)+' this week',(context.saa_meetings_this_week+context.aa_meetings_this_week)>0?'#22c55e':'#ef4444'],
+          ['Step',context.current_step?'Step '+context.current_step:'Not started',context.current_step?'#f59e0b':'#555']
+        ].map(([label,val,color])=>`<div style="background:#0d0d0d;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#444;text-transform:uppercase;margin-bottom:4px">${label}</div>
+          <div style="font-size:14px;font-weight:700;color:${color}">${val}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderAIChat() {
+  return `
+    <div style="height:360px;overflow-y:auto;margin-bottom:12px;padding:4px" id="ai-chat-messages">
+      ${aiChatMessages.length===0?`<div style="text-align:center;padding:40px 20px">
+        <div style="font-size:14px;color:#555;margin-bottom:8px">Ask me anything about your recovery.</div>
+        <div style="font-size:12px;color:#333">I know your streak, urges, habits, meetings, step work, and more.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;justify-content:center">
+          ${["Why are my urges high this week?","Am I doing enough meetings?","What patterns do you see?","How is my habit consistency?","What should I focus on today?"].map(q=>`<button onclick="document.getElementById('ai-chat-input').value='${q}'" style="background:#111;border:1px solid #2a2a2a;color:#888;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;font-family:inherit">${q}</button>`).join('')}
+        </div>
+      </div>`:
+      aiChatMessages.map(m=>`<div style="margin-bottom:14px;display:flex;${m.role==='user'?'justify-content:flex-end':'justify-content:flex-start'}">
+        <div style="max-width:85%;background:${m.role==='user'?'#1a2a1a':'#111'};border:1px solid ${m.role==='user'?'#22c55e':'#222'};border-radius:12px;padding:12px 14px;font-size:14px;color:#ccc;line-height:1.6">
+          ${m.content.replace(/\n/g,'<br>')}
+        </div>
+      </div>`).join('')}
+      ${aiLoading?`<div style="display:flex;justify-content:flex-start;margin-bottom:14px"><div style="background:#111;border:1px solid #222;border-radius:12px;padding:12px 14px;font-size:14px;color:#555">Thinking...</div></div>`:''}
+    </div>
+    <div style="display:flex;gap:8px">
+      <input type="text" id="ai-chat-input" placeholder="Ask your recovery coach..." style="flex:1" onkeydown="if(event.key==='Enter')sendAIChat()" />
+      <button onclick="sendAIChat()" style="background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:9px;padding:0 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap" ${aiLoading?'disabled':''}>Send</button>
+    </div>
+    ${aiChatMessages.length>0?`<button onclick="aiChatMessages=[];renderContent()" style="width:100%;padding:10px;background:transparent;border:1px solid #2a2a2a;color:#444;border-radius:9px;cursor:pointer;font-family:inherit;font-size:12px;margin-top:10px">Clear Chat</button>`:''}
+  `;
+}
+
+function renderAIWeeklyReport() {
+  return `
+    <div class="card" style="margin-bottom:14px">
+      <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">Weekly Recovery Report</div>
+      ${aiLoading?`<div style="text-align:center;padding:20px 0;color:#555;font-size:14px">Generating your weekly report...</div>`
+      :aiWeeklyReport?`<div style="font-size:14px;color:#ccc;line-height:1.7">${aiWeeklyReport.replace(/\n/g,'<br>')}</div>`
+      :`<div style="text-align:center;padding:20px 0">
+          <div style="font-size:13px;color:#555;margin-bottom:16px">Generate a full weekly analysis of your recovery data — good to read before sending your sponsor summary.</div>
+          <button class="btn-primary" onclick="loadWeeklyReport()" style="max-width:240px;margin:0 auto;display:block">Generate Weekly Report</button>
+        </div>`}
+    </div>
+    ${aiWeeklyReport?`<button onclick="aiWeeklyReport=null;loadWeeklyReport()" style="width:100%;padding:10px;background:transparent;border:1px solid #2a2a2a;color:#555;border-radius:9px;cursor:pointer;font-family:inherit;font-size:12px;margin-bottom:14px">Regenerate Report</button>`:''}
+  `;
+}
+
+// Auto-load daily insight when switching to AI tab
+const originalSwitchTab = switchTab;
+
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+
+// ── MONDAY REMINDER NOTIFICATION ──
+function requestNotificationPermission(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission==='default'){
+    Notification.requestPermission().then(p=>{
+      if(p==='granted') scheduleMondayReminder();
+    });
+  } else if(Notification.permission==='granted'){
+    scheduleMondayReminder();
+  }
+}
+
+function scheduleMondayReminder(){
+  // Store that notifications are enabled
+  const data=loadData();
+  saveData({...data,notificationsEnabled:true});
+  // Check every hour if it's Monday morning and reminder hasn't been sent today
+  checkMondayReminder();
+  setInterval(checkMondayReminder, 3600000); // check every hour
+}
+
+function checkMondayReminder(){
+  if(Notification.permission!=='granted') return;
+  const now=new Date();
+  const data=loadData();
+  const reminderDay=data.reminderDay!==undefined?data.reminderDay:1;
+  const reminderHour=data.reminderHour!==undefined?data.reminderHour:8;
+  const isRightDay=now.getDay()===reminderDay;
+  const isRightHour=now.getHours()===reminderHour;
+  const todayStr=getTodayStr();
+  const lastReminder=data.lastMondayReminder||'';
+  if(isRightDay&&isRightHour&&lastReminder!==todayStr){
+    new Notification('Stay the Course — Weekly Summary', {
+      body: 'Time to send your weekly recovery summary. Tap to open the app.',
+      icon: '/Recovery/icon-192.png',
+      badge: '/Recovery/icon-192.png'
+    });
+    saveData({...data,lastMondayReminder:todayStr});
+  }
+}
+
+// Request permission on first load if not already set
+setTimeout(()=>{
+  const data=loadData();
+  if(data.notificationsEnabled===undefined){
+    // Show in-app prompt first
+    const overlay=document.getElementById('modal-overlay');
+    if(overlay){
+      overlay.style.display='flex';
+      overlay.innerHTML=`<div class="modal-sheet">
+        <div style="font-size:18px;font-weight:800;margin-bottom:8px">Weekly Reminder</div>
+        <div style="font-size:14px;color:#aaa;margin-bottom:20px;line-height:1.6">Get a reminder every Monday morning to send your weekly summary to your sponsor, Sabrina, and therapist.</div>
+        <button class="btn-primary" onclick="requestNotificationPermission();closeModal()" style="margin-bottom:10px">Enable Monday Reminder</button>
+        <button class="btn-close" onclick="const d=loadData();saveData({...d,notificationsEnabled:false});closeModal()">Not Now</button>
+      </div>`;
+    }
+  } else if(data.notificationsEnabled){
+    scheduleMondayReminder();
+  }
+}, 3000);
+
 </script>
 </body>
 </html>
