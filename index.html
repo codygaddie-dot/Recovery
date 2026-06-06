@@ -251,9 +251,10 @@ const DEFAULT_HABITS=[
 ];
 
 const DEFAULT_PEPTIDES=[
-  {name:"Tesamorelin",defaultDose:"2000",unit:"mcg",time:"PM",notes:"Sub-Q injection, abdomen. Cycle 5 on / 2 off."},
-  {name:"Ipamorelin",defaultDose:"200",unit:"mcg",time:"PM",notes:"Blend with Tesamorelin. Same syringe."},
-  {name:"IGF-1 LR3",defaultDose:"50",unit:"mcg",time:"Post-workout",notes:"IM or sub-Q. Use within 30 min post-workout."}
+  {name:"2X Ipamorelin / Tesamorelin",defaultDose:"40",unit:"mL",time:"PM",defaultSite:"Abdomen L",frequency:"2x daily"},
+  {name:"BPC-157 / TB-500",defaultDose:"20",unit:"mL",time:"PM",defaultSite:"",frequency:"Daily"},
+  {name:"Tirzepatide",defaultDose:"30",unit:"mL",time:"PM",defaultSite:"",frequency:"Weekly"},
+  {name:"Testosterone",defaultDose:"45",unit:"mL",time:"AM (fasted)",defaultSite:"",frequency:"Weekly"}
 ];
 
 const WORKOUT_TYPES=["Lift","Cardio","HIIT","Bike","Walk","Swim","Sport","Other"];
@@ -639,7 +640,7 @@ window.closeModal=()=>{document.getElementById("modal-overlay").style.display="n
 // FITNESS
 let fitSubTab=0,workoutForm={type:"",duration:"",notes:"",fasted:false},workoutSaved=false;
 let bodyForm={weight:"",chest:"",waist:"",hips:"",arms:"",notes:""},bodySaved=false;
-let peptideForm={name:"",dose:"",unit:"mcg",site:"",time:"",notes:""},peptideSaved=false;
+let peptideForm={name:"",dose:"",unit:"mL",site:"",time:"",notes:"",frequency:""},peptideSaved=false;
 function renderFitness(){
   const subLabels=["Workout","Body","Peptides","Supplements","Goals","Photos"];
   return `
@@ -757,6 +758,12 @@ function renderFitPeptides(){
                   ${['AM (fasted)','Pre-workout','Post-workout','PM','Before bed'].map(t=>`<option value="${t}"${p.time===t?' selected':''}>${t}</option>`).join('')}
                 </select>
               </div>
+              <div style="grid-column:1/-1">
+                <label class="field-label">Frequency</label>
+                <select id="pedit-freq-${i}" style="margin-bottom:0">
+                  ${['Morning & Night','Morning only','Night only','Daily','2x per week','Weekly','Every other day','Mon/Wed/Fri','Custom'].map(f=>`<option value="${f}"${(p.frequency||'')=== f?' selected':''}>${f}</option>`).join('')}
+                </select>
+              </div>
               <div>
                 <label class="field-label">Site</label>
                 <select id="pedit-site-${i}" style="margin-bottom:0">
@@ -773,7 +780,7 @@ function renderFitPeptides(){
             <div style="display:flex;align-items:center;justify-content:space-between">
               <div style="flex:1">
                 <div style="font-size:15px;font-weight:600;color:${td?'#e8e8e8':'#888'}">${p.name}</div>
-                <div style="font-size:11px;color:#555;margin-top:3px">${p.defaultDose||''}${p.unit||''} &bull; ${p.time||''}${p.defaultSite?' &bull; '+p.defaultSite:''}</div>
+                <div style="font-size:11px;color:#555;margin-top:3px">${p.defaultDose||''}${p.unit||''} &bull; ${p.time||''}${p.frequency?' &bull; '+p.frequency:''}${p.defaultSite?' &bull; '+p.defaultSite:''}</div>
               </div>
               <div style="display:flex;align-items:center;gap:8px">
                 ${td?`<span style="font-size:11px;color:#22c55e">${td.dose}${td.unit}</span>`:''}
@@ -797,7 +804,7 @@ function renderFitPeptides(){
         <div><label class="field-label">Dose</label><input type="number" id="pdose" placeholder="200" oninput="peptideForm.dose=this.value" /></div>
         <div><label class="field-label">Unit</label>
           <select id="punit" onchange="peptideForm.unit=this.value">
-            <option value="mcg">mcg</option><option value="mg">mg</option><option value="mL">mL</option><option value="IU">IU</option>
+            <option value="mL" selected>mL</option><option value="mcg">mcg</option><option value="mg">mg</option><option value="IU">IU</option>
           </select>
         </div>
       </div>
@@ -851,7 +858,8 @@ window.savePeptideEdit=i=>{
   const unit=(document.getElementById('pedit-unit-'+i)||{}).value||p.unit;
   const time=(document.getElementById('pedit-time-'+i)||{}).value||p.time;
   const site=(document.getElementById('pedit-site-'+i)||{}).value||'';
-  const updated={name,defaultDose:dose,unit,time,defaultSite:site};
+  const freq=(document.getElementById('pedit-freq-'+i)||{}).value||p.frequency||'';
+  const updated={name,defaultDose:dose,unit,time,defaultSite:site,frequency:freq};
   if(i<DEFAULT_PEPTIDES.length){
     // Overriding a default — store in customOverrides
     const overrides=data.peptideOverrides||{};
@@ -1093,8 +1101,9 @@ function renderJournalHistory(){
       </div>
     </div>
     ${e.sabrinaLove?`<div class="log-line" style="margin-top:4px"><span style="color:#e75480">&#x2764;&#xFE0F;</span> ${e.sabrinaLove}</div>`:""}
-    ${e.promptResponse?`<div class="journal-entry-preview">${e.promptResponse.slice(0,120)}${e.promptResponse.length>120?"...":""}</div>`:""}
-    ${[e.gratitude1,e.gratitude2,e.gratitude3].filter(Boolean).length?`<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">${[e.gratitude1,e.gratitude2,e.gratitude3].filter(Boolean).map(g=>`<span class="tag green">${g}</span>`).join("")}</div>`:""}
+    ${e.promptResponse?`<div style="margin-top:6px"><div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">Prompt Response</div><div class="journal-entry-preview">${e.promptResponse.slice(0,200)}${e.promptResponse.length>200?"...":""}</div></div>`:""}
+    ${e.freeText?`<div style="margin-top:8px"><div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">Free Write</div><div class="journal-entry-preview">${e.freeText.slice(0,200)}${e.freeText.length>200?"...":""}</div></div>`:""}
+    ${[e.gratitude1,e.gratitude2,e.gratitude3].filter(Boolean).length?`<div style="margin-top:8px"><div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Grateful For</div><div style="display:flex;flex-wrap:wrap;gap:4px">${[e.gratitude1,e.gratitude2,e.gratitude3].filter(Boolean).map(g=>`<span class="tag green">${g}</span>`).join("")}</div></div>`:""}
   </div>`).join("")}`;
 }
 
@@ -1104,6 +1113,7 @@ window.saveJournalEntry=()=>{
   entries.push({type:"daily",date:new Date().toLocaleString(),mood:journalForm.mood,promptResponse:journalForm.promptResponse,prompt:getTodayPrompt(),freeText:journalForm.freeText,gratitude1:journalForm.gratitude1,gratitude2:journalForm.gratitude2,gratitude3:journalForm.gratitude3,sabrinaLove:journalForm.sabrinaLove});
   saveData({...data,journalEntries:entries});journalSaved=true;
   journalForm={type:"free",mood:"",freeText:"",gratitude1:"",gratitude2:"",gratitude3:"",sabrinaLove:"",promptResponse:"",letterText:"",promptIndex:-1};
+  journalSubTab=2;
   renderContent();setTimeout(()=>{journalSaved=false;renderContent();},2500);
 };
 window.saveLetterEntry=()=>{
