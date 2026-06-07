@@ -550,13 +550,26 @@ function renderShield(){
             <span class="accordion-toggle">${expandedAlert===ri?"&minus;":"+"}</span>
           </span>
         </button>
-        ${expandedAlert===ri?`<div class="accordion-body">${a.responses.map(r=>{
-          const used=usedToday.includes(r);
-          return `<div class="accordion-item" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-            <span style="flex:1"><span class="accordion-arrow">&rarr;</span>${r}</span>
-            <button onclick="event.stopPropagation();logRelease('${r.replace(/'/g,"\\'")}')" style="flex-shrink:0;background:${used?'#22c55e':'#1a2a1a'};border:1px solid #22c55e;color:${used?'#000':'#22c55e'};border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">${used?'&#x2713; Did it':'I did this'}</button>
-          </div>`;
-        }).join("")}</div>`:""}
+        ${expandedAlert===ri?`<div class="accordion-body">${(()=>{
+          const extra=(data.customResponses&&data.customResponses[a.trigger])||[];
+          const allResponses=[...a.responses,...extra];
+          return allResponses.map(r=>{
+            const used=usedToday.includes(r);
+            const isCustomResp=extra.includes(r);
+            return `<div class="accordion-item" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <span style="flex:1"><span class="accordion-arrow">&rarr;</span>${r}${isCustomResp?' <span style="font-size:9px;color:#22c55e">(yours)</span>':''}</span>
+              <span style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+                <button onclick="event.stopPropagation();logRelease('${r.replace(/'/g,"\\'")}')" style="background:${used?'#22c55e':'#1a2a1a'};border:1px solid #22c55e;color:${used?'#000':'#22c55e'};border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">${used?'&#x2713; Did it':'I did this'}</button>
+                ${isCustomResp?`<button onclick="event.stopPropagation();removeResponse('${a.trigger.replace(/'/g,"\\'")}','${r.replace(/'/g,"\\'")}')" style="background:#2a1a1a;border:1px solid #ef4444;color:#ef4444;border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;font-family:inherit;line-height:1">&times;</button>`:''}
+              </span>
+            </div>`;
+          }).join("");
+        })()}
+          <div style="display:flex;gap:8px;padding:10px 0 4px">
+            <input type="text" id="add-resp-${ri}" placeholder="Add your own action..." onclick="event.stopPropagation()" onkeydown="if(event.key==='Enter'){event.stopPropagation();addResponse('${a.trigger.replace(/'/g,"\\'")}',${ri});}" style="flex:1;margin:0" />
+            <button onclick="event.stopPropagation();addResponse('${a.trigger.replace(/'/g,"\\'")}',${ri})" style="background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:8px;padding:0 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Add</button>
+          </div>
+        </div>`:""}
       </div>`;
     }).join("")}
     ${hiddenList.length&&alertManageMode?`<div style="margin-top:14px">
@@ -573,6 +586,28 @@ function renderShield(){
     </div>`:""}`;
 }
 window.toggleAlert=i=>{expandedAlert=expandedAlert===i?null:i;render();};
+window.addResponse=(trigger,ri)=>{
+  const input=document.getElementById("add-resp-"+ri);
+  const val=input?input.value.trim():"";
+  if(!val)return;
+  const data=loadData();
+  const cr=data.customResponses||{};
+  const list=cr[trigger]||[];
+  if(!list.includes(val))list.push(val);
+  cr[trigger]=list;
+  saveData({...data,customResponses:cr});
+  renderContent();
+};
+window.removeResponse=(trigger,resp)=>{
+  const data=loadData();
+  const cr=data.customResponses||{};
+  if(cr[trigger]){
+    cr[trigger]=cr[trigger].filter(r=>r!==resp);
+    if(!cr[trigger].length)delete cr[trigger];
+  }
+  saveData({...data,customResponses:cr});
+  renderContent();
+};
 window.addCustomAlert=()=>{
   const t=(document.getElementById("new-alert-trigger")||{}).value||"";
   const r=(document.getElementById("new-alert-responses")||{}).value||"";
