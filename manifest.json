@@ -1,6 +1,6 @@
 {
-  "name": "Stay the Course",
-  "short_name": "Stay the Course",
+  "name": "Break the Cycle",
+  "short_name": "Break the Cycle",
   "description": "A personal recovery companion — daily check-ins, triggers, tools, habits, and progress.",
   "start_url": "./index.html",
   "scope": "./",

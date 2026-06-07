@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Stay the Course" />
+  <meta name="apple-mobile-web-app-title" content="Break the Cycle" />
   <meta name="theme-color" content="#0a0a0a" />
-  <title>Stay the Course</title>
+  <title>Break the Cycle</title>
   <link rel="manifest" href="manifest.json" />
   <style>
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -130,7 +130,7 @@
 <div id="app">
   <div class="header">
     <div class="header-sub">Recovery Companion</div>
-    <div class="header-title">Stay the Course</div>
+    <div class="header-title">Break the Cycle</div>
     <div id="daily-quote-bar" style="margin-top:12px;padding-top:12px;border-top:1px solid #1e1e1e;cursor:pointer" onclick="toggleSerenity()">
       <div id="quote-display"></div>
     </div>
@@ -783,7 +783,7 @@ window.showSponsorModal=()=>{
   const currentStepNum=([1,2,3,4,5,6,7,8,9,10,11,12].find(n=>(wb['step_'+n]||{}).status==='Working It'))||null;
 
   const lines=[
-    "Recovery Update — Stay the Course",
+    "Recovery Update — Break the Cycle",
     "─────────────────────────────",
     "Streak: "+days+" day"+(days!==1?"s":"")+" clean",
     "Avg urge (7 days): "+avgUrge+"/10",
@@ -793,7 +793,7 @@ window.showSponsorModal=()=>{
     topRelease?"Most used tool: "+topRelease:"",
     "Step currently working: "+(currentStepNum?"Step "+currentStepNum:"Not started"),
     "",
-    "Sent from Stay the Course app"
+    "Sent from Break the Cycle app"
   ].filter(l=>l!==undefined);
   const smsText=lines.join("\n");
 
@@ -1455,11 +1455,11 @@ window.saveLetterEntry=()=>{
 };
 
 // HABITS
-let habitView="weekly",habitMonthOffset=0,habitSelectedDate=null;
+let habitView="weekly",habitMonthOffset=0;
 
 function renderHabits(){
   const data=loadData();
-  const activeDate=habitSelectedDate||getTodayStr();
+  const activeDate=getTodayStr();
   const todayKey="habits_"+activeDate;
   const todayDone=data[todayKey]||[];const customHabits=data.customHabits||[];
   const allHabits=[...DEFAULT_HABITS,...customHabits];
@@ -1488,21 +1488,6 @@ function renderHabits(){
       </div>
       <div class="progress-bar-bg" style="margin:0"><div class="progress-bar-fill" style="width:${pct}%;background:${pct===100?"#22c55e":"#f59e0b"}"></div></div>
     </div>
-    <!-- Date navigation for logging past days -->
-    <div class="card" style="margin-bottom:14px;padding:14px">
-      <div style="font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Logging date</div>
-      <div style="font-size:10px;color:#ef4444;margin-bottom:8px">DEBUG: activeDate=${activeDate} | getTodayStr=${getTodayStr()} | now=${new Date().toISOString()}</div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <button onclick="shiftHabitDate(-1)" style="background:#1a1a1a;border:1px solid #333;border-radius:8px;color:#aaa;font-size:20px;width:44px;height:44px;cursor:pointer;font-family:inherit;flex-shrink:0">&lt;</button>
-        <div style="flex:1;text-align:center">
-          <div style="font-size:16px;font-weight:700;color:#e8e8e8">${new Date(activeDate+'T12:00:00').toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>
-          <div style="font-size:11px;color:#555;margin-top:2px">${activeDate===getTodayStr()?"Today":""}</div>
-        </div>
-        <button onclick="shiftHabitDate(1)" style="background:#1a1a1a;border:1px solid #333;border-radius:8px;color:${activeDate===getTodayStr()?'#2a2a2a':'#aaa'};font-size:20px;width:44px;height:44px;cursor:pointer;font-family:inherit;flex-shrink:0" ${activeDate===getTodayStr()?'disabled':''}>&gt;</button>
-      </div>
-      ${activeDate!==getTodayStr()?`<button onclick="setHabitDate(null)" style="width:100%;padding:8px;background:transparent;border:1px solid #2a2a2a;border-radius:8px;color:#555;font-size:12px;cursor:pointer;font-family:inherit;margin-top:10px">Back to Today</button>`:""}
-    </div>
-
     <!-- Meeting counter -->
     <div class="card" style="margin-bottom:14px;padding:16px">
       <div style="font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">Meetings Today</div>
@@ -1537,8 +1522,9 @@ function renderHabits(){
 
 function renderHabitsWeekly(data,allHabits,todayDone,last7,activeDate){
   return `<div class="card" style="margin-bottom:14px">
+    <div style="font-size:11px;color:#555;margin-bottom:8px">Tap any day to mark it done &mdash; including days you missed.</div>
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:10px">
-      ${last7.map(d=>`<div style="text-align:center;font-size:9px;color:#444;text-transform:uppercase">${new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"short"})}<br><span style="font-size:10px;color:#333">${new Date(d+"T12:00:00").getDate()}</span></div>`).join("")}
+      ${last7.map(d=>{const isT=d===getTodayStr();return `<div style="text-align:center;font-size:9px;color:${isT?"#22c55e":"#444"};font-weight:${isT?"700":"400"};text-transform:uppercase">${new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"short"})}<br><span style="font-size:10px;color:${isT?"#22c55e":"#333"}">${new Date(d+"T12:00:00").getDate()}</span></div>`;}).join("")}
     </div>
     ${allHabits.map(h=>{
       const hid=h.id||h.name;const done=todayDone.includes(hid);
@@ -1551,11 +1537,8 @@ function renderHabitsWeekly(data,allHabits,todayDone,last7,activeDate){
             ${streak>1?`<span class="habit-streak-badge" style="flex-shrink:0">${streak}d</span>`:""}
           </div>
           <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:5px">
-            ${last7.map((d,di)=>{const isDone=(data["habits_"+d]||[]).includes(hid);const isToday=d===activeDate;return `<div style="display:flex;justify-content:center"><div style="width:18px;height:18px;border-radius:3px;background:${isDone?"#22c55e":"#1a1a1a"};border:${isToday?"1.5px solid #555":"none"};display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff">${isDone?"v":""}</div></div>`;}).join("")}
+            ${last7.map((d,di)=>{const isDone=(data["habits_"+d]||[]).includes(hid);const isToday=d===getTodayStr();const isFuture=d>getTodayStr();return `<div style="display:flex;justify-content:center"><div onclick="${isFuture?'':`toggleHabitDay('${hid.replace(/'/g,"\\'")}','${d}')`}" style="width:26px;height:26px;border-radius:5px;background:${isDone?"#22c55e":"#1a1a1a"};box-shadow:${isToday?"0 0 0 2px #f59e0b":"none"};display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;cursor:${isFuture?"default":"pointer"};opacity:${isFuture?"0.3":"1"}">${isDone?"&#x2713;":""}</div></div>`;}).join("")}
           </div>
-        </div>
-        <div class="habit-check${done?" checked":""}" style="margin-left:10px" onclick="toggleHabit('${hid.replace(/'/g,"\\'")}')">
-          ${done?"&#x2713;":""}
         </div>
       </div>`;
     }).join("")}
@@ -1597,13 +1580,14 @@ function getHabitStreak(data,habitId,last7){
   for(let i=last7.length-1;i>=0;i--){const d=data["habits_"+last7[i]]||[];if(d.includes(habitId))streak++;else break;}
   return streak;
 }
-window.toggleHabit=id=>{
+window.toggleHabitDay=(id,dateStr)=>{
+  if(dateStr>getTodayStr())return; // no future days
   const data=loadData();
-  const activeDate=habitSelectedDate||getTodayStr();
-  const todayKey="habits_"+activeDate;
-  const done=data[todayKey]||[];const idx=done.indexOf(id);
+  const key="habits_"+dateStr;
+  const done=(data[key]||[]).slice();
+  const idx=done.indexOf(id);
   if(idx>-1)done.splice(idx,1);else done.push(id);
-  saveData({...data,[todayKey]:done});renderContent();
+  saveData({...data,[key]:done});renderContent();
 };
 window.adjustMeeting=(key,date,delta)=>{
   const data=loadData();
@@ -1617,32 +1601,6 @@ window.adjustMeeting=(key,date,delta)=>{
   if(newVal>0&&!done.includes(habitId)){done.push(habitId);}
   else if(newVal===0){const idx=done.indexOf(habitId);if(idx>-1)done.splice(idx,1);}
   saveData({...data,[storageKey]:newVal,[habitKey]:done});
-  renderContent();
-};
-
-window.shiftHabitDate=delta=>{
-  const current=habitSelectedDate||getTodayStr();
-  const parts=current.split('-');
-  const d=new Date(+parts[0],+parts[1]-1,+parts[2],12,0,0);
-  d.setDate(d.getDate()+delta);
-  const newDate=toLocalDateStr(d);
-  // Don't go into the future
-  if(newDate>getTodayStr()) return;
-  habitSelectedDate=newDate;
-  renderContent();
-};
-
-window.setHabitDate=date=>{
-  if(!date){habitSelectedDate=null;renderContent();return;}
-  // Date input returns YYYY-MM-DD which can be off by one day due to timezone
-  // Parse as local date by appending T12:00:00 to force local noon interpretation
-  const parts=date.split('-');
-  if(parts.length===3){
-    const local=new Date(+parts[0],+parts[1]-1,+parts[2],12,0,0);
-    habitSelectedDate=toLocalDateStr(local);
-  } else {
-    habitSelectedDate=date;
-  }
   renderContent();
 };
 
@@ -2273,11 +2231,11 @@ function renderSteps(){
       const entryCount = (sd.entries||[]).length;
 
       return `<div style="margin-bottom:10px">
-        <button onclick="toggleStep(${step.num})" style="width:100%;text-align:left;background:#111;border:1px solid ${isOpen?statusColor:'#222'};border-radius:${isOpen?'10px 10px 0 0':'10px'};padding:14px 16px;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between;align-items:center">
-          <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
+        <button onclick="toggleStep(${step.num})" style="width:100%;text-align:left;background:#111;border:1px solid ${isOpen?statusColor:'#222'};border-radius:${isOpen?'10px 10px 0 0':'10px'};padding:14px 16px;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div style="display:flex;align-items:flex-start;gap:12px;flex:1;min-width:0">
             <div style="width:32px;height:32px;border-radius:50%;border:2px solid ${statusColor};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:${statusColor};flex-shrink:0">${step.num}</div>
             <div style="flex:1;min-width:0">
-              <div style="font-size:13px;color:#e8e8e8;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${step.title.slice(0,60)}${step.title.length>60?'...':''}</div>
+              <div style="font-size:13px;color:#e8e8e8;font-weight:600;line-height:1.4">${step.title}</div>
               <div style="display:flex;align-items:center;gap:8px;margin-top:3px">
                 <span style="font-size:11px;color:${statusColor}">${status}</span>
                 ${entryCount>0?`<span style="font-size:10px;color:#444">${entryCount} entr${entryCount===1?'y':'ies'}</span>`:''}
@@ -2624,7 +2582,7 @@ function checkMondayReminder(){
   const todayStr=getTodayStr();
   const lastReminder=data.lastMondayReminder||'';
   if(isRightDay&&isRightHour&&lastReminder!==todayStr){
-    new Notification('Stay the Course — Weekly Summary', {
+    new Notification('Break the Cycle — Weekly Summary', {
       body: 'Time to send your weekly recovery summary. Tap to open the app.',
       icon: 'icon-192.png',
       badge: 'icon-192.png'
