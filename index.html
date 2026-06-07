@@ -400,7 +400,7 @@ function renderHome(){
 
   // This week stats
   const now=new Date();
-  const startOfWeek=new Date(now);startOfWeek.setDate(now.getDate()-now.getDay());
+  const startOfWeek=new Date(now);startOfWeek.setDate(now.getDate()-now.getDay());startOfWeek.setHours(0,0,0,0);
   const startOfWeekStr=toLocalDateStr(startOfWeek);
 
   const weekLogs=(data.urgeLogs||[]).filter(l=>new Date(l.date)>=startOfWeek);
@@ -889,7 +889,7 @@ window.showSponsorModal=()=>{
 
   // Habit completion this week
   const now=new Date();
-  const startOfWeek=new Date(now);startOfWeek.setDate(now.getDate()-now.getDay());
+  const startOfWeek=new Date(now);startOfWeek.setDate(now.getDate()-now.getDay());startOfWeek.setHours(0,0,0,0);
   const weekDays2=[];for(let i=0;i<7;i++){const d=new Date(startOfWeek);d.setDate(startOfWeek.getDate()+i);weekDays2.push(toLocalDateStr(d));}
   const totalHabits=[...DEFAULT_HABITS,...(data.customHabits||[])].length;
   const habitTotal=totalHabits*7;
@@ -1360,7 +1360,7 @@ let goalEditIdx=null;
 function renderFitGoals(){
   const data=loadData();
   const goals=data.fitnessGoals||[{text:"Train 4x per week",target:4,unit:"days/week",progress:0},{text:"Hit 200 lbs bodyweight",target:200,unit:"lbs",progress:0}];
-  const now=new Date();const startOfWeek=new Date(now);startOfWeek.setDate(now.getDate()-now.getDay());
+  const now=new Date();const startOfWeek=new Date(now);startOfWeek.setDate(now.getDate()-now.getDay());startOfWeek.setHours(0,0,0,0);
   const weekWorkouts=(data.workoutLogs||[]).filter(l=>new Date(l.date)>=startOfWeek).length;
   return `<div class="card">
     <div class="section-label" style="margin-bottom:14px">This week: ${weekWorkouts} workout${weekWorkouts!==1?"s":""}</div>
