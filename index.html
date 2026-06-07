@@ -336,7 +336,7 @@ function urgeColor(v){return v<=3?"#22c55e":v<=6?"#f59e0b":"#ef4444";}
 function urgeStatus(v){return v<=3?"Manageable — stay aware":v<=6?"Moderate — run your plan":"High — execute immediately";}
 function streakDays(data){if(!data.soberStart)return 0;const start=new Date(data.soberStart+'T00:00:00');const today=new Date();const diff=new Date(today.getFullYear(),today.getMonth(),today.getDate())-new Date(start.getFullYear(),start.getMonth(),start.getDate());return Math.floor(diff/86400000);}
 
-let currentTab=0,expandedAlert=null,expandedRelease=null,alertSearch='';
+let currentTab=0,expandedAlert=null,expandedRelease=null,alertSearch='',alertManageMode=false;
 
 let moreMenuOpen = false;
 
@@ -498,6 +498,9 @@ function renderHome(){
         <div style="font-size:22px;margin-bottom:4px">&#x2705;</div>Habits
       </button>
     </div>
+    <button onclick="showSponsorModal()" style="width:100%;background:#1a2333;border:1px solid #60a5fa;border-radius:10px;padding:14px;color:#60a5fa;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px">
+      <span style="font-size:18px">&#x1F4E4;</span> Send Report to Contacts
+    </button>
   `;
 }
 
@@ -513,25 +516,98 @@ window.clearAllData=()=>{
 
 // SHIELD
 function renderShield(){
-  const filtered=RED_ALERTS.filter(a=>a.trigger.toLowerCase().includes(alertSearch.toLowerCase()));
+  const data=loadData();
+  const usedToday=(data.releaseLogs||[]).filter(r=>r.date&&r.date.startsWith(getTodayStr())).map(r=>r.item);
+  const customAlerts=data.customAlerts||[];
+  const hiddenAlerts=data.hiddenAlerts||[];
+  const allAlerts=[...RED_ALERTS,...customAlerts].filter(a=>!hiddenAlerts.includes(a.trigger));
+  const hiddenList=RED_ALERTS.filter(a=>hiddenAlerts.includes(a.trigger));
+  const filtered=allAlerts.filter(a=>a.trigger.toLowerCase().includes(alertSearch.toLowerCase()));
   return `
-    <div class="section-title"><h2>Red Alert Plan</h2><p>Tap a trigger. Follow the plan. No decisions required.</p></div>
-    <div style="position:relative;margin-bottom:16px">
+    <div class="section-title"><h2>Red Alert Plan</h2><p>Tap a trigger. Do what helps. Mark what worked — it gets tracked.</p></div>
+    <div style="position:relative;margin-bottom:12px">
       <input type="text" placeholder="Search triggers..." value="${alertSearch}" oninput="alertSearch=this.value;expandedAlert=null;renderContent()" style="padding-left:14px" />
       ${alertSearch?`<button onclick="alertSearch='';expandedAlert=null;renderContent()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#555;font-size:18px;cursor:pointer">x</button>`:""}
     </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+      <button onclick="alertManageMode=!alertManageMode;renderContent()" style="background:${alertManageMode?'#2a1a1a':'#1a1a1a'};border:1px solid ${alertManageMode?'#ef4444':'#333'};color:${alertManageMode?'#ef4444':'#888'};border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">${alertManageMode?'Done':'Edit triggers'}</button>
+    </div>
+    ${alertManageMode?`<div class="card" style="margin-bottom:14px">
+      <label class="field-label" style="margin-bottom:8px">Add your own trigger</label>
+      <input type="text" id="new-alert-trigger" placeholder="Trigger name — e.g. Work stress" style="margin-bottom:8px" />
+      <textarea id="new-alert-responses" rows="4" placeholder="One action per line:&#10;Call sponsor&#10;Take a walk&#10;Write down what I feel"></textarea>
+      <button onclick="addCustomAlert()" style="width:100%;background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px">Add Trigger</button>
+    </div>`:''}
     ${filtered.length===0?`<div style="text-align:center;color:#333;font-size:14px;padding:30px 0">No triggers match "${alertSearch}"</div>`:""}
     ${filtered.map(a=>{
-      const ri=RED_ALERTS.indexOf(a);
+      const ri=allAlerts.indexOf(a);
+      const isCustom=customAlerts.some(c=>c.trigger===a.trigger);
       return `<div class="accordion-wrapper">
         <button class="accordion-btn${expandedAlert===ri?" open":""}" onclick="toggleAlert(${ri})">
-          <span>${a.trigger}</span><span class="accordion-toggle">${expandedAlert===ri?"&minus;":"+"}</span>
+          <span>${a.trigger}${isCustom?' <span style="font-size:10px;color:#22c55e">(yours)</span>':''}</span>
+          <span style="display:flex;align-items:center;gap:8px">
+            ${alertManageMode?`<span onclick="event.stopPropagation();removeAlert('${a.trigger.replace(/'/g,"\\'")}')" style="background:#2a1a1a;border:1px solid #ef4444;color:#ef4444;border-radius:6px;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:15px">&times;</span>`:''}
+            <span class="accordion-toggle">${expandedAlert===ri?"&minus;":"+"}</span>
+          </span>
         </button>
-        ${expandedAlert===ri?`<div class="accordion-body">${a.responses.map(r=>`<div class="accordion-item"><span class="accordion-arrow">&rarr;</span>${r}</div>`).join("")}</div>`:""}
+        ${expandedAlert===ri?`<div class="accordion-body">${a.responses.map(r=>{
+          const used=usedToday.includes(r);
+          return `<div class="accordion-item" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <span style="flex:1"><span class="accordion-arrow">&rarr;</span>${r}</span>
+            <button onclick="event.stopPropagation();logRelease('${r.replace(/'/g,"\\'")}')" style="flex-shrink:0;background:${used?'#22c55e':'#1a2a1a'};border:1px solid #22c55e;color:${used?'#000':'#22c55e'};border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">${used?'&#x2713; Did it':'I did this'}</button>
+          </div>`;
+        }).join("")}</div>`:""}
       </div>`;
-    }).join("")}`;
+    }).join("")}
+    ${hiddenList.length&&alertManageMode?`<div style="margin-top:14px">
+      <div style="font-size:11px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Removed — tap to restore</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${hiddenList.map(a=>`<button onclick="restoreAlert('${a.trigger.replace(/'/g,"\\'")}')" style="background:#111;border:1px dashed #555;color:#888;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;font-family:inherit">${a.trigger} +</button>`).join('')}
+      </div>
+    </div>`:''}
+    ${usedToday.length?`<div class="card" style="margin-top:16px">
+      <div class="section-label" style="margin-top:0">Logged Today — what helped</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+        ${usedToday.map(item=>`<span class="tag green">${item}</span>`).join("")}
+      </div>
+    </div>`:""}`;
 }
 window.toggleAlert=i=>{expandedAlert=expandedAlert===i?null:i;render();};
+window.addCustomAlert=()=>{
+  const t=(document.getElementById("new-alert-trigger")||{}).value||"";
+  const r=(document.getElementById("new-alert-responses")||{}).value||"";
+  const trigger=t.trim();
+  const responses=r.split("\n").map(s=>s.trim()).filter(Boolean);
+  if(!trigger){alert("Give the trigger a name.");return;}
+  if(!responses.length){alert("Add at least one action (one per line).");return;}
+  const data=loadData();
+  const custom=data.customAlerts||[];
+  const hidden=(data.hiddenAlerts||[]).filter(x=>x!==trigger);
+  if(custom.some(c=>c.trigger===trigger)||RED_ALERTS.some(a=>a.trigger===trigger)){
+    alert("A trigger with that name already exists.");return;
+  }
+  custom.push({trigger,responses});
+  saveData({...data,customAlerts:custom,hiddenAlerts:hidden});
+  expandedAlert=null;renderContent();
+};
+window.removeAlert=trigger=>{
+  const data=loadData();
+  const custom=data.customAlerts||[];
+  const isCustom=custom.some(c=>c.trigger===trigger);
+  if(isCustom){
+    saveData({...data,customAlerts:custom.filter(c=>c.trigger!==trigger)});
+  } else {
+    const hidden=data.hiddenAlerts||[];
+    if(!hidden.includes(trigger))hidden.push(trigger);
+    saveData({...data,hiddenAlerts:hidden});
+  }
+  expandedAlert=null;renderContent();
+};
+window.restoreAlert=trigger=>{
+  const data=loadData();
+  const hidden=(data.hiddenAlerts||[]).filter(x=>x!==trigger);
+  saveData({...data,hiddenAlerts:hidden});renderContent();
+};
 
 // CHECK-IN
 let checkIn={urge:5,emotion:"",situation:"",action:""};
@@ -603,9 +679,12 @@ function renderRelease(){
     ${releaseLogs.length?`
       <div class="section-label" style="margin-top:16px">What's Been Working</div>
       ${releaseLogs.map(log=>`<div class="release-log-entry">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
           <span style="font-size:12px;color:#555">${new Date(log.date).toLocaleDateString()}</span>
-          ${log.urge?`<span style="font-size:12px;font-weight:700;color:${urgeColor(log.urge)}">Urge was ${log.urge}/10</span>`:""}
+          <div style="display:flex;align-items:center;gap:8px">
+            ${log.urge?`<span style="font-size:12px;font-weight:700;color:${urgeColor(log.urge)}">Urge was ${log.urge}/10</span>`:""}
+            <button onclick="deleteReleaseLog('${log.date}')" style="background:none;border:none;color:#555;font-size:20px;cursor:pointer;padding:0;line-height:1" title="Delete">&times;</button>
+          </div>
         </div>
         <span class="tag green">${log.item}</span>
       </div>`).join("")}`:""}`;
@@ -620,6 +699,11 @@ window.logRelease=item=>{
     const lastUrge=data.urgeLogs&&data.urgeLogs.length?data.urgeLogs[data.urgeLogs.length-1].urge:null;
     logs.push({item,date:new Date().toISOString(),urge:lastUrge});
   }
+  saveData({...data,releaseLogs:logs});renderContent();
+};
+window.deleteReleaseLog=dateIso=>{
+  const data=loadData();
+  const logs=(data.releaseLogs||[]).filter(l=>l.date!==dateIso);
   saveData({...data,releaseLogs:logs});renderContent();
 };
 
@@ -843,8 +927,8 @@ window.showSponsorModal=()=>{
     </div>
     ${currentStepNum?`<div style="background:#1a2a1a;border:1px solid #22c55e33;border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px;color:#22c55e">Currently working: Step ${currentStepNum}</div>`:``}
     ${!circlesSet?`<div style="background:#1a1200;border:1px solid #f59e0b33;border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px;color:#f59e0b">Three Circles not set up yet.</div>`:""}
-    <a href="sms:?&body=${encodeURIComponent(smsText)}" style="text-decoration:none;display:block;margin-bottom:8px"><button class="btn-copy" style="margin:0">Send as Text</button></a>
-    <button class="btn-copy" onclick="sendToAllContacts(smsText)" style="margin-bottom:8px">Send to All Contacts</button>
+    <button class="btn-copy" onclick="sendToAllContacts(smsText)" style="margin-bottom:8px;background:#1a2333;border-color:#60a5fa;color:#60a5fa;font-weight:700">📤 Send to All Contacts</button>
+    <a href="sms:?&body=${encodeURIComponent(smsText)}" style="text-decoration:none;display:block;margin-bottom:8px"><button class="btn-copy" style="margin:0">Send as Text (pick recipient)</button></a>
     <button class="btn-copy" onclick="copyToClipboard(smsText)" style="margin-bottom:8px">Copy to Clipboard</button>
     <button class="btn-close" onclick="closeModal()">Close</button>
   </div>`;
@@ -1433,16 +1517,22 @@ function renderJournalLetters(){
   </div>`).join("")}`:""}`;
 }
 
+function journalEntryPct(e){
+  // Count filled components out of the daily journal parts
+  const parts=[e.mood,e.promptResponse,e.freeText,e.gratitude1,e.gratitude2,e.gratitude3,e.affirmation1,e.affirmation2,e.affirmation3,e.sabrinaLove];
+  const filled=parts.filter(p=>p&&String(p).trim()).length;
+  return Math.round((filled/parts.length)*100);
+}
 function renderJournalHistory(){
   const data=loadData();const entries=(data.journalEntries||[]).slice().reverse().slice(0,20);
   if(!entries.length)return `<div style="text-align:center;color:#333;font-size:14px;padding:40px 0">No journal entries yet.</div>`;
   return `<div class="section-label">${(data.journalEntries||[]).length} entries</div>
-  ${entries.map(e=>`<div class="journal-entry-card">
+  ${entries.map(e=>{const pct=e.type==="letter"?null:journalEntryPct(e);const pc=pct===null?"#555":pct>=80?"#22c55e":pct>=40?"#f59e0b":"#ef4444";return `<div class="journal-entry-card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
       <div class="journal-entry-meta" style="margin:0">${e.date}</div>
       <div style="display:flex;align-items:center;gap:6px">
         ${e.mood?`<span style="font-size:16px">${MOODS.find(m=>m.label===e.mood)?.emoji||""}</span>`:""}
-        ${e.type==="letter"?`<span class="tag">Letter</span>`:""}
+        ${e.type==="letter"?`<span class="tag">Letter</span>`:`<span class="tag" style="background:${pc}22;color:${pc};border-color:${pc}">${pct}% complete</span>`}
       </div>
     </div>
     ${e.sabrinaLove?`<div class="log-line" style="margin-top:4px"><span style="color:#e75480">&#x2764;&#xFE0F;</span> ${e.sabrinaLove}</div>`:""}
@@ -1450,7 +1540,7 @@ function renderJournalHistory(){
     ${e.freeText?`<div style="margin-top:8px"><div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">Free Write</div><div class="journal-entry-preview">${e.freeText.slice(0,200)}${e.freeText.length>200?"...":""}</div></div>`:""}
     ${[e.gratitude1,e.gratitude2,e.gratitude3].filter(Boolean).length?`<div style="margin-top:8px"><div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Grateful For</div><div style="display:flex;flex-wrap:wrap;gap:4px">${[e.gratitude1,e.gratitude2,e.gratitude3].filter(Boolean).map(g=>`<span class="tag green">${g}</span>`).join("")}</div></div>`:""}
     ${[e.affirmation1,e.affirmation2,e.affirmation3].filter(Boolean).length?`<div style="margin-top:8px"><div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Affirmations</div><div style="display:flex;flex-wrap:wrap;gap:4px">${[e.affirmation1,e.affirmation2,e.affirmation3].filter(Boolean).map(a=>`<span class="tag" style="background:#1a1200;color:#f59e0b;border-color:#f59e0b">${a}</span>`).join("")}</div></div>`:""}
-  </div>`).join("")}`;
+  </div>`;}).join("")}`;
 }
 
 window.setMood=m=>{journalForm.mood=m;renderContent();};
@@ -1471,14 +1561,17 @@ window.saveLetterEntry=()=>{
 };
 
 // HABITS
-let habitView="weekly",habitMonthOffset=0;
+let habitView="weekly",habitMonthOffset=0,habitManageMode=false;
 
 function renderHabits(){
   const data=loadData();
   const activeDate=getTodayStr();
   const todayKey="habits_"+activeDate;
   const todayDone=data[todayKey]||[];const customHabits=data.customHabits||[];
-  const allHabits=[...DEFAULT_HABITS,...customHabits];
+  const hidden=data.hiddenHabits||[];
+  const hkey=h=>h.id||h.name;
+  const allHabits=[...DEFAULT_HABITS,...customHabits].filter(h=>!hidden.includes(hkey(h)));
+  const hiddenDefaults=DEFAULT_HABITS.filter(h=>hidden.includes(hkey(h)));
   const completedToday=todayDone.length;const totalHabits=allHabits.length;
   const pct=totalHabits?Math.round((completedToday/totalHabits)*100):0;
   const last7=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last7.push(toLocalDateStr(d));}
@@ -1528,11 +1621,26 @@ function renderHabits(){
     </div>
     ${habitView==="weekly"?renderHabitsWeekly(data,allHabits,todayDone,last7,activeDate):renderHabitsMonthly(data,allHabits,monthDays,monthYear,daysInMonth,firstDayOfWeek)}
     <div class="card" style="margin-bottom:20px">
-      <label class="field-label" style="margin-bottom:10px">Add Custom Habit</label>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <label class="field-label" style="margin:0">Manage Habits</label>
+        <button onclick="habitManageMode=!habitManageMode;renderContent()" style="background:${habitManageMode?'#2a1a1a':'#1a1a1a'};border:1px solid ${habitManageMode?'#ef4444':'#333'};color:${habitManageMode?'#ef4444':'#888'};border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">${habitManageMode?'Done':'Edit'}</button>
+      </div>
+      ${habitManageMode?`<div style="margin-bottom:14px">
+        ${allHabits.map(h=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1a1a">
+          <span style="font-size:14px;color:#ccc">${h.icon} ${h.name}</span>
+          <button onclick="removeHabit('${hkey(h).replace(/'/g,"\\'")}')" style="background:#2a1a1a;border:1px solid #ef4444;color:#ef4444;border-radius:6px;width:30px;height:30px;font-size:16px;cursor:pointer;font-family:inherit;line-height:1">&times;</button>
+        </div>`).join('')}
+      </div>`:''}
       <div style="display:flex;gap:8px">
-        <input type="text" id="new-habit-input" placeholder="e.g. Cold plunge..." style="flex:1" />
+        <input type="text" id="new-habit-input" placeholder="Add a habit — e.g. Cold plunge..." style="flex:1" onkeydown="if(event.key==='Enter')addCustomHabit()" />
         <button onclick="addCustomHabit()" style="background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:8px;padding:0 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">Add</button>
       </div>
+      ${hiddenDefaults.length?`<div style="margin-top:14px">
+        <div style="font-size:11px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Removed — tap to restore</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${hiddenDefaults.map(h=>`<button onclick="restoreHabit('${hkey(h).replace(/'/g,"\\'")}')" style="background:#111;border:1px dashed #555;color:#888;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;font-family:inherit">${h.icon} ${h.name} +</button>`).join('')}
+        </div>
+      </div>`:''}
     </div>`;
 }
 
@@ -1623,7 +1731,32 @@ window.adjustMeeting=(key,date,delta)=>{
 window.addCustomHabit=()=>{
   const input=document.getElementById("new-habit-input");const val=input?input.value.trim():"";if(!val)return;
   const data=loadData();const custom=data.customHabits||[];
-  if(!custom.find(h=>h.name===val)){custom.push({name:val,icon:"&#x2B50;"});saveData({...data,customHabits:custom});}
+  const hidden=(data.hiddenHabits||[]).filter(k=>k!==val); // un-hide if re-adding a removed name
+  if(!custom.find(h=>h.name===val)){
+    custom.push({id:"custom_"+Date.now(),name:val,icon:"&#x2B50;"});
+  }
+  saveData({...data,customHabits:custom,hiddenHabits:hidden});
+  if(input)input.value="";
+  renderContent();
+};
+window.removeHabit=key=>{
+  const data=loadData();
+  const custom=data.customHabits||[];
+  // If it's a custom habit, delete it outright; if a default, hide it
+  const isCustom=custom.find(h=>(h.id||h.name)===key);
+  if(isCustom){
+    saveData({...data,customHabits:custom.filter(h=>(h.id||h.name)!==key)});
+  } else {
+    const hidden=data.hiddenHabits||[];
+    if(!hidden.includes(key))hidden.push(key);
+    saveData({...data,hiddenHabits:hidden});
+  }
+  renderContent();
+};
+window.restoreHabit=key=>{
+  const data=loadData();
+  const hidden=(data.hiddenHabits||[]).filter(k=>k!==key);
+  saveData({...data,hiddenHabits:hidden});
   renderContent();
 };
 
