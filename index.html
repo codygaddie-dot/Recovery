@@ -762,7 +762,7 @@ window.logRelease=item=>{
     logs.splice(todayIdx,1);
   } else {
     const lastUrge=data.urgeLogs&&data.urgeLogs.length?data.urgeLogs[data.urgeLogs.length-1].urge:null;
-    logs.push({item,date:new Date().toISOString(),urge:lastUrge});
+    logs.push({item,date:getTodayStr()+"T"+new Date().toTimeString().slice(0,8),urge:lastUrge});
   }
   saveData({...data,releaseLogs:logs});renderContent();
 };
@@ -2241,6 +2241,7 @@ function renderSettings() {
       <button onclick="importData()" style="width:100%;padding:12px;background:#1a2333;border:1px solid #60a5fa;color:#60a5fa;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;margin-bottom:10px">📥 Restore from Backup</button>
       <button onclick="clearAllData()" style="width:100%;padding:12px;background:transparent;border:1px solid #2a2a2a;color:#555;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13px">Clear All Data</button>
     </div>
+    <div style="text-align:center;color:#333;font-size:11px;padding:8px 0 20px">Build: BTC-v2 · ${new Date().toLocaleDateString()}</div>
   `;
 }
 
