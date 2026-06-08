@@ -173,7 +173,31 @@ const DAILY_QUOTES=[
   {text:"Strength does not come from winning. Your struggles develop your strengths.",author:"Arnold Schwarzenegger"},
   {text:"Man never made any material as resilient as the human spirit.",author:"Bernard Williams"},
   {text:"It does not matter how slowly you go as long as you do not stop.",author:"Confucius"},
-  {text:"What lies behind us and what lies before us are tiny matters compared to what lies within us.",author:"Ralph Waldo Emerson"}
+  {text:"What lies behind us and what lies before us are tiny matters compared to what lies within us.",author:"Ralph Waldo Emerson"},
+  {text:"You will be the same person in five years except for the people you meet and the choices you make.",author:"Anonymous"},
+  {text:"The man who moves a mountain begins by carrying away small stones.",author:"Confucius"},
+  {text:"Discipline is choosing between what you want now and what you want most.",author:"Anonymous"},
+  {text:"Your relapse doesn't erase your progress. Get back up and keep walking.",author:"Anonymous"},
+  {text:"The urge will pass whether you act on it or not. Outlast it.",author:"Anonymous"},
+  {text:"You didn't come this far to only come this far.",author:"Anonymous"},
+  {text:"Being a good man to your family is the recovery. Everything else is just the work.",author:"Anonymous"},
+  {text:"The people who love you are not the enemy of your urges — they're the reason to beat them.",author:"Anonymous"},
+  {text:"Cravings are loud. So is the silence after you don't give in.",author:"Anonymous"},
+  {text:"You can't control the first thought. You can control the second.",author:"Anonymous"},
+  {text:"Don't trade what you want most for what you want right now.",author:"Anonymous"},
+  {text:"A setback is a setup for a comeback.",author:"Anonymous"},
+  {text:"Showing up sober and present is the most radical thing you can do for the people you love.",author:"Anonymous"},
+  {text:"The hardest part is over — you admitted it. The rest is just practice.",author:"Anonymous"},
+  {text:"Some days staying clean is the only thing you did. That's enough.",author:"Anonymous"},
+  {text:"You are building a man your stepkids can look up to, one honest day at a time.",author:"Anonymous"},
+  {text:"Feelings aren't facts, and urges aren't orders.",author:"Anonymous"},
+  {text:"Progress, not perfection.",author:"Anonymous"},
+  {text:"The version of you that your family deserves is the version you're fighting for right now.",author:"Anonymous"},
+  {text:"Recovery isn't about never falling. It's about refusing to stay down.",author:"Anonymous"},
+  {text:"Half measures availed us nothing.",author:"Alcoholics Anonymous"},
+  {text:"We are only as sick as our secrets.",author:"Recovery Proverb"},
+  {text:"It works if you work it.",author:"Recovery Proverb"},
+  {text:"Just for today, I will not pick up. Tomorrow can wait.",author:"Anonymous"}
 ];
 function getDailyQuote(){const day=Math.floor(Date.now()/86400000);return DAILY_QUOTES[day%DAILY_QUOTES.length];}
 
@@ -2195,10 +2219,12 @@ function renderSettings() {
       ${renderReminderCard()}
     </div>
 
-    <!-- Export -->
+    <!-- Backup / Restore -->
     <div class="card">
-      <div class="section-label" style="margin-bottom:10px">Data</div>
-      <button onclick="exportData()" style="width:100%;padding:12px;background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;margin-bottom:10px">Export All Data</button>
+      <div class="section-label" style="margin-bottom:4px">Data</div>
+      <div style="font-size:11px;color:#555;margin-bottom:12px;line-height:1.5">Everything is stored only on this phone. Save a backup file regularly — if Safari data is cleared, it's the only way to get your entries back.</div>
+      <button onclick="exportData()" style="width:100%;padding:12px;background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;margin-bottom:10px">💾 Save Data (Backup to File)</button>
+      <button onclick="importData()" style="width:100%;padding:12px;background:#1a2333;border:1px solid #60a5fa;color:#60a5fa;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;margin-bottom:10px">📥 Restore from Backup</button>
       <button onclick="clearAllData()" style="width:100%;padding:12px;background:transparent;border:1px solid #2a2a2a;color:#555;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13px">Clear All Data</button>
     </div>
   `;
@@ -2259,9 +2285,33 @@ window.exportData = () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'staythecourse-backup-'+getTodayStr()+'.json';
+  a.download = 'breakthecycle-backup-'+getTodayStr()+'.json';
   a.click();
   URL.revokeObjectURL(url);
+};
+window.importData = () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'application/json,.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try{
+        const imported = JSON.parse(ev.target.result);
+        if(typeof imported !== 'object' || imported === null) throw new Error('bad');
+        if(!confirm('Restore from this backup? This replaces everything currently in the app.')) return;
+        saveData(imported);
+        alert('Backup restored.');
+        renderContent();
+      }catch(err){
+        alert("That file isn't a valid Break the Cycle backup.");
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
 };
 
 
