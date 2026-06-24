@@ -356,6 +356,12 @@ function getTodayStr(){
 function toLocalDateStr(d){
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
+function currentWeekId(){
+  // Identifier for the current week (Sunday start) — used to auto-reset weekly goals
+  const now=new Date();
+  const sow=new Date(now);sow.setDate(now.getDate()-now.getDay());sow.setHours(0,0,0,0);
+  return toLocalDateStr(sow);
+}
 function urgeColor(v){return v<=3?"#22c55e":v<=6?"#f59e0b":"#ef4444";}
 function urgeStatus(v){return v<=3?"Manageable — stay aware":v<=6?"Moderate — run your plan":"High — execute immediately";}
 function streakDays(data){if(!data.soberStart)return 0;const start=new Date(data.soberStart+'T00:00:00');const today=new Date();const diff=new Date(today.getFullYear(),today.getMonth(),today.getDate())-new Date(start.getFullYear(),start.getMonth(),start.getDate());return Math.floor(diff/86400000);}
@@ -998,7 +1004,19 @@ window.showSponsorModal=()=>{
     <button class="btn-close" onclick="closeModal()">Close</button>
   </div>`;
 }
-function getTopRelease(data){const logs=data.releaseLogs||[];if(!logs.length)return null;const c={};logs.forEach(l=>{c[l.item]=(c[l.item]||0)+1;});return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;}
+function getTopRelease(data){
+  const now=new Date();const sow=new Date(now);sow.setDate(now.getDate()-now.getDay());sow.setHours(0,0,0,0);
+  const sowStr=toLocalDateStr(sow);
+  const logs=(data.releaseLogs||[]).filter(l=>{
+    if(!l.date)return false;
+    // l.date may be ISO ("2026-06-08T...") or locale string; normalize to a Date
+    const d=new Date(l.date);
+    return !isNaN(d)&&d>=sow;
+  });
+  if(!logs.length)return null;
+  const c={};logs.forEach(l=>{c[l.item]=(c[l.item]||0)+1;});
+  return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;
+}
 window.copyToClipboard=(text)=>{if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>alert("Copied!"));}else{const el=document.createElement('textarea');el.value=text;document.body&&document.body.appendChild(el);el.select();try{document.execCommand('copy');alert("Copied!");}catch(e){}document.body&&document.body.removeChild(el);}};
 
 window.sendToAllContacts=(text)=>{
@@ -1392,10 +1410,14 @@ function renderFitGoals(){
   const goals=data.fitnessGoals||[{text:"Train 4x per week",target:4,unit:"days/week",progress:0},{text:"Hit 200 lbs bodyweight",target:200,unit:"lbs",progress:0}];
   const now=new Date();const startOfWeek=new Date(now);startOfWeek.setDate(now.getDate()-now.getDay());startOfWeek.setHours(0,0,0,0);
   const weekWorkouts=(data.workoutLogs||[]).filter(l=>new Date(l.date)>=startOfWeek).length;
+  const curWeek=currentWeekId();
+  const isWeekly=g=>(g.unit||'').toLowerCase().includes('week');
+  const effProgress=g=>{ if(isWeekly(g)&&g.weekId!==curWeek) return 0; return g.progress||0; };
   return `<div class="card">
     <div class="section-label" style="margin-bottom:14px">This week: ${weekWorkouts} workout${weekWorkouts!==1?"s":""}</div>
     ${goals.map((g,i)=>{
-      const pct=Math.min(100,Math.round(((g.progress||0)/g.target)*100));
+      const prog=effProgress(g);
+      const pct=Math.min(100,Math.round((prog/g.target)*100));
       const isEditing=goalEditIdx===i;
       return `<div style="padding:14px 0;border-bottom:1px solid #1a1a1a">
         ${isEditing?`
@@ -1414,7 +1436,7 @@ function renderFitGoals(){
             </div>
             <div>
               <label class="field-label">Current progress</label>
-              <input type="number" id="gedit-progress-${i}" value="${g.progress||0}" style="margin-bottom:0" />
+              <input type="number" id="gedit-progress-${i}" value="${effProgress(g)}" style="margin-bottom:0" />
             </div>
           </div>
           <div style="display:flex;gap:8px">
@@ -1429,7 +1451,7 @@ function renderFitGoals(){
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <div class="progress-bar-bg" style="margin:0"><div class="progress-bar-fill" style="width:${pct}%;background:${pct>=100?'#22c55e':pct>=50?'#f59e0b':'#60a5fa'}"></div></div>
-            <span style="font-size:12px;color:#555;white-space:nowrap">${g.progress||0}/${g.target} ${g.unit||''}</span>
+            <span style="font-size:12px;color:#555;white-space:nowrap">${prog}/${g.target} ${g.unit||''}${isWeekly(g)?' <span style="color:#444">(weekly)</span>':''}</span>
             <button onclick="adjustGoal(${i},1)" style="background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:5px;width:30px;height:30px;font-size:16px;cursor:pointer;flex-shrink:0">+</button>
             <button onclick="adjustGoal(${i},-1)" style="background:#1a1a1a;border:1px solid #333;color:#555;border-radius:5px;width:30px;height:30px;font-size:16px;cursor:pointer;flex-shrink:0">-</button>
           </div>
@@ -1444,7 +1466,17 @@ function renderFitGoals(){
 }
 window.adjustGoal=(i,delta)=>{
   const data=loadData();const goals=data.fitnessGoals||[];
-  if(goals[i]){goals[i].progress=Math.max(0,(goals[i].progress||0)+delta);saveData({...data,fitnessGoals:goals});renderContent();}
+  if(goals[i]){
+    const g=goals[i];
+    const isWeekly=(g.unit||'').toLowerCase().includes('week');
+    const curWeek=currentWeekId();
+    // If this is a weekly goal and we've rolled into a new week, start fresh
+    let base=g.progress||0;
+    if(isWeekly && g.weekId!==curWeek){ base=0; }
+    g.progress=Math.max(0,base+delta);
+    if(isWeekly){ g.weekId=curWeek; }
+    saveData({...data,fitnessGoals:goals});renderContent();
+  }
 };
 window.saveGoalEdit=i=>{
   const data=loadData();const goals=data.fitnessGoals||[];
@@ -1452,7 +1484,9 @@ window.saveGoalEdit=i=>{
   const target=+(document.getElementById('gedit-target-'+i)||{}).value||goals[i].target;
   const unit=(document.getElementById('gedit-unit-'+i)||{}).value||goals[i].unit;
   const progress=+(document.getElementById('gedit-progress-'+i)||{}).value||0;
+  const isWeekly=(unit||'').toLowerCase().includes('week');
   goals[i]={...goals[i],text,target,unit,progress};
+  if(isWeekly){ goals[i].weekId=currentWeekId(); }
   saveData({...data,fitnessGoals:goals});goalEditIdx=null;renderContent();
 };
 window.deleteGoal=i=>{
@@ -1891,10 +1925,11 @@ function renderStats(){
     weeks.push({label,pct});
   }
 
-  // Top triggers
-  const triggerCounts={};
-  urgeLogs.forEach(l=>{if(l.situation&&l.situation.trim()){const t=l.situation.trim().slice(0,30);triggerCounts[t]=(triggerCounts[t]||0)+1;}});
-  const topTriggers=Object.entries(triggerCounts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  // Recent check-in notes (the free-text "what's on your mind" field)
+  const recentNotes=(urgeLogs||[])
+    .filter(l=>l.situation&&l.situation.trim())
+    .slice().reverse().slice(0,8)
+    .map(l=>({date:l.date,text:l.situation.trim(),urge:l.urge}));
 
   // Top release tools
   const toolCounts={};
@@ -1986,20 +2021,23 @@ function renderStats(){
         </div>`).join("")}
     </div>`:""}
 
-    <!-- Top triggers -->
-    ${topTriggers.length?`
+    <!-- Recent check-in notes -->
+    ${recentNotes.length?`
     <div class="chart-container">
-      <div class="chart-title">Top Triggers Logged</div>
-      <div class="chart-sub">From your check-in descriptions</div>
-      ${topTriggers.map(([trigger,count])=>`
-        <div class="trigger-row">
-          <span style="font-size:14px;color:#ccc">${trigger}</span>
-          <span style="font-size:13px;font-weight:700;color:#f59e0b">${count}x</span>
+      <div class="chart-title">Recent Check-In Notes</div>
+      <div class="chart-sub">What you wrote during your check-ins</div>
+      ${recentNotes.map(n=>`
+        <div style="background:#0d0d0d;border:1px solid #1a1a1a;border-radius:8px;padding:10px 12px;margin-top:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-size:11px;color:#444">${n.date?new Date(n.date).toLocaleDateString("en-US",{month:"short",day:"numeric"}):""}</span>
+            ${n.urge!=null?`<span style="font-size:11px;font-weight:700;color:${urgeColor(+n.urge)}">Urge ${n.urge}/10</span>`:""}
+          </div>
+          <div style="font-size:13px;color:#ccc;line-height:1.5">${n.text}</div>
         </div>`).join("")}
     </div>`:`
     <div class="chart-container">
-      <div class="chart-title">Top Triggers</div>
-      <div style="text-align:center;color:#333;font-size:13px;padding:20px 0">Log check-ins with trigger descriptions to see patterns here.</div>
+      <div class="chart-title">Recent Check-In Notes</div>
+      <div style="text-align:center;color:#333;font-size:13px;padding:20px 0">Your check-in notes will show here as you log them.</div>
     </div>`}
   `;
 }
