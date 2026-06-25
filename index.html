@@ -1544,6 +1544,8 @@ window.deletePhoto=i=>{
 // JOURNAL
 let journalSubTab=0;
 let journalForm={type:"free",mood:"",freeText:"",gratitude1:"",gratitude2:"",gratitude3:"",affirmation1:"",affirmation2:"",affirmation3:"",sabrinaLove:"",promptResponse:"",letterText:"",promptIndex:-1};
+let expandedLetter=null;
+let expandedJournal=null;
 let journalSaved=false;
 function getTodayPrompt(){const day=Math.floor(Date.now()/86400000);return JOURNAL_PROMPTS[day%JOURNAL_PROMPTS.length];}
 function renderJournal(){
@@ -1610,10 +1612,17 @@ function renderJournalLetters(){
     <textarea rows="7" placeholder="Dear Sabrina," oninput="journalForm.letterText=this.value">${journalForm.letterText}</textarea>
     <button class="btn-primary${journalSaved?" saved":""}" onclick="saveLetterEntry()" style="margin-top:12px">${journalSaved?"Saved":"Save Letter"}</button>
   </div>
-  ${letters.length?`<div class="section-label" style="margin-top:8px">Previous Letters</div>${letters.map(e=>`<div class="journal-entry-card">
-    <div class="journal-entry-meta">${e.date}</div>
-    <div class="journal-entry-preview">${(e.letterText||"").slice(0,100)}${(e.letterText||"").length>100?"...":""}</div>
-  </div>`).join("")}`:""}`;
+  ${letters.length?`<div class="section-label" style="margin-top:8px">Previous Letters</div>${letters.map(e=>{
+    const open=expandedLetter===e.date;
+    const full=e.letterText||"";
+    return `<div class="journal-entry-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <div class="journal-entry-meta" style="margin:0">${e.date}</div>
+      <button onclick="deleteLetter('${(e.date||'').replace(/'/g,"\\'")}')" style="background:none;border:none;color:#555;font-size:18px;cursor:pointer;padding:0 4px;line-height:1">&times;</button>
+    </div>
+    <div class="journal-entry-preview" style="white-space:pre-wrap">${open?full:full.slice(0,100)+(full.length>100?"...":"")}</div>
+    ${full.length>100?`<button onclick="toggleLetter('${(e.date||'').replace(/'/g,"\\'")}')" style="background:none;border:none;color:#60a5fa;font-size:12px;font-weight:700;cursor:pointer;padding:6px 0 0;font-family:inherit">${open?"Show less":"Read full letter"}</button>`:""}
+  </div>`;}).join("")}`:""}`;
 }
 
 function journalEntryPct(e){
@@ -1626,23 +1635,38 @@ function renderJournalHistory(){
   const data=loadData();const entries=(data.journalEntries||[]).slice().reverse().slice(0,20);
   if(!entries.length)return `<div style="text-align:center;color:#333;font-size:14px;padding:40px 0">No journal entries yet.</div>`;
   return `<div class="section-label">${(data.journalEntries||[]).length} entries</div>
-  ${entries.map(e=>{const pct=e.type==="letter"?null:journalEntryPct(e);const pc=pct===null?"#555":pct>=80?"#22c55e":pct>=40?"#f59e0b":"#ef4444";return `<div class="journal-entry-card">
+  ${entries.map(e=>{const pct=e.type==="letter"?null:journalEntryPct(e);const pc=pct===null?"#555":pct>=80?"#22c55e":pct>=40?"#f59e0b":"#ef4444";
+    const open=expandedJournal===e.date;
+    const clip=(t)=>open?t:(t.slice(0,200)+(t.length>200?"...":""));
+    const hasMore=(e.promptResponse&&e.promptResponse.length>200)||(e.freeText&&e.freeText.length>200);
+    return `<div class="journal-entry-card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
       <div class="journal-entry-meta" style="margin:0">${e.date}</div>
       <div style="display:flex;align-items:center;gap:6px">
         ${e.mood?`<span style="font-size:16px">${MOODS.find(m=>m.label===e.mood)?.emoji||""}</span>`:""}
         ${e.type==="letter"?`<span class="tag">Letter</span>`:`<span class="tag" style="background:${pc}22;color:${pc};border-color:${pc}">${pct}% complete</span>`}
+        <button onclick="deleteJournalEntry('${(e.date||'').replace(/'/g,"\\'")}')" style="background:none;border:none;color:#555;font-size:18px;cursor:pointer;padding:0 2px;line-height:1">&times;</button>
       </div>
     </div>
     ${e.sabrinaLove?`<div class="log-line" style="margin-top:4px"><span style="color:#e75480">&#x2764;&#xFE0F;</span> ${e.sabrinaLove}</div>`:""}
-    ${e.promptResponse?`<div style="margin-top:6px"><div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">Prompt Response</div><div class="journal-entry-preview">${e.promptResponse.slice(0,200)}${e.promptResponse.length>200?"...":""}</div></div>`:""}
-    ${e.freeText?`<div style="margin-top:8px"><div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">Free Write</div><div class="journal-entry-preview">${e.freeText.slice(0,200)}${e.freeText.length>200?"...":""}</div></div>`:""}
+    ${e.promptResponse?`<div style="margin-top:6px"><div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">Prompt Response</div><div class="journal-entry-preview" style="white-space:pre-wrap">${clip(e.promptResponse)}</div></div>`:""}
+    ${e.freeText?`<div style="margin-top:8px"><div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">Free Write</div><div class="journal-entry-preview" style="white-space:pre-wrap">${clip(e.freeText)}</div></div>`:""}
     ${[e.gratitude1,e.gratitude2,e.gratitude3].filter(Boolean).length?`<div style="margin-top:8px"><div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Grateful For</div><div style="display:flex;flex-wrap:wrap;gap:4px">${[e.gratitude1,e.gratitude2,e.gratitude3].filter(Boolean).map(g=>`<span class="tag green">${g}</span>`).join("")}</div></div>`:""}
     ${[e.affirmation1,e.affirmation2,e.affirmation3].filter(Boolean).length?`<div style="margin-top:8px"><div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Affirmations</div><div style="display:flex;flex-wrap:wrap;gap:4px">${[e.affirmation1,e.affirmation2,e.affirmation3].filter(Boolean).map(a=>`<span class="tag" style="background:#1a1200;color:#f59e0b;border-color:#f59e0b">${a}</span>`).join("")}</div></div>`:""}
+    ${hasMore?`<button onclick="toggleJournal('${(e.date||'').replace(/'/g,"\\'")}')" style="background:none;border:none;color:#60a5fa;font-size:12px;font-weight:700;cursor:pointer;padding:8px 0 0;font-family:inherit">${open?"Show less":"Read full entry"}</button>`:""}
   </div>`;}).join("")}`;
 }
 
 window.setMood=m=>{journalForm.mood=m;renderContent();};
+window.toggleJournal=date=>{ expandedJournal=expandedJournal===date?null:date; renderContent(); };
+window.deleteJournalEntry=date=>{
+  if(!confirm("Delete this journal entry? This can't be undone."))return;
+  const data=loadData();
+  const entries=(data.journalEntries||[]).filter(e=>e.date!==date);
+  saveData({...data,journalEntries:entries});
+  if(expandedJournal===date)expandedJournal=null;
+  renderContent();
+};
 window.saveJournalEntry=()=>{
   const data=loadData();const entries=data.journalEntries||[];
   entries.push({type:"daily",date:new Date().toLocaleString(),mood:journalForm.mood,promptResponse:journalForm.promptResponse,prompt:getTodayPrompt(),freeText:journalForm.freeText,gratitude1:journalForm.gratitude1,gratitude2:journalForm.gratitude2,gratitude3:journalForm.gratitude3,affirmation1:journalForm.affirmation1,affirmation2:journalForm.affirmation2,affirmation3:journalForm.affirmation3,sabrinaLove:journalForm.sabrinaLove});
@@ -1657,6 +1681,15 @@ window.saveLetterEntry=()=>{
   entries.push({type:"letter",date:new Date().toLocaleString(),letterText:journalForm.letterText});
   saveData({...data,journalEntries:entries});journalSaved=true;journalForm.letterText="";
   renderContent();setTimeout(()=>{journalSaved=false;renderContent();},2500);
+};
+window.toggleLetter=date=>{ expandedLetter=expandedLetter===date?null:date; renderContent(); };
+window.deleteLetter=date=>{
+  if(!confirm("Delete this letter? This can't be undone."))return;
+  const data=loadData();
+  const entries=(data.journalEntries||[]).filter(e=>!(e.type==="letter"&&e.date===date));
+  saveData({...data,journalEntries:entries});
+  if(expandedLetter===date)expandedLetter=null;
+  renderContent();
 };
 
 // HABITS
