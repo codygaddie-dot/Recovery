@@ -1996,35 +1996,51 @@ window.authSubmit=async()=>{
   const password=document.getElementById("auth-password").value||"";
   const errEl=document.getElementById("auth-error");
   const btn=document.getElementById("auth-submit");
+  errEl.style.color="#ef4444";
   errEl.textContent="";
   if(!email||!password){errEl.textContent="Enter your email and password.";return;}
   if(password.length<6){errEl.textContent="Password must be at least 6 characters.";return;}
-  if(!sb){errEl.textContent="Can't reach the server. Check your connection and try again.";return;}
+  if(!sb){errEl.textContent="Can't connect to the server. Check your internet, then reload.";return;}
   btn.disabled=true;btn.textContent="Please wait…";
+  const reset=(label)=>{btn.disabled=false;btn.textContent=label;};
   try{
-    let res;
     if(authMode==="signup"){
-      res=await sb.auth.signUp({email,password});
+      const res=await sb.auth.signUp({email,password});
+      if(res.error){
+        // If already registered, just try to sign in
+        if(/already/i.test(res.error.message)){
+          authMode="signin";
+        }else{
+          errEl.textContent=res.error.message; reset("Create Account"); return;
+        }
+      }else if(res.data.session){
+        await onSignedIn(res.data.user); return;
+      }
+      // No session yet → attempt an immediate sign-in (works if confirmation is OFF)
+      const si=await sb.auth.signInWithPassword({email,password});
+      if(si.data && si.data.session){ await onSignedIn(si.data.user); return; }
+      // Still no session → confirmation is ON and blocking us
+      errEl.style.color="#f59e0b";
+      errEl.innerHTML="Your account needs email confirmation turned OFF in Supabase.<br>Go to Supabase → Authentication → Sign In / Providers → Email → turn off \"Confirm email\", then tap Sign In.";
+      authMode="signin"; reset("Sign In"); return;
     }else{
-      res=await sb.auth.signInWithPassword({email,password});
+      const res=await sb.auth.signInWithPassword({email,password});
+      if(res.error){
+        if(/confirm/i.test(res.error.message)){
+          errEl.style.color="#f59e0b";
+          errEl.innerHTML="Email not confirmed. In Supabase → Authentication → Providers → Email, turn OFF \"Confirm email\", then try again.";
+        }else if(/invalid/i.test(res.error.message)){
+          errEl.textContent="Wrong email or password. If you haven't made an account yet, tap \"Create an account\" below.";
+        }else{
+          errEl.textContent=res.error.message;
+        }
+        reset("Sign In"); return;
+      }
+      await onSignedIn(res.data.user); return;
     }
-    if(res.error){
-      errEl.textContent=res.error.message;
-      btn.disabled=false;btn.textContent=authMode==="signin"?"Sign In":"Create Account";
-      return;
-    }
-    if(!res.data.session){
-      // email confirmation is on
-      errEl.style.color="#22c55e";
-      errEl.textContent="Check your email to confirm your account, then sign in.";
-      authMode="signin";
-      btn.disabled=false;btn.textContent="Sign In";
-      return;
-    }
-    await onSignedIn(res.data.user);
   }catch(e){
-    errEl.textContent="Something went wrong. Try again.";
-    btn.disabled=false;btn.textContent=authMode==="signin"?"Sign In":"Create Account";
+    errEl.textContent="Network error: "+(e&&e.message?e.message:"couldn't reach the server.");
+    reset(authMode==="signin"?"Sign In":"Create Account");
   }
 };
 window.signOut=async()=>{
@@ -2064,7 +2080,10 @@ function bootApp(){
     }
   }
   // Not signed in → show login
-  document.getElementById("auth-overlay").style.display="block";
+  const ov=document.getElementById("auth-overlay");
+  ov.style.display="block";
+  const sub=document.getElementById("auth-subtitle");
+  if(!sb){ sub.style.color="#ef4444"; sub.textContent="⚠ Couldn't load the cloud connection. Reload the page; if it keeps happening, your internet may be blocking it."; }
 })();
 
 
