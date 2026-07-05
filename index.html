@@ -129,10 +129,12 @@
   </style>
 </head>
 <body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <div id="app">
   <div class="header">
     <div class="header-sub">Recovery Companion</div>
     <div class="header-title">Break the Cycle</div>
+    <div id="sync-badge" style="font-size:11px;font-weight:700;height:14px;margin-top:2px"></div>
     <div id="daily-quote-bar" style="margin-top:12px;padding-top:12px;border-top:1px solid #1e1e1e;cursor:pointer" onclick="toggleSerenity()">
       <div id="quote-display"></div>
     </div>
@@ -141,6 +143,31 @@
   <nav class="bottom-nav" id="nav"></nav>
 </div>
 <div id="modal-overlay" class="modal-overlay" style="display:none"></div>
+<div id="auth-overlay" style="display:none;position:fixed;inset:0;background:#0a0a0a;z-index:9999;overflow-y:auto;padding:60px 24px 40px">
+  <div style="max-width:400px;margin:0 auto">
+    <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.15em;margin-bottom:6px">Recovery Companion</div>
+    <div style="font-size:32px;font-weight:800;color:#e8e8e8;margin-bottom:6px">Break the Cycle</div>
+    <div id="auth-subtitle" style="font-size:14px;color:#666;margin-bottom:28px">Sign in to sync your recovery across devices.</div>
+    <label style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.08em">Email</label>
+    <input type="email" id="auth-email" autocapitalize="off" autocorrect="off" placeholder="you@email.com" style="width:100%;margin:6px 0 14px;padding:14px;background:#111;border:1px solid #333;border-radius:10px;color:#e8e8e8;font-size:16px;font-family:inherit" />
+    <label style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.08em">Password</label>
+    <input type="password" id="auth-password" placeholder="At least 6 characters" style="width:100%;margin:6px 0 8px;padding:14px;background:#111;border:1px solid #333;border-radius:10px;color:#e8e8e8;font-size:16px;font-family:inherit" />
+    <div id="auth-error" style="color:#ef4444;font-size:13px;min-height:18px;margin-bottom:8px"></div>
+    <button id="auth-submit" onclick="authSubmit()" style="width:100%;padding:15px;background:#f59e0b;border:none;border-radius:10px;color:#000;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:12px">Sign In</button>
+    <div style="text-align:center;font-size:13px;color:#666">
+      <span id="auth-toggle-text">New here?</span>
+      <button onclick="authToggleMode()" id="auth-toggle-btn" style="background:none;border:none;color:#60a5fa;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;padding:4px">Create an account</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ SUPABASE CLOUD SYNC ═══
+const SUPABASE_URL="https://wwbfrtfwfdbsajlyzsld.supabase.co";
+const SUPABASE_KEY="sb_publishable_y11EqgKKYxGmaeosU-zmtQ_KHuMmQzs";
+let sb=null, currentUser=null, authMode="signin", syncTimer=null;
+try{ sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY); }catch(e){ console.warn("Supabase init failed",e); }
+</script>
 
 <script>
 const STORAGE_KEY="recovery_data_v1";
@@ -345,11 +372,42 @@ function loadData(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}
 function saveData(d){
   try{
     localStorage.setItem(STORAGE_KEY,JSON.stringify(d));
+    queueCloudSync();
     return true;
   }catch(e){
     alert("Couldn't save your data. If you're in Private Browsing, switch to a normal Safari tab — Private mode blocks saving. Your entries won't stick until then.");
     return false;
   }
+}
+function queueCloudSync(){
+  if(!sb||!currentUser)return;
+  updateSyncBadge("saving");
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(pushToCloud,1200);
+}
+async function pushToCloud(){
+  if(!sb||!currentUser)return;
+  try{
+    const data=loadData();
+    const {error}=await sb.from("user_data").upsert({id:currentUser.id,data,updated_at:new Date().toISOString()});
+    updateSyncBadge(error?"error":"saved");
+  }catch(e){ updateSyncBadge("error"); }
+}
+async function pullFromCloud(){
+  if(!sb||!currentUser)return null;
+  try{
+    const {data,error}=await sb.from("user_data").select("data").eq("id",currentUser.id).maybeSingle();
+    if(error)return null;
+    return data?data.data:null;
+  }catch(e){ return null; }
+}
+function updateSyncBadge(state){
+  const el=document.getElementById("sync-badge");
+  if(!el)return;
+  const map={saving:["Syncing…","#f59e0b"],saved:["✓ Synced","#22c55e"],error:["⚠ Offline — saved on device","#ef4444"]};
+  const [txt,col]=map[state]||["",""];
+  el.textContent=txt;el.style.color=col;
+  if(state==="saved")setTimeout(()=>{if(el.textContent==="✓ Synced")el.textContent="";},2000);
 }
 function getTodayStr(){
   const now=new Date();
@@ -1897,7 +1955,11 @@ window.restoreHabit=key=>{
 
 // RENDER
 const renderers=[renderHome,renderShield,renderCheckIn,renderRelease,renderBoard,renderMeetings,renderStreak,renderFitness,renderJournal,renderHabits,renderStats,renderCircles,renderSettings,renderSteps];
-function renderContent(){document.getElementById("content").innerHTML=renderers[currentTab]();}
+function renderContent(){
+  document.getElementById("content").innerHTML=renderers[currentTab]();
+  const acc=document.getElementById("account-email");
+  if(acc&&currentUser&&currentUser.email){acc.textContent="Signed in as "+currentUser.email+" · synced to the cloud.";}
+}
 function render(){renderContent();renderNav();}
 
 let showingSerenity=false;
@@ -1920,8 +1982,90 @@ document.addEventListener("click",e=>{
   if(rmBtn){e.stopPropagation();removeResponse(rmBtn.getAttribute("data-remove-trigger"),rmBtn.getAttribute("data-remove-resp"));return;}
 });
 
-render();
-renderQuote();
+// ═══ AUTH FLOW ═══
+window.authToggleMode=()=>{
+  authMode=authMode==="signin"?"signup":"signin";
+  document.getElementById("auth-submit").textContent=authMode==="signin"?"Sign In":"Create Account";
+  document.getElementById("auth-toggle-text").textContent=authMode==="signin"?"New here?":"Already have an account?";
+  document.getElementById("auth-toggle-btn").textContent=authMode==="signin"?"Create an account":"Sign in";
+  document.getElementById("auth-subtitle").textContent=authMode==="signin"?"Sign in to sync your recovery across devices.":"Create an account to save your recovery to the cloud.";
+  document.getElementById("auth-error").textContent="";
+};
+window.authSubmit=async()=>{
+  const email=(document.getElementById("auth-email").value||"").trim();
+  const password=document.getElementById("auth-password").value||"";
+  const errEl=document.getElementById("auth-error");
+  const btn=document.getElementById("auth-submit");
+  errEl.textContent="";
+  if(!email||!password){errEl.textContent="Enter your email and password.";return;}
+  if(password.length<6){errEl.textContent="Password must be at least 6 characters.";return;}
+  if(!sb){errEl.textContent="Can't reach the server. Check your connection and try again.";return;}
+  btn.disabled=true;btn.textContent="Please wait…";
+  try{
+    let res;
+    if(authMode==="signup"){
+      res=await sb.auth.signUp({email,password});
+    }else{
+      res=await sb.auth.signInWithPassword({email,password});
+    }
+    if(res.error){
+      errEl.textContent=res.error.message;
+      btn.disabled=false;btn.textContent=authMode==="signin"?"Sign In":"Create Account";
+      return;
+    }
+    if(!res.data.session){
+      // email confirmation is on
+      errEl.style.color="#22c55e";
+      errEl.textContent="Check your email to confirm your account, then sign in.";
+      authMode="signin";
+      btn.disabled=false;btn.textContent="Sign In";
+      return;
+    }
+    await onSignedIn(res.data.user);
+  }catch(e){
+    errEl.textContent="Something went wrong. Try again.";
+    btn.disabled=false;btn.textContent=authMode==="signin"?"Sign In":"Create Account";
+  }
+};
+window.signOut=async()=>{
+  if(!confirm("Sign out? Your data stays synced and you can sign back in anytime."))return;
+  if(sb)await sb.auth.signOut();
+  currentUser=null;
+  location.reload();
+};
+async function onSignedIn(user){
+  currentUser=user;
+  document.getElementById("auth-overlay").style.display="none";
+  // Merge: if cloud has data, use it; if not but we have local, push local up
+  const cloud=await pullFromCloud();
+  const local=loadData();
+  const localHasStuff=Object.keys(local).length>0;
+  if(cloud && Object.keys(cloud).length>0){
+    // Cloud wins as source of truth on a fresh device
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(cloud));
+  }else if(localHasStuff){
+    // First time in the cloud — upload what's already on this phone
+    await pushToCloud();
+  }
+  bootApp();
+}
+function bootApp(){
+  render();
+  renderQuote();
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+}
+// ═══ BOOT ═══
+(async()=>{
+  if(sb){
+    const {data}=await sb.auth.getSession();
+    if(data && data.session){
+      await onSignedIn(data.session.user);
+      return;
+    }
+  }
+  // Not signed in → show login
+  document.getElementById("auth-overlay").style.display="block";
+})();
 
 
 // STATS
@@ -2305,6 +2449,13 @@ function renderSettings() {
     <div class="card">
       <div class="section-label" style="margin-bottom:14px">Weekly Summary Reminder</div>
       ${renderReminderCard()}
+    </div>
+
+    <!-- Account -->
+    <div class="card">
+      <div class="section-label" style="margin-bottom:4px">Account</div>
+      <div id="account-email" style="font-size:12px;color:#555;margin-bottom:12px">Synced to the cloud.</div>
+      <button onclick="signOut()" style="width:100%;padding:12px;background:transparent;border:1px solid #333;color:#888;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13px">Sign Out</button>
     </div>
 
     <!-- Backup / Restore -->
@@ -2923,7 +3074,7 @@ window.deleteDateNight = idx => {
 };
 
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+// (service worker registered in bootApp after auth)
 
 // ── MONDAY REMINDER NOTIFICATION ──
 function requestNotificationPermission(){
