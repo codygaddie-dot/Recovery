@@ -1,7 +1,7 @@
 // Break the Cycle — service worker
 // Bump CACHE_VERSION whenever you update index.html or the icons
 // so phones pull the new version instead of the cached one.
-const CACHE_VERSION = "btc-v2";
+const CACHE_VERSION = "btc-v3";
 const CORE_ASSETS = [
   "./",
   "./index.html",
