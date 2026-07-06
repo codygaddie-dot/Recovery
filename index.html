@@ -2049,21 +2049,108 @@ window.signOut=async()=>{
   currentUser=null;
   location.reload();
 };
+window.showDataStatus=async()=>{
+  const local=loadData();
+  let cloud=null;
+  try{ cloud=await pullFromCloud(); }catch(e){}
+  const count=(d,k)=>d&&Array.isArray(d[k])?d[k].length:0;
+  const habitDays=(d)=>d?Object.keys(d).filter(k=>k.startsWith("habits_")).length:0;
+  const row=(label,l,c)=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1a1a1a;font-size:13px"><span style="color:#888">${label}</span><span><span style="color:#e8e8e8">${l}</span> <span style="color:#444">device</span> · <span style="color:#60a5fa">${c}</span> <span style="color:#444">cloud</span></span></div>`;
+  const overlay=document.getElementById("modal-overlay");
+  overlay.style.display="flex";
+  overlay.innerHTML=`<div style="width:100%;max-width:460px;background:#111;border-radius:16px;padding:22px;max-height:88vh;overflow-y:auto">
+    <div style="font-size:18px;font-weight:800;color:#e8e8e8;margin-bottom:4px">Your Data</div>
+    <div style="font-size:12px;color:#666;margin-bottom:16px">Comparing what's on this device vs. the cloud.</div>
+    ${row("Journal entries",count(local,"journalEntries"),count(cloud,"journalEntries"))}
+    ${row("Check-ins",count(local,"urgeLogs"),count(cloud,"urgeLogs"))}
+    ${row("Tool logs",count(local,"releaseLogs"),count(cloud,"releaseLogs"))}
+    ${row("Habit days logged",habitDays(local),habitDays(cloud))}
+    <div style="font-size:12px;color:#666;margin:16px 0 10px;line-height:1.5">The safe option below combines device + cloud + your backup so nothing is lost — it only ever adds, never deletes.</div>
+    <button onclick="mergeEverything()" style="width:100%;padding:13px;background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;margin-bottom:8px">✓ Merge &amp; Keep Everything</button>
+    <button onclick="importDataMerge()" style="width:100%;padding:13px;background:#1a2333;border:1px solid #60a5fa;color:#60a5fa;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;margin-bottom:8px">📥 Add My Backup File (merge in)</button>
+    <button onclick="closeModal()" style="width:100%;padding:11px;background:transparent;border:1px solid #333;color:#888;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13px">Close</button>
+  </div>`;
+};
+window.mergeEverything=async()=>{
+  const local=loadData();
+  let cloud=null;
+  try{ cloud=await pullFromCloud(); }catch(e){}
+  const merged=mergeData(local,cloud);
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(merged));
+  await pushToCloud();
+  closeModal();
+  renderContent();
+  alert("Done — device and cloud are now combined. Nothing was deleted.");
+};
+window.importDataMerge=()=>{
+  const input=document.createElement('input');
+  input.type='file';input.accept='application/json,.json';
+  input.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=async ev=>{
+      try{
+        const imported=JSON.parse(ev.target.result);
+        const merged=mergeData(loadData(),imported);
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(merged));
+        await pushToCloud();
+        closeModal();renderContent();
+        alert("Backup merged in — nothing was overwritten, only added.");
+      }catch(err){ alert("That file isn't a valid backup."); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+};
 async function onSignedIn(user){
   currentUser=user;
   document.getElementById("auth-overlay").style.display="none";
-  // Merge: if cloud has data, use it; if not but we have local, push local up
   const cloud=await pullFromCloud();
   const local=loadData();
-  const localHasStuff=Object.keys(local).length>0;
-  if(cloud && Object.keys(cloud).length>0){
-    // Cloud wins as source of truth on a fresh device
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(cloud));
-  }else if(localHasStuff){
-    // First time in the cloud — upload what's already on this phone
-    await pushToCloud();
-  }
+  const merged=mergeData(local,cloud);
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(merged));
+  // push the merged result up so cloud is current too
+  await pushToCloud();
   bootApp();
+}
+// Count how much "real" data a copy has, to decide which is richer
+function dataScore(d){
+  if(!d||typeof d!=="object")return -1;
+  let n=0;
+  n+=(d.journalEntries||[]).length*3;
+  n+=(d.urgeLogs||[]).length*2;
+  n+=(d.releaseLogs||[]).length;
+  n+=Object.keys(d).filter(k=>k.startsWith("habits_")).length;
+  n+=Object.keys(d).length;
+  return n;
+}
+// Merge two data copies without losing anything: union arrays by a key, keep richer scalars
+function mergeData(a,b){
+  a=a&&typeof a==="object"?a:{};
+  b=b&&typeof b==="object"?b:{};
+  // Start from whichever is richer as the base
+  const base=dataScore(a)>=dataScore(b)?{...b,...a}:{...a,...b};
+  const out={...base};
+  const arrByDate=(x,y)=>{
+    const seen=new Set();const res=[];
+    [...(x||[]),...(y||[])].forEach(item=>{
+      const k=item&&(item.date||JSON.stringify(item));
+      if(!seen.has(k)){seen.add(k);res.push(item);}
+    });
+    return res;
+  };
+  // Union the important arrays so nothing is dropped
+  out.journalEntries=arrByDate(a.journalEntries,b.journalEntries);
+  out.urgeLogs=arrByDate(a.urgeLogs,b.urgeLogs);
+  out.releaseLogs=arrByDate(a.releaseLogs,b.releaseLogs);
+  // Union daily habit keys (habits_YYYY-MM-DD arrays) by combining tapped habits
+  const allKeys=new Set([...Object.keys(a),...Object.keys(b)].filter(k=>k.startsWith("habits_")));
+  allKeys.forEach(k=>{
+    const av=Array.isArray(a[k])?a[k]:[];
+    const bv=Array.isArray(b[k])?b[k]:[];
+    out[k]=Array.from(new Set([...av,...bv]));
+  });
+  return out;
 }
 function bootApp(){
   render();
@@ -2474,6 +2561,7 @@ function renderSettings() {
     <div class="card">
       <div class="section-label" style="margin-bottom:4px">Account</div>
       <div id="account-email" style="font-size:12px;color:#555;margin-bottom:12px">Synced to the cloud.</div>
+      <button onclick="showDataStatus()" style="width:100%;padding:12px;background:#1a2333;border:1px solid #60a5fa;color:#60a5fa;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;margin-bottom:10px">🔍 Check My Data (device vs cloud)</button>
       <button onclick="signOut()" style="width:100%;padding:12px;background:transparent;border:1px solid #333;color:#888;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13px">Sign Out</button>
     </div>
 
