@@ -129,7 +129,6 @@
   </style>
 </head>
 <body>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <div id="app">
   <div class="header">
     <div class="header-sub">Recovery Companion</div>
@@ -162,11 +161,8 @@
 </div>
 
 <script>
-// ═══ SUPABASE CLOUD SYNC ═══
-const SUPABASE_URL="https://wwbfrtfwfdbsajlyzsld.supabase.co";
-const SUPABASE_KEY="sb_publishable_y11EqgKKYxGmaeosU-zmtQ_KHuMmQzs";
+// ═══ LOCAL-ONLY MODE (cloud sync removed for reliability) ═══
 let sb=null, currentUser=null, authMode="signin", syncTimer=null;
-try{ sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY); }catch(e){ console.warn("Supabase init failed",e); }
 </script>
 
 <script>
@@ -2110,12 +2106,11 @@ window.importDataMerge=()=>{
   input.onchange=e=>{
     const file=e.target.files[0];if(!file)return;
     const reader=new FileReader();
-    reader.onload=async ev=>{
+    reader.onload=ev=>{
       try{
         const imported=JSON.parse(ev.target.result);
         const merged=mergeData(loadData(),imported);
         localStorage.setItem(STORAGE_KEY,JSON.stringify(merged));
-        await pushToCloud();
         closeModal();renderContent();
         alert("Backup merged in — nothing was overwritten, only added.");
       }catch(err){ alert("That file isn't a valid backup."); }
@@ -2179,21 +2174,10 @@ function bootApp(){
   renderQuote();
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 }
-// ═══ BOOT ═══
-(async()=>{
-  if(sb){
-    const {data}=await sb.auth.getSession();
-    if(data && data.session){
-      await onSignedIn(data.session.user);
-      return;
-    }
-  }
-  // Not signed in → show login
-  const ov=document.getElementById("auth-overlay");
-  ov.style.display="block";
-  const sub=document.getElementById("auth-subtitle");
-  if(!sb){ sub.style.color="#ef4444"; sub.textContent="⚠ Couldn't load the cloud connection. Reload the page; if it keeps happening, your internet may be blocking it."; }
-})();
+// ═══ BOOT (local-only, no login) ═══
+render();
+renderQuote();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
 
 
 // STATS
@@ -2579,23 +2563,15 @@ function renderSettings() {
       ${renderReminderCard()}
     </div>
 
-    <!-- Account -->
-    <div class="card">
-      <div class="section-label" style="margin-bottom:4px">Account</div>
-      <div id="account-email" style="font-size:12px;color:#555;margin-bottom:12px">Synced to the cloud.</div>
-      <button onclick="showDataStatus()" style="width:100%;padding:12px;background:#1a2333;border:1px solid #60a5fa;color:#60a5fa;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;margin-bottom:10px">🔍 Check My Data (device vs cloud)</button>
-      <button onclick="signOut()" style="width:100%;padding:12px;background:transparent;border:1px solid #333;color:#888;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13px">Sign Out</button>
-    </div>
-
     <!-- Backup / Restore -->
     <div class="card">
       <div class="section-label" style="margin-bottom:4px">Data</div>
-      <div style="font-size:11px;color:#555;margin-bottom:12px;line-height:1.5">Everything is stored only on this phone. Save a backup file regularly — if Safari data is cleared, it's the only way to get your entries back.</div>
+      <div style="font-size:11px;color:#555;margin-bottom:12px;line-height:1.5">Everything is stored on this phone. Save a backup file regularly and email it to yourself — that's your safety net if you switch phones or clear Safari.</div>
       <button onclick="exportData()" style="width:100%;padding:12px;background:#1a2a1a;border:1px solid #22c55e;color:#22c55e;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;margin-bottom:10px">💾 Save Data (Backup to File)</button>
-      <button onclick="importData()" style="width:100%;padding:12px;background:#1a2333;border:1px solid #60a5fa;color:#60a5fa;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;margin-bottom:10px">📥 Restore from Backup</button>
+      <button onclick="importDataMerge()" style="width:100%;padding:12px;background:#1a2333;border:1px solid #60a5fa;color:#60a5fa;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;margin-bottom:10px">📥 Restore / Add Backup File</button>
       <button onclick="clearAllData()" style="width:100%;padding:12px;background:transparent;border:1px solid #2a2a2a;color:#555;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13px">Clear All Data</button>
     </div>
-    <div style="text-align:center;color:#333;font-size:11px;padding:8px 0 20px">Build: BTC-v2 · ${new Date().toLocaleDateString()}</div>
+    <div style="text-align:center;color:#333;font-size:11px;padding:8px 0 20px">Build: Local · ${new Date().toLocaleDateString()}</div>
   `;
 }
 

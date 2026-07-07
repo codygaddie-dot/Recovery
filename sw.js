@@ -1,7 +1,6 @@
 // Break the Cycle — service worker
-// Bump CACHE_VERSION whenever you update index.html or the icons
-// so phones pull the new version instead of the cached one.
-const CACHE_VERSION = "btc-v3";
+// Bump CACHE_VERSION whenever you update index.html or the icons.
+const CACHE_VERSION = "btc-v4";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -10,7 +9,6 @@ const CORE_ASSETS = [
   "./icon-512.png"
 ];
 
-// Install: pre-cache the core app shell
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_VERSION).then((cache) =>
@@ -20,7 +18,6 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activate: drop old caches from previous versions
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -32,10 +29,17 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Fetch: network-first for navigations (so updates show up),
-// cache-first for everything else (fast, works offline)
 self.addEventListener("fetch", (event) => {
   const req = event.request;
+  const url = new URL(req.url);
+
+  // CRITICAL: never touch cross-origin requests (Supabase API, the JS library CDN, etc).
+  // Let them go straight to the network every time — no caching, no interception.
+  // This is what keeps cloud data reads always fresh.
+  if (url.origin !== self.location.origin) {
+    return; // do not call respondWith — browser hits the network normally
+  }
+
   if (req.method !== "GET") return;
 
   if (req.mode === "navigate") {
