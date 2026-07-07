@@ -2126,13 +2126,24 @@ window.importDataMerge=()=>{
 async function onSignedIn(user){
   currentUser=user;
   document.getElementById("auth-overlay").style.display="none";
-  const cloud=await pullFromCloud();
-  const local=loadData();
-  const merged=mergeData(local,cloud);
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(merged));
-  // push the merged result up so cloud is current too
-  await pushToCloud();
+  // Pull cloud, merge, save — but guard against a hung network so the app ALWAYS boots.
+  try{
+    const cloud=await withTimeout(pullFromCloud(), 8000);
+    const local=loadData();
+    const merged=mergeData(local,cloud);
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(merged));
+  }catch(e){ /* offline or slow — keep local data, boot anyway */ }
+  // Boot the app NOW so the user is never staring at a blank screen
   bootApp();
+  // Push to cloud in the background (don't block the UI on it)
+  pushToCloud().catch(()=>{});
+}
+// Reject a promise if it takes too long, so we never hang forever on a bad connection
+function withTimeout(promise, ms){
+  return Promise.race([
+    promise,
+    new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")), ms))
+  ]);
 }
 // Count how much "real" data a copy has, to decide which is richer
 function dataScore(d){
@@ -2145,31 +2156,34 @@ function dataScore(d){
   n+=Object.keys(d).length;
   return n;
 }
-// Merge two data copies without losing anything: union arrays by a key, keep richer scalars
+// Merge two data copies without losing anything.
 function mergeData(a,b){
   a=a&&typeof a==="object"?a:{};
   b=b&&typeof b==="object"?b:{};
-  // Start from whichever is richer as the base
-  const base=dataScore(a)>=dataScore(b)?{...b,...a}:{...a,...b};
-  const out={...base};
-  const arrByDate=(x,y)=>{
+  const richer=dataScore(a)>=dataScore(b)?a:b;
+  const poorer=richer===a?b:a;
+  // Base: richer wins for plain scalars, but we then union every array/collection below.
+  const out={...poorer,...richer};
+  const arrUnion=(x,y)=>{
     const seen=new Set();const res=[];
-    [...(x||[]),...(y||[])].forEach(item=>{
-      const k=item&&(item.date||JSON.stringify(item));
+    [...(Array.isArray(x)?x:[]),...(Array.isArray(y)?y:[])].forEach(item=>{
+      const k=item&&typeof item==="object"?(item.date||JSON.stringify(item)):String(item);
       if(!seen.has(k)){seen.add(k);res.push(item);}
     });
     return res;
   };
-  // Union the important arrays so nothing is dropped
-  out.journalEntries=arrByDate(a.journalEntries,b.journalEntries);
-  out.urgeLogs=arrByDate(a.urgeLogs,b.urgeLogs);
-  out.releaseLogs=arrByDate(a.releaseLogs,b.releaseLogs);
-  // Union daily habit keys (habits_YYYY-MM-DD arrays) by combining tapped habits
-  const allKeys=new Set([...Object.keys(a),...Object.keys(b)].filter(k=>k.startsWith("habits_")));
+  // Union EVERY array field found on either side (journalEntries, urgeLogs, releaseLogs,
+  // contacts, customHabits, customAlerts, gratitudeList, etc.) so nothing is dropped.
+  const allKeys=new Set([...Object.keys(a),...Object.keys(b)]);
   allKeys.forEach(k=>{
-    const av=Array.isArray(a[k])?a[k]:[];
-    const bv=Array.isArray(b[k])?b[k]:[];
-    out[k]=Array.from(new Set([...av,...bv]));
+    if(k.startsWith("habits_")){
+      const av=Array.isArray(a[k])?a[k]:[];
+      const bv=Array.isArray(b[k])?b[k]:[];
+      out[k]=Array.from(new Set([...av,...bv]));
+    }else if(Array.isArray(a[k])||Array.isArray(b[k])){
+      out[k]=arrUnion(a[k],b[k]);
+    }
+    // non-array fields keep the richer side's value (already in out via spread)
   });
   return out;
 }
@@ -2178,10 +2192,35 @@ function bootApp(){
   renderQuote();
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 }
-// ═══ BOOT (local-only, no login) ═══
-render();
-renderQuote();
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+// ═══ BOOT (cloud — show login, then sync) ═══
+function bootApp(){
+  render();
+  renderQuote();
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+}
+(async()=>{
+  if(sb){
+    try{
+      const {data}=await sb.auth.getSession();
+      if(data && data.session){
+        await onSignedIn(data.session.user);
+        return;
+      }
+    }catch(e){ console.warn("session check failed",e); }
+  }
+  // Not signed in (or cloud unavailable) → show login screen
+  const ov=document.getElementById("auth-overlay");
+  if(ov){
+    ov.style.display="block";
+    if(!sb){
+      const sub=document.getElementById("auth-subtitle");
+      if(sub){ sub.style.color="#ef4444"; sub.textContent="⚠ Couldn't load the cloud connection. Reload the page."; }
+    }
+  } else {
+    // Failsafe: if the overlay somehow isn't in the DOM, at least run the app
+    bootApp();
+  }
+})();
 
 
 // STATS
