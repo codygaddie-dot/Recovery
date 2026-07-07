@@ -129,6 +129,7 @@
   </style>
 </head>
 <body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <div id="app">
   <div class="header">
     <div class="header-sub">Recovery Companion</div>
@@ -161,8 +162,11 @@
 </div>
 
 <script>
-// ═══ LOCAL-ONLY MODE (cloud sync removed for reliability) ═══
+// ═══ SUPABASE CLOUD SYNC ═══
+const SUPABASE_URL="https://wwbfrtfwfdbsajlyzsld.supabase.co";
+const SUPABASE_KEY="sb_publishable_y11EqgKKYxGmaeosU-zmtQ_KHuMmQzs";
 let sb=null, currentUser=null, authMode="signin", syncTimer=null;
+try{ sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY); }catch(e){ console.warn("Supabase init failed",e); }
 </script>
 
 <script>
