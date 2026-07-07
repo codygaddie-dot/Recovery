@@ -2077,16 +2077,28 @@ window.mergeEverything=async()=>{
   try{ cloud=await pullFromCloud(); }catch(e){}
   const merged=mergeData(local,cloud);
   localStorage.setItem(STORAGE_KEY,JSON.stringify(merged));
-  // Push directly and report the real outcome
   let msg;
-  if(!sb){ msg="Merged on this device. (Cloud library not loaded — reload the app.)"; }
-  else if(!currentUser){ msg="Merged on this device, but you're not signed in, so it can't reach the cloud. Sign in and try again."; }
+  if(!sb){ msg="Merged on this device. (Cloud not loaded — reload the app.)"; }
+  else if(!currentUser){ msg="Merged on device, but you're not signed in. Sign in and try again."; }
   else{
     try{
-      const {error}=await sb.from("user_data").upsert({id:currentUser.id,data:merged,updated_at:new Date().toISOString()});
-      if(error){ msg="Merged on this device, but the cloud upload failed:\n\n"+(error.message||JSON.stringify(error))+"\n\nYour data is safe on the phone."; updateSyncBadge("error"); }
-      else{ msg="✓ Done — everything is now combined and saved to the cloud."; updateSyncBadge("saved"); }
-    }catch(e){ msg="Merged on device, but cloud upload threw an error:\n\n"+(e&&e.message?e.message:e)+"\n\nYour data is safe on the phone."; updateSyncBadge("error"); }
+      // Write
+      const {error:wErr}=await sb.from("user_data").upsert({id:currentUser.id,data:merged,updated_at:new Date().toISOString()});
+      if(wErr){ msg="Cloud upload failed:\n\n"+(wErr.message||JSON.stringify(wErr)); updateSyncBadge("error"); }
+      else{
+        // Read it straight back and VERIFY the counts actually landed
+        const verify=await pullFromCloud();
+        const cCount=(verify&&verify.journalEntries?verify.journalEntries.length:0);
+        const lCount=(merged.journalEntries?merged.journalEntries.length:0);
+        if(verify && cCount>=lCount){
+          msg="✓ Confirmed saved to the cloud.\n\nJournal in cloud: "+cCount+"\nCheck-ins: "+((verify.urgeLogs||[]).length)+"\nTool logs: "+((verify.releaseLogs||[]).length);
+          updateSyncBadge("saved");
+        }else{
+          msg="⚠ The upload didn't fully land. Cloud shows "+cCount+" of "+lCount+" journal entries.\n\nThis usually means the data is too large for one write. Tell Claude this exact message.";
+          updateSyncBadge("error");
+        }
+      }
+    }catch(e){ msg="Cloud upload threw an error:\n\n"+(e&&e.message?e.message:e); updateSyncBadge("error"); }
   }
   closeModal();
   renderContent();
