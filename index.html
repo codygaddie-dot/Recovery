@@ -2077,10 +2077,20 @@ window.mergeEverything=async()=>{
   try{ cloud=await pullFromCloud(); }catch(e){}
   const merged=mergeData(local,cloud);
   localStorage.setItem(STORAGE_KEY,JSON.stringify(merged));
-  await pushToCloud();
+  // Push directly and report the real outcome
+  let msg;
+  if(!sb){ msg="Merged on this device. (Cloud library not loaded — reload the app.)"; }
+  else if(!currentUser){ msg="Merged on this device, but you're not signed in, so it can't reach the cloud. Sign in and try again."; }
+  else{
+    try{
+      const {error}=await sb.from("user_data").upsert({id:currentUser.id,data:merged,updated_at:new Date().toISOString()});
+      if(error){ msg="Merged on this device, but the cloud upload failed:\n\n"+(error.message||JSON.stringify(error))+"\n\nYour data is safe on the phone."; updateSyncBadge("error"); }
+      else{ msg="✓ Done — everything is now combined and saved to the cloud."; updateSyncBadge("saved"); }
+    }catch(e){ msg="Merged on device, but cloud upload threw an error:\n\n"+(e&&e.message?e.message:e)+"\n\nYour data is safe on the phone."; updateSyncBadge("error"); }
+  }
   closeModal();
   renderContent();
-  alert("Done — device and cloud are now combined. Nothing was deleted.");
+  alert(msg);
 };
 window.importDataMerge=()=>{
   const input=document.createElement('input');
