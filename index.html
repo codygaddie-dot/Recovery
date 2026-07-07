@@ -1870,16 +1870,24 @@ function renderHabitsWeekly(data,allHabits,todayDone,last7,activeDate){
 
 function renderHabitsMonthly(data,allHabits,monthDays,monthYear,daysInMonth,firstDayOfWeek){
   return `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
       <button onclick="habitMonthOffset--;renderContent()" style="background:#111;border:1px solid #222;border-radius:8px;color:#aaa;font-size:20px;width:38px;height:38px;cursor:pointer;font-family:inherit">&lt;</button>
       <span style="font-size:15px;font-weight:700;color:#e8e8e8">${monthYear}</span>
       <button onclick="habitMonthOffset=Math.min(0,habitMonthOffset+1);renderContent()" style="background:#111;border:1px solid #222;border-radius:8px;color:${habitMonthOffset<0?"#aaa":"#333"};font-size:20px;width:38px;height:38px;cursor:pointer;font-family:inherit" ${habitMonthOffset>=0?"disabled":""}>&gt;</button>
     </div>
+    <div style="display:flex;gap:6px;justify-content:center;margin-bottom:14px;flex-wrap:wrap">
+      <button onclick="habitMonthOffset-=12;renderContent()" style="background:#111;border:1px solid #222;border-radius:7px;color:#888;font-size:11px;padding:5px 10px;cursor:pointer;font-family:inherit">‹‹ 1 year</button>
+      <button onclick="habitMonthOffset=0;renderContent()" style="background:#1a2a1a;border:1px solid #22c55e;border-radius:7px;color:#22c55e;font-size:11px;padding:5px 10px;cursor:pointer;font-family:inherit">Today</button>
+    </div>
+    <div style="font-size:11px;color:#555;text-align:center;margin-bottom:12px">Tap any day to mark it done or undo it.</div>
     ${allHabits.map(h=>{
       const hid=h.id||h.name;
       const completedDays=monthDays.filter(d=>(data["habits_"+d]||[]).includes(hid)).length;
       const pctM=Math.round((completedDays/daysInMonth)*100);
       const color=pctM>=80?"#22c55e":pctM>=50?"#f59e0b":"#ef4444";
+      // Longest streak within this month
+      let best=0,run=0;
+      monthDays.forEach(d=>{ if((data["habits_"+d]||[]).includes(hid)){run++;best=Math.max(best,run);}else run=0; });
       return `<div class="card" style="margin-bottom:10px;padding:14px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
           <div style="display:flex;align-items:center;gap:6px">
@@ -1888,10 +1896,11 @@ function renderHabitsMonthly(data,allHabits,monthDays,monthYear,daysInMonth,firs
           </div>
           <span style="font-size:12px;font-weight:700;color:${color}">${completedDays}/${daysInMonth} &bull; ${pctM}%</span>
         </div>
+        ${best>1?`<div style="font-size:11px;color:#f59e0b;margin-bottom:8px">🔥 Best streak this month: ${best} days</div>`:""}
         <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:8px">
           ${["S","M","T","W","T","F","S"].map(d=>`<div style="text-align:center;font-size:8px;color:#444;padding-bottom:2px">${d}</div>`).join("")}
           ${Array(firstDayOfWeek).fill("<div></div>").join("")}
-          ${monthDays.map(d=>{const isDone=(data["habits_"+d]||[]).includes(hid);const isToday=d===getTodayStr();const dn=parseInt(d.slice(-2));return `<div style="aspect-ratio:1;border-radius:3px;background:${isDone?"#22c55e":"#1a1a1a"};border:${isToday?"1.5px solid #f59e0b":"none"};display:flex;align-items:center;justify-content:center;font-size:8px;color:${isDone?"#fff":"#444"}">${dn}</div>`;}).join("")}
+          ${monthDays.map(d=>{const isDone=(data["habits_"+d]||[]).includes(hid);const isToday=d===getTodayStr();const isFuture=d>getTodayStr();const dn=parseInt(d.slice(-2));return `<div onclick="${isFuture?'':`toggleHabitDay('${hid.replace(/'/g,"\\'")}','${d}')`}" style="aspect-ratio:1;border-radius:3px;background:${isDone?"#22c55e":"#1a1a1a"};border:${isToday?"1.5px solid #f59e0b":"none"};display:flex;align-items:center;justify-content:center;font-size:8px;color:${isDone?"#fff":"#444"};cursor:${isFuture?"default":"pointer"};opacity:${isFuture?"0.35":"1"}">${dn}</div>`;}).join("")}
         </div>
         <div class="progress-bar-bg" style="margin:0"><div class="progress-bar-fill" style="width:${pctM}%;background:${color}"></div></div>
       </div>`;
