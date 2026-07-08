@@ -1938,9 +1938,13 @@ window.adjustMeeting=(key,date,delta)=>{
 
 window.addCustomHabit=()=>{
   const input=document.getElementById("new-habit-input");const val=input?input.value.trim():"";if(!val)return;
-  const data=loadData();const custom=data.customHabits||[];
+  const data=loadData();let custom=data.customHabits||[];
+  // Clean any existing duplicates by name (from earlier sync bug)
+  const byName=new Map();
+  custom.forEach(h=>{const key=(h.name||"").trim().toLowerCase();if(!byName.has(key))byName.set(key,h);});
+  custom=[...byName.values()];
   const hidden=(data.hiddenHabits||[]).filter(k=>k!==val); // un-hide if re-adding a removed name
-  if(!custom.find(h=>h.name===val)){
+  if(!custom.find(h=>(h.name||"").trim().toLowerCase()===val.toLowerCase())){
     custom.push({id:"custom_"+Date.now(),name:val,icon:"&#x2B50;"});
   }
   saveData({...data,customHabits:custom,hiddenHabits:hidden});
@@ -2203,36 +2207,70 @@ function mergeData(a,b){
   const poorer=richer===a?b:a;
   // Base: richer wins for plain scalars, but we then union every array/collection below.
   const out={...poorer,...richer};
-  const arrUnion=(x,y)=>{
+  const arrUnion=(x,y,keyFn)=>{
     const seen=new Set();const res=[];
     [...(Array.isArray(x)?x:[]),...(Array.isArray(y)?y:[])].forEach(item=>{
-      const k=item&&typeof item==="object"?(item.date||JSON.stringify(item)):String(item);
+      const k=keyFn?keyFn(item):(item&&typeof item==="object"?(item.date||JSON.stringify(item)):String(item));
       if(!seen.has(k)){seen.add(k);res.push(item);}
     });
     return res;
   };
-  // Union EVERY array field found on either side (journalEntries, urgeLogs, releaseLogs,
-  // contacts, customHabits, customAlerts, gratitudeList, etc.) so nothing is dropped.
+  // Dedup key by the STABLE identifying field of each collection (not mutable fields
+  // like progress/weekId, which differ across devices and cause duplicates).
+  const dedupKeys={
+    customHabits:   it=>(it&&it.name||"").trim().toLowerCase(),
+    customAlerts:   it=>(it&&it.trigger||"").trim().toLowerCase(),
+    contacts:       it=>((it&&it.name||"")+"|"+(it&&it.phone||"")).trim().toLowerCase(),
+    fitnessGoals:   it=>(it&&it.text||"").trim().toLowerCase(),
+    customPeptides: it=>(it&&(it.name||it.text)||"").trim().toLowerCase(),
+    customSupps:    it=>(it&&(it.name||it.text)||"").trim().toLowerCase(),
+    gratitudeList:  it=>(typeof it==="string"?it:(it&&it.text||"")).trim().toLowerCase(),
+    sabrinaList:    it=>(typeof it==="string"?it:(it&&it.text||"")).trim().toLowerCase(),
+    dateNights:     it=>(typeof it==="string"?it:(it&&(it.text||it.date)||"")).trim().toLowerCase()
+  };
   const allKeys=new Set([...Object.keys(a),...Object.keys(b)]);
   allKeys.forEach(k=>{
     if(k.startsWith("habits_")){
       const av=Array.isArray(a[k])?a[k]:[];
       const bv=Array.isArray(b[k])?b[k]:[];
       out[k]=Array.from(new Set([...av,...bv]));
+    }else if(dedupKeys[k]){
+      out[k]=arrUnion(a[k],b[k],dedupKeys[k]);
     }else if(Array.isArray(a[k])||Array.isArray(b[k])){
+      // date-stamped logs (journalEntries, urgeLogs, releaseLogs, workoutLogs,
+      // relapseLogs, bodyLogs, peptideLogs, progressPhotos) union by date/content
       out[k]=arrUnion(a[k],b[k]);
     }
     // non-array fields keep the richer side's value (already in out via spread)
   });
   return out;
 }
-function bootApp(){
-  render();
-  renderQuote();
-  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
-}
 // ═══ BOOT (cloud — show login, then sync) ═══
+function dedupeAllCollections(){
+  const data=loadData();
+  const keyers={
+    customHabits:   it=>(it&&it.name||"").trim().toLowerCase(),
+    customAlerts:   it=>(it&&it.trigger||"").trim().toLowerCase(),
+    contacts:       it=>((it&&it.name||"")+"|"+(it&&it.phone||"")).trim().toLowerCase(),
+    fitnessGoals:   it=>(it&&it.text||"").trim().toLowerCase(),
+    customPeptides: it=>(it&&(it.name||it.text)||"").trim().toLowerCase(),
+    customSupps:    it=>(it&&(it.name||it.text)||"").trim().toLowerCase(),
+    gratitudeList:  it=>(typeof it==="string"?it:(it&&it.text||"")).trim().toLowerCase(),
+    sabrinaList:    it=>(typeof it==="string"?it:(it&&it.text||"")).trim().toLowerCase()
+  };
+  let changed=false;
+  const out={...data};
+  Object.keys(keyers).forEach(field=>{
+    const arr=data[field];
+    if(!Array.isArray(arr)||!arr.length)return;
+    const seen=new Set();const cleaned=[];
+    arr.forEach(it=>{const key=keyers[field](it);if(key&&seen.has(key))return;if(key)seen.add(key);cleaned.push(it);});
+    if(cleaned.length!==arr.length){ out[field]=cleaned; changed=true; }
+  });
+  if(changed)saveData(out);
+}
 function bootApp(){
+  dedupeAllCollections();
   render();
   renderQuote();
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
